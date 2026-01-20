@@ -6,8 +6,8 @@
 
 #### Testing
 
-#### Sreenshots (mobile)
+#### Screenshots (mobile)
 
-#### Sreenshots (computer)
+#### Screenshots (computer)
 
 #### Additional context
