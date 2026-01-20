@@ -3,7 +3,7 @@ npm install
 ```
 
 Make sure you have a .env file with DATABASE_URL
-Also get BETTER_AUTH_SECRET and BETTER_AUTH_URL as described in better auth instalation guide: https://www.better-auth.com/docs/installation
+Also get BETTER_AUTH_SECRET and BETTER_AUTH_URL as described in better auth installation guide: https://www.better-auth.com/docs/installation
 
 Then maybe do some of this stuff???
 
