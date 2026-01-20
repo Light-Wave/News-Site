@@ -21,15 +21,25 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  role          String?
+  role          Roles     @default(USER)
   banned        Boolean?  @default(false)
   banReason     String?
   banExpires    DateTime?
-  sessions      Session[]
-  accounts      Account[]
+
+  sessions       Session[]
+  accounts       Account[]
+  subscriptions  Subscription[]
+  editorsChoices EditorsChoice[]
+  articles       Article[]
 
   @@unique([email])
   @@map("user")
+}
+
+enum Roles {
+  USER
+  EDITOR
+  ADMIN
 }
 
 model Session {
@@ -79,4 +89,76 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Article {
+  id         String   @id @default(uuid())
+  headline   String
+  content    String
+  summary    String
+  views      Int      @default(0)
+  image      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  isActive   Boolean  @default(true)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  editorsChoices EditorsChoice[]
+
+  @@index([categoryId])
+  @@index([userId])
+  @@map("article")
+}
+
+model EditorsChoice {
+  id        String   @id @default(uuid())
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  editorId  String
+  editor    User     @relation(fields: [editorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@unique([articleId, editorId])
+  @@index([articleId])
+  @@index([editorId])
+  @@map("editorschoice")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String
+
+  articles Article[]
+
+  @@unique([name])
+  @@map("category")
+}
+
+model Subscription {
+  id                 String           @id @default(uuid())
+  price              Int
+  createdAt          DateTime         @default(now())
+  expiresAt          DateTime
+  subscriptionTypeId String
+  subscriptionType   SubscriptionType @relation(fields: [subscriptionTypeId], references: [id])
+  userId             String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscription")
+}
+
+model SubscriptionType {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  price       Int
+
+  subscriptions Subscription[]
+
+  @@unique([name])
+  @@map("subscriptiontype")
 }
