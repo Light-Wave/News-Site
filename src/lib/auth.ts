@@ -14,7 +14,7 @@ export const auth = betterAuth({
       void sendMail(
         user.email,
         "Reset your password",
-        `Click the link to reset your password: ${url}`
+        `Click the link to reset your password: ${url}`,
       );
     },
     onPasswordReset: async ({ user }, request) => {
@@ -27,7 +27,7 @@ export const auth = betterAuth({
       await sendMail(
         user.email,
         "Verify your email address",
-        `Click the link to verify your email: ${url}`
+        `Click the link to verify your email: ${url}`,
       );
     },
   },
