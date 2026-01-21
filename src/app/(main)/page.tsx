@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
+/* NOTE - all sections should be lifted out of page and into seperate components*/
 export default function Home() {
   return (
     <div className="">
