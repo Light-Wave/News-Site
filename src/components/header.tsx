@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "./ui/button";
+import { Menu } from "lucide-react";
 
 const categories = [
   { name: "Home", href: "/" },
@@ -19,7 +20,7 @@ const categories = [
   { name: "Sports", href: "/sports" },
 ];
 
-export default function Navbar() {
+export default function Header() {
   return (
     <header className="border-b bg-white">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -29,16 +30,19 @@ export default function Navbar() {
           <Sheet>
             <SheetTrigger asChild>
               <Button className="md:hidden text-2xl" aria-label="Open menu">
-                ☰
+                <Menu />
               </Button>
             </SheetTrigger>
 
-            <SheetContent side="left" className="w-70 sm:w-[320px]">
-              <SheetHeader>
-                <SheetTitle className="text-left">Menu</SheetTitle>
+            <SheetContent side="left" className="w-full sm:w-[320px] px-6">
+              <SheetHeader className="py-2 px-0">
+                <SheetTitle className="text-left text-xl">Menu</SheetTitle>
+                <div className="pt-1">
+                  <hr />
+                </div>
               </SheetHeader>
 
-              <nav className="mt-6 flex flex-col gap-6">
+              <nav className=" flex flex-col gap-3">
                 {categories.map((item) => (
                   <Link
                     key={item.name}
@@ -49,11 +53,13 @@ export default function Navbar() {
                   </Link>
                 ))}
 
-                <hr />
+                <div className="pt-2">
+                  <hr />
+                </div>
 
                 <Link
                   href="/subscribe"
-                  className="text-lg font-semibold text-red-600"
+                  className="text-lg font-semibold text-red-600 py-2"
                 >
                   Subscribe
                 </Link>
