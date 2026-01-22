@@ -16,5 +16,7 @@ npx prisma studio
 npm run dev
 ```
 
+If better auth has changed, you might need to run `npx @better-auth/cli generate`
+
 And check out this page to see if better auth is working: http://localhost:3000/api/auth/get-session
 If it works, the page should say 'null'

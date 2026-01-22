@@ -1,7 +1,12 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import Lipsum from "node-lipsum";
-import { testUserData } from "./seed_data";
+import {
+  clickbait_prefixes,
+  clickbait_suffixes,
+  premade_categories,
+  testUserData,
+} from "./seed_data";
 
 const lipsum = new Lipsum();
 
@@ -21,7 +26,12 @@ async function generateUsers() {
     const userExists = users.find((u) => u.email === user.email);
     if (!userExists) {
       await auth.api.createUser({
-        body: user,
+        body: {
+          email: user.email,
+          password: user.password,
+          name: user.name,
+          // TODO: user.role
+        },
       });
       prisma.user
         .updateMany({
@@ -35,24 +45,91 @@ async function generateUsers() {
   }
 }
 
+async function generateCategories() {
+  // Local, Sweden, World, Weather, Economy,
+
+  const existingCategories = await prisma.category.findMany({
+    select: { name: true },
+  });
+  for (const category of premade_categories) {
+    const categoryExists = existingCategories.find((c) => c.name === category);
+    if (!categoryExists) {
+      await prisma.category.create({
+        data: { name: category },
+      });
+    }
+  }
+}
+
 async function generatePosts() {
-  const postCount = await prisma.post.count();
+  const postCount = await prisma.article.count();
   for (let i = postCount; i < 20; i++) {
-    await prisma.post.create({
+    const summary = await lipsum.getText({
+      amount: Math.floor(Math.random() * 2) + 1,
+      what: "sentences",
+    });
+    let content = summary + "\n\n";
+    for (let j = 0; j < i % 10; j++) {
+      content += await lipsum.getText({
+        amount: Math.floor(Math.random() * 5) + 3,
+        what: "paragraphs",
+      });
+      content += "\n\n";
+    }
+    let headline = await lipsum.getText({
+      amount: Math.floor(Math.random() * 10) + 1,
+      what: "words",
+    });
+    switch (i % 4) {
+      case 0:
+        headline =
+          clickbait_prefixes[
+            Math.floor(Math.random() * clickbait_prefixes.length)
+          ] + headline;
+        break;
+      case 1:
+        headline =
+          headline +
+          clickbait_suffixes[
+            Math.floor(Math.random() * clickbait_suffixes.length)
+          ];
+        break;
+      default:
+        break;
+    }
+    let writerEmail =
+      (await prisma.user.count({
+        where: { email: "writer@testing.com" },
+      })) > 0
+        ? "writer@testing.com"
+        : (await prisma.user.findFirst())?.email;
+    if (!writerEmail) {
+      throw new Error("No users found for article writers.");
+    }
+
+    await prisma.article.create({
       data: {
-        title: lipsum.getText({
-          amount: Math.floor(Math.random() * 10) + 1,
-          what: "words",
-        }),
-        content: `This is the content for sample post ${i + 1}.`,
-        published: true,
+        headline,
+        content,
+        summary,
+        image: `https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/200/300`,
+        user: { connect: { email: writerEmail } },
+        category: {
+          connect: { name: premade_categories[i % premade_categories.length] },
+        },
       },
     });
   }
 }
 
 async function main() {
-  await generateUsers();
+  try {
+    await generateUsers();
+  } catch (e) {
+    console.error("User generation failed: ", e);
+  }
+
+  await generateCategories();
   await generatePosts();
 }
 
