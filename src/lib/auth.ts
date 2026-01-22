@@ -2,8 +2,9 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 
-import { admin } from "better-auth/plugins";
+import { admin as adminPlugin } from "better-auth/plugins";
 import { sendMail } from "./mail";
+import { ac, admin, editor, user, writer } from "@/lib/permissions";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
@@ -14,7 +15,7 @@ export const auth = betterAuth({
       void sendMail(
         user.email,
         "Reset your password",
-        `Click the link to reset your password: ${url}`
+        `Click the link to reset your password: ${url}`,
       );
     },
     onPasswordReset: async ({ user }, request) => {
@@ -27,9 +28,14 @@ export const auth = betterAuth({
       await sendMail(
         user.email,
         "Verify your email address",
-        `Click the link to verify your email: ${url}`
+        `Click the link to verify your email: ${url}`,
       );
     },
   },
-  plugins: [admin()],
+  plugins: [
+    adminPlugin({
+      ac,
+      roles: { admin, user, writer, editor },
+    }),
+  ],
 });
