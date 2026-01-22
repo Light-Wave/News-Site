@@ -32,7 +32,7 @@ export default function Header() {
                 </div>
               </SheetHeader>
 
-              <nav className=" flex flex-col gap-3">
+              <nav className="flex flex-col gap-3">
                 {categories.map((item) => (
                   <Link
                     key={item.name}
