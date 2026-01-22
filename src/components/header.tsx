@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import {
   Sheet,
@@ -14,7 +12,7 @@ import { categories } from "@/types/categories";
 
 export default function Header() {
   return (
-    <header className="border-b bg-white">
+    <header className="border-b bg-gray-100">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Left: Menu + Logo */}
         <div className="flex items-center gap-4">
