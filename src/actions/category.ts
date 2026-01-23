@@ -28,11 +28,14 @@ export async function createCategory(
     return { success: false };
   }
 
-  const parsedInput = createCategorySchema.parse(input);
+  const parsed = createCategorySchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
 
   try {
     await prisma.category.create({
-      data: parsedInput,
+      data: parsed.data,
     });
 
     return { success: true };
@@ -62,9 +65,12 @@ export async function updateCategory(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = updateCategorySchema.parse(input);
+  const parsed = updateCategorySchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
 
-  const { id, ...data } = parsed;
+  const { id, ...data } = parsed.data;
 
   try {
     const category = await prisma.category.update({
@@ -101,11 +107,14 @@ export async function deleteCategory(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = deleteCategorySchema.parse(input);
+  const parsed = deleteCategorySchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
 
   try {
     await prisma.category.delete({
-      where: { id: parsed.id },
+      where: { id: parsed.data.id },
     });
 
     return { success: true };

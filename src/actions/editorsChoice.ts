@@ -26,17 +26,13 @@ export async function createEditorsChoice(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsedInput = createEditorsChoiceSchema.parse(input);
-
-  if (!parsedInput.articleId) {
-    return { success: false, message: "Article Id not found" };
-  }
-  if (!parsedInput.editorId) {
-    return { success: false, message: "Editor Id not found" };
+  const parsed = createEditorsChoiceSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
   }
   try {
     await prisma.editorsChoice.create({
-      data: parsedInput,
+      data: parsed.data,
     });
 
     return { success: true };
@@ -66,12 +62,15 @@ export async function updateEditorsChoice(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = updateEditorsChoiceSchema.parse(input);
+  const parsed = updateEditorsChoiceSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
 
   try {
     const editorsChoice = await prisma.editorsChoice.update({
-      where: { id: parsed.id },
-      data: parsed,
+      where: { id: parsed.data.id },
+      data: parsed.data,
     });
 
     return { success: true, editorsChoice };
@@ -103,11 +102,14 @@ export async function deleteEditorsChoice(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = deleteEditorsChoiceSchema.parse(input);
+  const parsed = deleteEditorsChoiceSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
 
   try {
     await prisma.editorsChoice.delete({
-      where: { id: parsed.id },
+      where: { id: parsed.data.id },
     });
 
     return { success: true };

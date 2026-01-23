@@ -27,11 +27,14 @@ export async function createSubscriptionType(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsedInput = createSubscriptionTypeSchema.parse(input);
+  const parsed = createSubscriptionTypeSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
 
   try {
     await prisma.subscriptionType.create({
-      data: parsedInput,
+      data: parsed.data,
     });
 
     return { success: true };
@@ -61,8 +64,12 @@ export async function updateSubscriptionType(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = updateSubscriptionTypeSchema.parse(input);
-  const { id, ...data } = parsed;
+  const parsed = updateSubscriptionTypeSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
+  const { id, ...data } = parsed.data;
 
   try {
     const subscriptionType = await prisma.subscriptionType.update({
@@ -99,11 +106,14 @@ export async function deleteSubscriptionType(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = deleteSubscriptionTypeSchema.parse(input);
+  const parsed = deleteSubscriptionTypeSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
 
   try {
     await prisma.subscriptionType.delete({
-      where: { id: parsed.id },
+      where: { id: parsed.data.id },
     });
 
     return { success: true };
@@ -128,7 +138,7 @@ export async function addSubscriptionToUser(
   const { success } = await auth.api.userHasPermission({
     headers: await headers(),
     body: {
-      permissions: { subscription: ["create"] }, 
+      permissions: { subscription: ["create"] },
     },
   });
 
@@ -136,27 +146,31 @@ export async function addSubscriptionToUser(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = addSubscriptionToUserSchema.parse(input);
+  const parsed = addSubscriptionToUserSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
 
   try {
     const subscriptionType = await prisma.subscriptionType.findUnique({
-      where: { id: parsed.subscriptionTypeId },
+      where: { id: parsed.data.subscriptionTypeId },
     });
 
     if (!subscriptionType) {
       return { success: false, message: "Subscription type not found" };
     }
-    
-    if (!parsed.userId) {
+
+    if (!parsed.data.userId) {
       return { success: false, message: "User not found" };
     }
 
     const subscription = await prisma.subscription.create({
       data: {
-        userId: parsed.userId,
-        subscriptionTypeId: parsed.subscriptionTypeId,
-        expiresAt: parsed.expiresAt
-          ? new Date(parsed.expiresAt)
+        userId: parsed.data.userId,
+        subscriptionTypeId: parsed.data.subscriptionTypeId,
+        expiresAt: parsed.data.expiresAt
+          ? new Date(parsed.data.expiresAt)
           : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
     });

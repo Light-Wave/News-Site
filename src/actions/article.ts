@@ -25,7 +25,7 @@ const createArticleSchema = z.object({
   userId: z.string().min(1, "Article needs a writer"),
 });
 
-export default async function createArticle(
+export async function createArticle(
   input: z.infer<typeof createArticleSchema>,
 ) {
   const { success } = await auth.api.userHasPermission({
@@ -39,14 +39,20 @@ export default async function createArticle(
   if (!success) {
     return { success: false, message: "Unauthorized" };
   }
-  const parsedInput = createArticleSchema.parse(input);
+  const parsed = createArticleSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
   try {
     await prisma.article.create({
-      data: parsedInput,
+      data: parsed.data,
     });
     return { success: true };
   } catch (error) {
-    return { success: false, message: error instanceof Error ? error.message : String(error) };
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
@@ -70,9 +76,12 @@ export async function updateArticle(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = updateArticleSchema.parse(input);
+  const parsed = updateArticleSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
 
-  const { id, ...data } = parsed;
+  const { id, ...data } = parsed.data;
 
   try {
     const article = await prisma.article.update({
@@ -109,11 +118,14 @@ export async function deleteArticle(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = deleteArticleSchema.parse(input);
+  const parsed = deleteArticleSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
 
   try {
     await prisma.article.delete({
-      where: { id: parsed.id },
+      where: { id: parsed.data.id },
     });
 
     return { success: true };
