@@ -18,31 +18,32 @@ export default function Footer() {
           {/* Categories */}
           <div>
             <div className="inline-block rounded bg-gray-200 px-3 py-1">
-              <h3 className="text-xs font-semibold uppercase text-gray-900">
+              <h1 className="text-xs font-semibold uppercase text-gray-900">
                 Sections
-              </h3>
+              </h1>
             </div>
-
-            <ul className="mt-4 space-y-1">
-              {categories.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-gray-700 hover:text-black"
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <nav>
+              <ul className="mt-4 space-y-1">
+                {categories.map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className="text-sm text-gray-700 hover:text-black"
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
 
           {/* About */}
           <div>
             <div className="inline-block rounded bg-gray-200 px-3 py-1">
-              <h3 className="text-xs font-semibold uppercase text-gray-900">
-                About
-              </h3>
+              <h1 className="text-xs font-semibold uppercase text-gray-900">
+                About Us
+              </h1>
             </div>
 
             <p className="mt-4 text-sm text-gray-700 leading-relaxed">
@@ -62,9 +63,9 @@ export default function Footer() {
           {/* Careers */}
           <div>
             <div className="inline-block rounded bg-gray-200 px-3 py-1">
-              <h3 className="text-xs font-semibold uppercase text-gray-900">
+              <h1 className="text-xs font-semibold uppercase text-gray-900">
                 Careers
-              </h3>
+              </h1>
             </div>
 
             <p className="mt-4 text-sm text-gray-700 leading-relaxed">
