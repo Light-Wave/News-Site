@@ -5,6 +5,8 @@ import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import z from "zod";
 
+// Create Article
+
 const createArticleSchema = z.object({
   headline: z
     .string()
@@ -37,19 +39,96 @@ export default async function createArticle(
   if (!success) {
     return { success: false };
   }
+  const parsedInput = createArticleSchema.parse(input);
   try {
     await prisma.article.create({
-        data: {
-            headline: input.headline,
-            content: input.content,
-            summary: input.summary,
-            image: input.image,
-            categoryId: "1",
-            userId: "1",
-        }
+      data: parsedInput,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return { success: false, message}
+    return { success: false, message };
+  }
+}
+
+// Update Article
+
+export const updateArticleSchema = createArticleSchema.partial().extend({
+  id: z.string().min(1),
+});
+
+export async function updateArticle(
+  input: z.infer<typeof updateArticleSchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: { article: ["update"] },
+    },
+  });
+
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const parsed = updateArticleSchema.parse(input);
+  if (!success) {
+    return { success: false };
+  }
+
+  const { id, ...data } = parsed;
+
+  try {
+    const article = await prisma.article.update({
+      where: { id },
+      data,
+    });
+
+    return { success: true, article };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// Delete Article
+
+export const deleteArticleSchema = z.object({
+  id: z.string().min(1),
+});
+
+export async function deleteArticle(
+  input: z.infer<typeof deleteArticleSchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: { article: ["update"] },
+    },
+  });
+
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const parsed = updateArticleSchema.parse(input);
+  if (!success) {
+    return { success: false };
+  }
+
+  const { id, ...data } = parsed;
+
+  try {
+    await prisma.article.delete({
+      where: { id: parsed.id },
+    });
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 }
