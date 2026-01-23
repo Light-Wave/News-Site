@@ -48,7 +48,7 @@ export const clickbait_suffixes: string[] = [
 export const clickbait_prefixes: string[] = [
   "Uncertain future - ",
   "Trump warns ",
-  "Doctors warns: ",
+  "Doctors warn: ",
   "The big question: ",
   "Team Better reveals: ",
 ];
