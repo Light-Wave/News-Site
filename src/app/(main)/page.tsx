@@ -8,11 +8,10 @@ export default function Home() {
     <div className="">
       <main className="">
         {/* breaking news ticker section*/}
-        <p className="text-center">fake header</p>
         <section className="">
           <p className="bg-black text-white text-center">
             Breaking news: <br />
-            Stupid people still being stupid
+            Wizard council warns of dragon season approaching.
           </p>
         </section>
         {/* Main article section (editors choice? most popular? most recent?) */}
@@ -148,7 +147,6 @@ export default function Home() {
           />
           <Button className="p-2 bg-blue-500 text-white">Subscribe</Button>
         </section>
-        <p className="text-center">fake footer</p>
       </main>
     </div>
   );

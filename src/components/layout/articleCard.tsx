@@ -1,11 +1,17 @@
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
+import Image from "next/image";
 
 export default function ArticleCard() {
   return (
     <Card>
       <div className="bg-gray-200 h-50">
-        <p>image here</p>
+        <Image
+          src="/path/to/image.jpg"
+          alt="Article Image"
+          layout="fill"
+          objectFit="cover"
+        />
       </div>
       <div className="flex p-2 justify-between items-center gap-4 text-sm text-gray-600">
         <span>Author</span>
