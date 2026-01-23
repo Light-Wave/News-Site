@@ -30,6 +30,7 @@ export async function createEditorsChoice(
   if (!parsed.success) {
     return { success: false, errors: parsed.error };
   }
+
   try {
     await prisma.editorsChoice.create({
       data: parsed.data,
