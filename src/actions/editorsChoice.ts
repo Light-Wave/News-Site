@@ -28,12 +28,6 @@ export async function createEditorsChoice(
 
   const parsedInput = createEditorsChoiceSchema.parse(input);
 
-  if (!parsedInput.articleId) {
-    return { success: false, message: "Article Id not found" };
-  }
-  if (!parsedInput.editorId) {
-    return { success: false, message: "Editor Id not found" };
-  }
   try {
     await prisma.editorsChoice.create({
       data: parsedInput,
