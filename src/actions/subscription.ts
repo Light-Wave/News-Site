@@ -24,7 +24,7 @@ export async function createSubscriptionType(
   });
 
   if (!success) {
-    return { success: false };
+    return { success: false, message: "Unauthorized" };
   }
 
   const parsedInput = createSubscriptionTypeSchema.parse(input);
@@ -128,7 +128,7 @@ export async function addSubscriptionToUser(
   const { success } = await auth.api.userHasPermission({
     headers: await headers(),
     body: {
-      permissions: { subscription: ["update"] }, 
+      permissions: { subscription: ["create"] }, 
     },
   });
 
@@ -146,12 +146,15 @@ export async function addSubscriptionToUser(
     if (!subscriptionType) {
       return { success: false, message: "Subscription type not found" };
     }
+    
+    if (!parsed.userId) {
+      return { success: false, message: "User not found" };
+    }
 
     const subscription = await prisma.subscription.create({
       data: {
         userId: parsed.userId,
         subscriptionTypeId: parsed.subscriptionTypeId,
-        createdAt: new Date(),
         expiresAt: parsed.expiresAt
           ? new Date(parsed.expiresAt)
           : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),

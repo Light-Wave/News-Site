@@ -12,7 +12,7 @@ const createCategorySchema = z.object({
     .max(50, "Category name can be at most 50 characters"),
 });
 
-export default async function createCategory(
+export async function createCategory(
   input: z.infer<typeof createCategorySchema>,
 ) {
   const { success } = await auth.api.userHasPermission({

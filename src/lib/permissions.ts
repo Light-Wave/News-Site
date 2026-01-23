@@ -10,7 +10,7 @@ const statement = {
   category: ["create", "update", "delete"],
   subscriptionType: ["create", "update", "delete"],
   editorsChoice: ["create", "update", "delete"],
-  subscription: ["update"],
+  subscription: ["create", "update"],
   signInEmail: ["*"],
 } as const;
 
@@ -25,7 +25,7 @@ export const admin = ac.newRole({
   category: ["create", "update", "delete"],
   subscriptionType: ["create", "update", "delete"],
   editorsChoice: ["create", "update", "delete"],
-  subscription: ["update"],
+  subscription: ["create", "update"],
   ...adminAc.statements,
 });
 

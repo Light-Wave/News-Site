@@ -23,11 +23,17 @@ export async function createEditorsChoice(
   });
 
   if (!success) {
-    return { success: false };
+    return { success: false, message: "Unauthorized" };
   }
 
   const parsedInput = createEditorsChoiceSchema.parse(input);
 
+  if (!parsedInput.articleId) {
+    return { success: false, message: "Article Id not found" };
+  }
+  if (!parsedInput.editorId) {
+    return { success: false, message: "Editor Id not found" };
+  }
   try {
     await prisma.editorsChoice.create({
       data: parsedInput,
@@ -65,9 +71,7 @@ export async function updateEditorsChoice(
   try {
     const editorsChoice = await prisma.editorsChoice.update({
       where: { id: parsed.id },
-      data: {
-        updatedAt: new Date(),
-      },
+      data: parsed,
     });
 
     return { success: true, editorsChoice };

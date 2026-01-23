@@ -15,7 +15,7 @@ const createArticleSchema = z.object({
   content: z
     .string()
     .min(10, "Content must be at least 10 characters")
-    .max(500, "Content can be at most 500 characters"),
+    .max(10000, "Content can be at most 10000 characters"),
   summary: z
     .string()
     .min(10, "Summary must be at least 10 characters")
@@ -37,16 +37,16 @@ export default async function createArticle(
     },
   });
   if (!success) {
-    return { success: false };
+    return { success: false, message: "Unauthorized" };
   }
   const parsedInput = createArticleSchema.parse(input);
   try {
     await prisma.article.create({
       data: parsedInput,
     });
+    return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return { success: false, message };
+    return { success: false, message: error instanceof Error ? error.message : String(error) };
   }
 }
 
@@ -71,9 +71,6 @@ export async function updateArticle(
   }
 
   const parsed = updateArticleSchema.parse(input);
-  if (!success) {
-    return { success: false };
-  }
 
   const { id, ...data } = parsed;
 
@@ -104,7 +101,7 @@ export async function deleteArticle(
   const { success } = await auth.api.userHasPermission({
     headers: await headers(),
     body: {
-      permissions: { article: ["update"] },
+      permissions: { article: ["delete"] },
     },
   });
 
@@ -112,10 +109,7 @@ export async function deleteArticle(
     return { success: false, message: "Unauthorized" };
   }
 
-  const parsed = updateArticleSchema.parse(input);
-  if (!success) {
-    return { success: false };
-  }
+  const parsed = deleteArticleSchema.parse(input);
 
   try {
     await prisma.article.delete({
