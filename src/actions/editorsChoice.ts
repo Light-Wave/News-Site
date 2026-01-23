@@ -7,7 +7,7 @@ import { z } from "zod";
 
 // Create Editors Choice
 
-export const createEditorsChoiceSchema = z.object({
+const createEditorsChoiceSchema = z.object({
   articleId: z.string().min(1, "Article is required"),
   editorId: z.string().min(1, "Editor is required"),
 });
@@ -42,7 +42,7 @@ export async function createEditorsChoice(
 
 // Update Editors Choice
 
-export const updateEditorsChoiceSchema = z.object({
+const updateEditorsChoiceSchema = z.object({
   id: z.string().min(1),
 });
 
@@ -81,7 +81,7 @@ export async function updateEditorsChoice(
 
 // Delete Editors Choice
 
-export const deleteEditorsChoiceSchema = z.object({
+const deleteEditorsChoiceSchema = z.object({
   id: z.string().min(1),
 });
 

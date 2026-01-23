@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { z } from "zod";
 
-export const createSubscriptionTypeSchema = z.object({
+const createSubscriptionTypeSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(5, "Description must be at least 5 characters"),
   price: z.number().int().min(0),
@@ -43,11 +43,9 @@ export async function createSubscriptionType(
 
 // Update Subscription Type
 
-export const updateSubscriptionTypeSchema = createSubscriptionTypeSchema.extend(
-  {
-    id: z.string().min(1),
-  },
-);
+const updateSubscriptionTypeSchema = createSubscriptionTypeSchema.extend({
+  id: z.string().min(1),
+});
 
 export async function updateSubscriptionType(
   input: z.infer<typeof updateSubscriptionTypeSchema>,
@@ -83,7 +81,7 @@ export async function updateSubscriptionType(
 
 // Delete Subscription Type
 
-export const deleteSubscriptionTypeSchema = z.object({
+const deleteSubscriptionTypeSchema = z.object({
   id: z.string().min(1),
 });
 
@@ -109,6 +107,58 @@ export async function deleteSubscriptionType(
     });
 
     return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// Add subscription to a user
+const addSubscriptionToUserSchema = z.object({
+  userId: z.string().min(1, "User ID is required"),
+  subscriptionTypeId: z.string().min(1, "Subscription Type ID is required"),
+  expiresAt: z.string().optional(),
+});
+
+export async function addSubscriptionToUser(
+  input: z.infer<typeof addSubscriptionToUserSchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: { subscription: ["update"] }, 
+    },
+  });
+
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const parsed = addSubscriptionToUserSchema.parse(input);
+
+  try {
+    const subscriptionType = await prisma.subscriptionType.findUnique({
+      where: { id: parsed.subscriptionTypeId },
+    });
+
+    if (!subscriptionType) {
+      return { success: false, message: "Subscription type not found" };
+    }
+
+    const subscription = await prisma.subscription.create({
+      data: {
+        userId: parsed.userId,
+        subscriptionTypeId: parsed.subscriptionTypeId,
+        createdAt: new Date(),
+        expiresAt: parsed.expiresAt
+          ? new Date(parsed.expiresAt)
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    return { success: true, subscription };
   } catch (error) {
     return {
       success: false,

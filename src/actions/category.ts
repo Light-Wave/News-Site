@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export const createCategorySchema = z.object({
+const createCategorySchema = z.object({
   name: z
     .string()
     .min(2, "Category name must be at least 2 characters")
@@ -44,7 +44,7 @@ export default async function createCategory(
 
 // Update Category
 
-export const updateCategorySchema = createCategorySchema.extend({
+const updateCategorySchema = createCategorySchema.extend({
   id: z.string().min(1),
 });
 
@@ -83,7 +83,7 @@ export async function updateCategory(
 
 // Delete Category
 
-export const deleteCategorySchema = z.object({
+const deleteCategorySchema = z.object({
   id: z.string().min(1),
 });
 

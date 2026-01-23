@@ -52,7 +52,7 @@ export default async function createArticle(
 
 // Update Article
 
-export const updateArticleSchema = createArticleSchema.partial().extend({
+const updateArticleSchema = createArticleSchema.partial().extend({
   id: z.string().min(1),
 });
 
@@ -94,7 +94,7 @@ export async function updateArticle(
 
 // Delete Article
 
-export const deleteArticleSchema = z.object({
+const deleteArticleSchema = z.object({
   id: z.string().min(1),
 });
 

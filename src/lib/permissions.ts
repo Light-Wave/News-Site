@@ -10,7 +10,8 @@ const statement = {
   category: ["create", "update", "delete"],
   subscriptionType: ["create", "update", "delete"],
   editorsChoice: ["create", "update", "delete"],
-  signInEmail: ["admin"],
+  subscription: ["update"],
+  signInEmail: ["*"],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -24,6 +25,7 @@ export const admin = ac.newRole({
   category: ["create", "update", "delete"],
   subscriptionType: ["create", "update", "delete"],
   editorsChoice: ["create", "update", "delete"],
+  subscription: ["update"],
   ...adminAc.statements,
 });
 
