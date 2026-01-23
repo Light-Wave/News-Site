@@ -9,6 +9,7 @@ const statement = {
   article: ["read", "create", "delete", "update"],
   category: ["create", "update", "delete"],
   subscriptionType: ["create", "update", "delete"],
+  editorsChoice: ["create", "update", "delete"],
   signInEmail: ["admin"],
 } as const;
 
@@ -22,6 +23,7 @@ export const admin = ac.newRole({
   article: ["read", "create", "delete", "update"],
   category: ["create", "update", "delete"],
   subscriptionType: ["create", "update", "delete"],
+  editorsChoice: ["create", "update", "delete"],
   ...adminAc.statements,
 });
 
@@ -31,4 +33,5 @@ export const writer = ac.newRole({
 
 export const editor = ac.newRole({
   article: ["read", "update"],
+  editorsChoice: ["create", "update", "delete"],
 });
