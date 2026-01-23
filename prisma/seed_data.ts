@@ -1,40 +1,38 @@
-import { Roles } from "@/generated/prisma/enums";
-
 export const testUserData: {
   email: string;
   name: string;
   password: string;
-  role: Roles;
+  role: string;
 }[] = [
   {
     email: "user@testing.com",
     name: "Test User",
     password: "password1234",
-    role: Roles.USER,
+    role: "user",
   },
   {
     email: "subscribed_user@testing.com",
     name: "Test Subscribed User",
     password: "password1234",
-    role: Roles.USER,
+    role: "user",
   },
   {
     email: "admin@testing.com",
     name: "Test Admin",
     password: "password1234",
-    role: Roles.ADMIN,
+    role: "admin",
   },
   {
     email: "writer@testing.com",
     name: "Test Writer",
     password: "password1234",
-    role: Roles.WRITER,
+    role: "writer",
   },
   {
     email: "editor@testing.com",
     name: "Test Editor",
     password: "password1234",
-    role: Roles.EDITOR,
+    role: "editor",
   },
 ];
 
