@@ -117,8 +117,6 @@ export async function deleteArticle(
     return { success: false };
   }
 
-  const { id, ...data } = parsed;
-
   try {
     await prisma.article.delete({
       where: { id: parsed.id },

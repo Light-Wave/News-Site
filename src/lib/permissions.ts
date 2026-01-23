@@ -7,6 +7,7 @@ import {
 const statement = {
   ...defaultStatements,
   article: ["read", "create", "delete", "update"],
+  category: ["create", "update", "delete"],
   signInEmail: ["admin"],
 } as const;
 
@@ -18,6 +19,7 @@ export const user = ac.newRole({
 
 export const admin = ac.newRole({
   article: ["read", "create", "delete", "update"],
+  category: ["create", "update", "delete"],
   ...adminAc.statements,
 });
 

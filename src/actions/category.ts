@@ -1,0 +1,118 @@
+"use server";
+
+import { z } from "zod";
+import prisma from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
+export const createCategorySchema = z.object({
+  name: z
+    .string()
+    .min(2, "Category name must be at least 2 characters")
+    .max(50, "Category name can be at most 50 characters"),
+});
+
+export default async function createCategory(
+  input: z.infer<typeof createCategorySchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        category: ["create"],
+      },
+    },
+  });
+
+  if (!success) {
+    return { success: false };
+  }
+
+  const parsedInput = createCategorySchema.parse(input);
+
+  try {
+    await prisma.category.create({
+      data: parsedInput,
+    });
+
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { success: false, message };
+  }
+}
+
+// Update Category
+
+export const updateCategorySchema = createCategorySchema.extend({
+  id: z.string().min(1),
+});
+
+export async function updateCategory(
+  input: z.infer<typeof updateCategorySchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: { category: ["update"] },
+    },
+  });
+
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const parsed = updateCategorySchema.parse(input);
+
+  const { id, ...data } = parsed;
+
+  try {
+    const category = await prisma.category.update({
+      where: { id },
+      data,
+    });
+
+    return { success: true, category };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// Delete Category
+
+export const deleteCategorySchema = z.object({
+  id: z.string().min(1),
+});
+
+export async function deleteCategory(
+  input: z.infer<typeof deleteCategorySchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: { category: ["delete"] },
+    },
+  });
+
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const parsed = deleteCategorySchema.parse(input);
+
+  try {
+    await prisma.category.delete({
+      where: { id: parsed.id },
+    });
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
