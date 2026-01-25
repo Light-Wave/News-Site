@@ -22,7 +22,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
     : "Sun's Height, Third Era";
 
   return (
-    <Card className="parchment-card gap-0 py-2 rounded-none sm:max-w-[1024px] m-auto">
+    <Card className="parchment-card gap-0 py-2 sm:max-w-[1024px] m-auto">
       <div
         className="relative w-full aspect-3/3
   sm:aspect-4/3"
@@ -34,7 +34,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           className="object-contain"
           sizes="(max-width: 1024px) 100vw, 50vw"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-oklch(0.92 0.04 85 / 0.8) to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-oklch(0.96 0.03 90 / 0.8) to-transparent" />
       </div>
       <div className="flex p-4 pb-3 justify-center items-center gap-3 text-xs italic text-primary uppercase tracking-widest">
         <span>{author}</span>
@@ -51,8 +51,8 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           {summary}
         </p>
       </CardContent>
-      <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-6 bg-oklch(0.85 0.08 75 / 0.2) py-6 px-6">
-        <div className="flex flex-col items-center sm:items-start gap-3">
+      <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-primary/10 py-8 px-8">
+        <div className="flex flex-col items-center sm:items-start gap-4">
           <p className="text-sm italic opacity-70 text-center sm:text-left max-w-[250px] sm:max-w-none">
             Cast a sharing spell to show support for free wizard press!
           </p>
@@ -62,7 +62,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             <SpellIcon color="purple" tooltip="Infuse with Arcane Favor">✨</SpellIcon>
           </div>
         </div>
-        <Button className="w-full sm:w-auto min-w-[160px] bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_0_0_rgba(0,0,0,0.3)] border-b-2 border-primary/50 active:translate-y-[2px] active:shadow-none transition-all font-cinzel px-8 h-12 text-lg">
+        <Button className="w-full sm:w-auto min-w-[180px] bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_6px_0_0_rgba(0,0,0,0.3)] border-b border-primary/50 active:translate-y-[2px] active:shadow-none transition-all font-cinzel px-8 h-14 text-xl">
           Read Scroll
         </Button>
       </CardFooter>
