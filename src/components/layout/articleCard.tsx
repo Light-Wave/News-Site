@@ -51,18 +51,18 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           {summary}
         </p>
       </CardContent>
-      <CardFooter className="flex justify-between items-center bg-oklch(0.85 0.08 75 / 0.2) py-4">
-        <div className="flex flex-col items-start gap-1">
-          <p className="text-sm italic opacity-70">
+      <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-6 bg-oklch(0.85 0.08 75 / 0.2) py-6 px-6">
+        <div className="flex flex-col items-center sm:items-start gap-3">
+          <p className="text-sm italic opacity-70 text-center sm:text-left max-w-[250px] sm:max-w-none">
             Cast a sharing spell to show support for free wizard press!
           </p>
-          <div className="flex gap-4 mt-2">
+          <div className="flex gap-4">
             <SpellIcon color="blue" tooltip="Share via Telepathy Scroll">📜</SpellIcon>
             <SpellIcon color="amber" tooltip="Inscribe in the Chronicles">🖌️</SpellIcon>
             <SpellIcon color="purple" tooltip="Infuse with Arcane Favor">✨</SpellIcon>
           </div>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_0_0_rgba(0,0,0,0.3)] border-b-2 border-primary/50 active:translate-y-[2px] active:shadow-none transition-all font-cinzel px-8 h-12 text-lg">
+        <Button className="w-full sm:w-auto min-w-[160px] bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_0_0_rgba(0,0,0,0.3)] border-b-2 border-primary/50 active:translate-y-[2px] active:shadow-none transition-all font-cinzel px-8 h-12 text-lg">
           Read Scroll
         </Button>
       </CardFooter>
