@@ -129,7 +129,7 @@ export async function deleteSubscriptionType(
 const addSubscriptionToUserSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
   subscriptionTypeId: z.string().min(1, "Subscription Type ID is required"),
-  expiresAt: z.string().optional(),
+  expiresAt: z.string().datetime().optional(),
 });
 
 export async function addSubscriptionToUser(
