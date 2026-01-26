@@ -16,7 +16,7 @@ export default function Home() {
         </section>
         {/* Main article section (editors choice? most popular? most recent?) */}
         <section>
-          <ArticleCard></ArticleCard>
+          <ArticleCard />
         </section>
         {/* Trending articles section (most popular? recommended to user?) */}
         <section>
