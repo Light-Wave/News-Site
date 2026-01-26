@@ -173,7 +173,7 @@
     }
   }
 
-  /* Adds a fancy bobbing animation, primary used for the spell icons */
+  /* Adds a fancy bobbing animation, primarily used for the spell icons */
   @keyframes spell-levitate {
     0%,
     100% {
