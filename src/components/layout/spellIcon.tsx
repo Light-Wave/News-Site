@@ -5,8 +5,17 @@ TODO: Decide if we want it to link to actual media, do nothing, or create a simp
 On desktop the icon have a animation effect when hovered over
 */
 
-export default function SpellIcon({ children, color, tooltip, onClick }: { children: React.ReactNode; color: string; tooltip: string; onClick?: () => void }) {
-    const colorMap: Record<string, { gradient: string; border: string; bloom: string; iconGlow: string; ring: string }> = {
+type SpellColor = "blue" | "amber" | "purple";
+
+interface SpellIconProps {
+    children: React.ReactNode;
+    color: SpellColor;
+    tooltip: string;
+    onClick?: () => void;
+}
+
+export default function SpellIcon({ children, color, tooltip, onClick }: SpellIconProps) {
+    const colorMap: Record<SpellColor, { gradient: string; border: string; bloom: string; iconGlow: string; ring: string }> = {
         blue: {
             gradient: "from-blue-600/30 to-blue-950/80",
             border: "border-blue-400/40",
@@ -30,7 +39,7 @@ export default function SpellIcon({ children, color, tooltip, onClick }: { child
         },
     };
 
-    const style = colorMap[color] || colorMap.amber;
+    const style = colorMap[color];
 
     return (
         <button
