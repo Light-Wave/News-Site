@@ -45,6 +45,18 @@ export async function getOsrsItemData(
 
     const { icon, icon_large, name, current, day30 } = data.item;
 
+    if (
+      typeof icon !== "string" ||
+      typeof icon_large !== "string" ||
+      typeof name !== "string" ||
+      current == null ||
+      day30 == null
+    ) {
+      return {
+        success: false,
+        message: "Invalid or incomplete item data from API",
+      };
+    }
     return {
       success: true,
       data: { icon, icon_large, name, current, day30 },
