@@ -34,7 +34,7 @@ export default function SpellIcon({
       gradient: "from-blue-600/30 to-blue-950/80",
       border: "border-blue-400/40",
       bloom: "bg-blue-500/40",
-      iconGlow: "drop-shadow-[0_0_8px_rgba(59,130,146,0.6)]",
+      iconGlow: "drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]",
       ring: "ring-blue-400",
     },
     amber: {
