@@ -1,0 +1,184 @@
+"use server";
+
+import prisma from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { z } from "zod";
+
+const createSubscriptionTypeSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  description: z.string().min(5, "Description must be at least 5 characters"),
+  price: z.number().int().min(0),
+});
+
+// Create Subscription Type
+
+export async function createSubscriptionType(
+  input: z.infer<typeof createSubscriptionTypeSchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: { subscriptionType: ["create"] },
+    },
+  });
+
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const parsed = createSubscriptionTypeSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
+  try {
+    await prisma.subscriptionType.create({
+      data: parsed.data,
+    });
+
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { success: false, message };
+  }
+}
+
+// Update Subscription Type
+
+const updateSubscriptionTypeSchema = createSubscriptionTypeSchema.extend({
+  id: z.string().min(1),
+});
+
+export async function updateSubscriptionType(
+  input: z.infer<typeof updateSubscriptionTypeSchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: { subscriptionType: ["update"] },
+    },
+  });
+
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const parsed = updateSubscriptionTypeSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
+  const { id, ...data } = parsed.data;
+
+  try {
+    const subscriptionType = await prisma.subscriptionType.update({
+      where: { id },
+      data,
+    });
+
+    return { success: true, subscriptionType };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// Delete Subscription Type
+
+const deleteSubscriptionTypeSchema = z.object({
+  id: z.string().min(1),
+});
+
+export async function deleteSubscriptionType(
+  input: z.infer<typeof deleteSubscriptionTypeSchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: { subscriptionType: ["delete"] },
+    },
+  });
+
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const parsed = deleteSubscriptionTypeSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
+  try {
+    await prisma.subscriptionType.delete({
+      where: { id: parsed.data.id },
+    });
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// Add subscription to a user
+const addSubscriptionToUserSchema = z.object({
+  userId: z.string().min(1, "User ID is required"),
+  subscriptionTypeId: z.string().min(1, "Subscription Type ID is required"),
+  expiresAt: z.string().datetime().optional(),
+});
+
+export async function addSubscriptionToUser(
+  input: z.infer<typeof addSubscriptionToUserSchema>,
+) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: { subscription: ["create"] },
+    },
+  });
+
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const parsed = addSubscriptionToUserSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
+  try {
+    const subscriptionType = await prisma.subscriptionType.findUnique({
+      where: { id: parsed.data.subscriptionTypeId },
+    });
+
+    if (!subscriptionType) {
+      return { success: false, message: "Subscription type not found" };
+    }
+
+    if (!parsed.data.userId) {
+      return { success: false, message: "User not found" };
+    }
+
+    const subscription = await prisma.subscription.create({
+      data: {
+        userId: parsed.data.userId,
+        subscriptionTypeId: parsed.data.subscriptionTypeId,
+        expiresAt: parsed.data.expiresAt
+          ? new Date(parsed.data.expiresAt)
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days in the future
+      },
+    });
+
+    return { success: true, subscription };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
