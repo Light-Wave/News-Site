@@ -29,15 +29,20 @@ async function generateUsers() {
     const userExists = users.find((u) => u.email === user.email);
     if (!userExists) {
       console.log(`  Creating user: ${user.email}`);
+      if (!user.password) {
+        throw new Error(
+          `No password provided for user: ${user.email}\nSet TESTING_PASSWORD environment variable.`,
+        );
+      }
       await auth.api.createUser({
         body: {
           email: user.email,
           password: user.password,
           name: user.name,
-          // TODO: role: user.role
+          role: user.role,
         },
       });
-      prisma.user
+      await prisma.user
         .updateMany({
           where: { email: user.email },
           data: { emailVerified: true },
@@ -142,6 +147,10 @@ async function generatePosts() {
   console.log(`✅ Articles complete (${20 - postCount} created)`);
 }
 
+async function subscribeUser() {
+  //TODO
+}
+
 async function main() {
   console.log("🌱 Starting database seeding...");
   console.log("================================");
@@ -149,11 +158,18 @@ async function main() {
   try {
     await generateUsers();
   } catch (e) {
-    console.error("❌ User generation failed: ", e);
+    console.error("❌ User generation failed, continuing: ", e);
+    // As long as we have any users, we can continue
   }
-
+  if ((await prisma.user.count()) === 0) {
+    throw new Error(
+      "Unable to generate users, and no preexisting users found.",
+    );
+  }
   await generateCategories();
   await generatePosts();
+
+  await subscribeUser();
 
   console.log("\n================================");
   console.log("✅ Database seeding completed!");

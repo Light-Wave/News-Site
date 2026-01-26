@@ -1,37 +1,43 @@
 export const testUserData: {
   email: string;
   name: string;
-  password: string;
-  role: string;
+  password?: string;
+  role:
+    | "user"
+    | "admin"
+    | "writer"
+    | "editor"
+    | ("user" | "admin" | "writer" | "editor")[]
+    | undefined;
 }[] = [
   {
     email: "user@testing.com",
     name: "Test User",
-    password: "password1234",
+    password: process.env.TESTING_PASSWORD,
     role: "user",
   },
   {
     email: "subscribed_user@testing.com",
     name: "Test Subscribed User",
-    password: "password1234",
+    password: process.env.TESTING_PASSWORD,
     role: "user",
   },
   {
     email: "admin@testing.com",
     name: "Test Admin",
-    password: "password1234",
+    password: process.env.TESTING_PASSWORD,
     role: "admin",
   },
   {
     email: "writer@testing.com",
     name: "Test Writer",
-    password: "password1234",
+    password: process.env.TESTING_PASSWORD,
     role: "writer",
   },
   {
     email: "editor@testing.com",
     name: "Test Editor",
-    password: "password1234",
+    password: process.env.TESTING_PASSWORD,
     role: "editor",
   },
 ];
