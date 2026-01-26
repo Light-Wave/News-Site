@@ -151,7 +151,6 @@ export async function addSubscriptionToUser(
     return { success: false, errors: parsed.error };
   }
 
-
   try {
     const subscriptionType = await prisma.subscriptionType.findUnique({
       where: { id: parsed.data.subscriptionTypeId },
