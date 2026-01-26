@@ -160,6 +160,7 @@
     border: 1px solid oklch(0.8 0.1 70 / 0.4);
   }
 
+  /* Gives the icon a shine animation when hovered over */
   @keyframes shine {
     0% {
       transform: translateX(-100%) translateY(-100%) rotate(45deg);
@@ -170,7 +171,8 @@
     }
   }
 
-  @keyframes float {
+  /* Adds a fancy bobbing animation, primary used for the spell icons */
+  @keyframes spell-levitate {
 
     0%,
     100% {

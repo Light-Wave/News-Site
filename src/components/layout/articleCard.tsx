@@ -22,10 +22,9 @@ export default function ArticleCard({ article }: ArticleCardProps) {
     : "Sun's Height, Third Era";
 
   return (
-    <Card className="parchment-card gap-0 py-2 sm:max-w-[1024px] m-auto">
+    <Card className="parchment-card gap-0 py-2 rounded-none sm:max-w-[1024px] m-auto">
       <div
-        className="relative w-full aspect-3/3
-  sm:aspect-4/3"
+        className="relative w-full aspect-square sm:aspect-[4/3]"
       >
         <Image
           src={imageUrl}
