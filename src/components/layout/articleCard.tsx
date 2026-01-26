@@ -5,18 +5,19 @@ import type { Article } from "@/generated/prisma/client";
 import SpellIcon from "./spellIcon";
 
 interface ArticleCardProps {
-  article?: Article;
+  article?: Article & { user?: { name?: string | null } };
+  authorName?: string;
 }
 
 /* Article Card shows a summarized version of an article. The card includes three "share" buttons and a "read scroll" button to view the full article */
 
-export default function ArticleCard({ article }: ArticleCardProps) {
+export default function ArticleCard({ article, authorName }: ArticleCardProps) {
   const imageUrl = article?.image || "/placeholder-dragon.png";
   const title = article?.headline || "A Dragon Spotted Over the High Peaks";
   const summary =
     article?.summary ||
     "Villagers in the northern reaches report a massive gold-scaled beast circling the mountain tops. Scholars from the capital have been dispatched to investigate if this marks the return of the ancient protectors.";
-  const author = article?.userId || "Ancient Scribe";
+  const author = authorName || article?.user?.name || "Ancient Scribe";
   const date = article?.createdAt
     ? new Date(article.createdAt).toLocaleDateString()
     : "Sun's Height, Third Era";
