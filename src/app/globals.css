@@ -8,6 +8,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-body: var(--font-goudy-bookletter-1911);
+  --font-cinzel: var(--font-cinzel-family);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,20 +50,24 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  /* Fantasy theme parchment modifications */
+  --background: oklch(0.97 0.01 90);
+  --foreground: oklch(0.2 0.02 20);
+  --card: oklch(0.92 0.04 85);
+  --card-foreground: oklch(0.2 0.02 20);
+  --popover: oklch(0.92 0.04 85);
+  --popover-foreground: oklch(0.2 0.02 20);
+  --primary: oklch(0.35 0.05 35);
+  --primary-foreground: oklch(0.98 0.01 90);
+  --secondary: oklch(0.88 0.06 80);
+  --secondary-foreground: oklch(0.2 0.02 20);
+  --muted: oklch(0.9 0.02 85);
+  --muted-foreground: oklch(0.4 0.02 20);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
+  --heading: oklch(0.15 0.03 30);
+  /* end of fantasy theme parchment modifications */
+
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -96,6 +102,7 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
+  --heading: var(--foreground);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
@@ -119,7 +126,63 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  p,
+  span,
+  li,
+  label {
+    font-family: var(--font-goudy-bookletter-1911);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-cinzel);
+    letter-spacing: 0.02em;
+    color: var(--heading);
+  }
+}
+
+@layer components {
+  .parchment-card {
+    @apply relative overflow-hidden transition-all duration-300;
+    background: radial-gradient(circle at center,
+        oklch(0.96 0.03 90) 0%,
+        oklch(0.88 0.07 80) 100%);
+    box-shadow:
+      0 10px 25px -5px rgb(0 0 0 / 0.1),
+      inset 0 0 80px oklch(0.85 0.1 75 / 0.3);
+    border: 1px solid oklch(0.8 0.1 70 / 0.4);
+  }
+
+  /* Gives the icon a shine animation when hovered over */
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+
+    100% {
+      transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+  }
+
+  /* Adds a fancy bobbing animation, primarily used for the spell icons */
+  @keyframes spell-levitate {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-5px);
+    }
   }
 }

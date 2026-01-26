@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Goudy_Bookletter_1911,
+  Cinzel,
+} from "next/font/google";
 import "@/app/globals.css";
 import Header from "@/components/header";
 
@@ -11,6 +16,17 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const goudyBookletter1911 = Goudy_Bookletter_1911({
+  weight: "400",
+  variable: "--font-goudy-bookletter-1911",
+  subsets: ["latin"],
+});
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  variable: "--font-cinzel-family",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +42,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} light`}
+      className={`${geistSans.variable} ${geistMono.variable} ${goudyBookletter1911.variable} ${cinzel.variable} light`}
     >
       <body className="min-h-screen flex flex-col overflow-x-hidden">
         <Header />

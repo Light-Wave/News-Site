@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import ArticleCard from "@/components/layout/articleCard";
 
 /* NOTE - all sections should be lifted out of page and into seperate components*/
 export default function Home() {
@@ -7,40 +8,15 @@ export default function Home() {
     <div className="">
       <main className="">
         {/* breaking news ticker section*/}
-        <p className="text-center">fake header</p>
         <section className="">
           <p className="bg-black text-white text-center">
             Breaking news: <br />
-            Stupid people still being stupid
+            Wizard council warns of dragon season approaching.
           </p>
         </section>
         {/* Main article section (editors choice? most popular? most recent?) */}
         <section>
-          <Card>
-            <div className="bg-gray-200 h-50">
-              <p>image here</p>
-            </div>
-            <div className="flex p-2 justify-between items-center gap-4 text-sm text-gray-600">
-              <span>Author</span>
-              <span>•</span>
-              <span>Posted date</span>
-              <span>•</span>
-              <span>5 min read</span>
-            </div>
-            <CardContent>
-              <h2 className="text-xl font-bold text-center">Article Title</h2>
-              <p className="text-gray-600">
-                Article short version goes here. Lorem ipsum dolor, sit amet
-                consectetur adipisicing elit. Laborum vero quis asperiores
-                labore impedit, tempore, voluptates, ipsam accusantium
-                consequuntur facere beatae neque sapiente officia aliquid.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <p className="">social links ❌👍🔗</p>
-              <Button>Full article</Button>
-            </CardFooter>
-          </Card>
+          <ArticleCard />
         </section>
         {/* Trending articles section (most popular? recommended to user?) */}
         <section>
@@ -171,7 +147,6 @@ export default function Home() {
           />
           <Button className="p-2 bg-blue-500 text-white">Subscribe</Button>
         </section>
-        <p className="text-center">fake footer</p>
       </main>
     </div>
   );
