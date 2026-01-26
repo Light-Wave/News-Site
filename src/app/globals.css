@@ -65,6 +65,7 @@
   --muted-foreground: oklch(0.4 0.02 20);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
+  --heading: oklch(0.15 0.03 30);
   /* end of fantasy theme parchment modifications */
 
   --destructive: oklch(0.577 0.245 27.325);
@@ -101,6 +102,7 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
+  --heading: var(--foreground);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
@@ -144,18 +146,16 @@
   h6 {
     font-family: var(--font-cinzel);
     letter-spacing: 0.02em;
-    color: oklch(0.15 0.03 30);
+    color: var(--heading);
   }
 }
 
 @layer components {
   .parchment-card {
     @apply relative overflow-hidden transition-all duration-300;
-    background: radial-gradient(
-      circle at center,
-      oklch(0.96 0.03 90) 0%,
-      oklch(0.88 0.07 80) 100%
-    );
+    background: radial-gradient(circle at center,
+        oklch(0.96 0.03 90) 0%,
+        oklch(0.88 0.07 80) 100%);
     box-shadow:
       0 10px 25px -5px rgb(0 0 0 / 0.1),
       inset 0 0 80px oklch(0.85 0.1 75 / 0.3);
@@ -175,6 +175,7 @@
 
   /* Adds a fancy bobbing animation, primarily used for the spell icons */
   @keyframes spell-levitate {
+
     0%,
     100% {
       transform: translateY(0);
