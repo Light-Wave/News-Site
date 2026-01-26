@@ -32,7 +32,6 @@ export default function ArticleCard({ article, authorName }: ArticleCardProps) {
           className="object-contain"
           sizes="(max-width: 1024px) 100vw, 50vw"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-oklch(0.96 0.03 90 / 0.8) to-transparent" />
       </div>
       <div className="flex p-4 pb-3 justify-center items-center gap-3 text-xs italic text-primary uppercase tracking-widest">
         <span>{author}</span>
@@ -66,7 +65,10 @@ export default function ArticleCard({ article, authorName }: ArticleCardProps) {
             </SpellIcon>
           </div>
         </div>
-        <Button className="w-full sm:w-auto min-w-[180px] bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_6px_0_0_rgba(0,0,0,0.3)] border-b border-primary/50 active:translate-y-[2px] active:shadow-none transition-all font-cinzel px-8 h-14 text-xl">
+        <Button
+          type="button"
+          className="w-full sm:w-auto min-w-[180px] bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_6px_0_0_rgba(0,0,0,0.3)] border-b border-primary/50 active:translate-y-[2px] active:shadow-none transition-all font-cinzel px-8 h-14 text-xl"
+        >
           Read Scroll
         </Button>
       </CardFooter>

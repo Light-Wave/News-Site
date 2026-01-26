@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Goudy_Bookletter_1911, Cinzel } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Goudy_Bookletter_1911,
+  Cinzel,
+} from "next/font/google";
 import "@/app/globals.css";
 import Header from "@/components/header";
 
@@ -21,7 +26,7 @@ const goudyBookletter1911 = Goudy_Bookletter_1911({
 
 const cinzel = Cinzel({
   subsets: ["latin"],
-  variable: "--font-cinzel",
+  variable: "--font-cinzel-family",
 });
 
 export const metadata: Metadata = {
