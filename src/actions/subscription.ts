@@ -170,7 +170,7 @@ export async function addSubscriptionToUser(
         subscriptionTypeId: parsed.data.subscriptionTypeId,
         expiresAt: parsed.data.expiresAt
           ? new Date(parsed.data.expiresAt)
-          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days in the future
       },
     });
 
