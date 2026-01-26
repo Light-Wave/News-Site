@@ -1,5 +1,5 @@
-import { Card, CardContent, CardFooter } from "../ui/card";
-import { Button } from "../ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import type { Article } from "@/generated/prisma/client";
 import SpellIcon from "./spellIcon";
@@ -24,9 +24,7 @@ export default function ArticleCard({ article, authorName }: ArticleCardProps) {
 
   return (
     <Card className="parchment-card gap-0 py-2 rounded-none sm:max-w-[1024px] m-auto">
-      <div
-        className="relative w-full aspect-square sm:aspect-[4/3]"
-      >
+      <div className="relative w-full aspect-square sm:aspect-[4/3]">
         <Image
           src={imageUrl}
           alt={title}
@@ -57,9 +55,15 @@ export default function ArticleCard({ article, authorName }: ArticleCardProps) {
             Cast a sharing spell to show support for free wizard press!
           </p>
           <div className="flex gap-4">
-            <SpellIcon color="blue" tooltip="Share via Telepathy Scroll">📜</SpellIcon>
-            <SpellIcon color="amber" tooltip="Inscribe in the Chronicles">🖌️</SpellIcon>
-            <SpellIcon color="purple" tooltip="Infuse with Arcane Favor">✨</SpellIcon>
+            <SpellIcon color="blue" tooltip="Share via Telepathy Scroll">
+              📜
+            </SpellIcon>
+            <SpellIcon color="amber" tooltip="Inscribe in the Chronicles">
+              🖌️
+            </SpellIcon>
+            <SpellIcon color="purple" tooltip="Infuse with Arcane Favor">
+              ✨
+            </SpellIcon>
           </div>
         </div>
         <Button className="w-full sm:w-auto min-w-[180px] bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_6px_0_0_rgba(0,0,0,0.3)] border-b border-primary/50 active:translate-y-[2px] active:shadow-none transition-all font-cinzel px-8 h-14 text-xl">
@@ -69,4 +73,3 @@ export default function ArticleCard({ article, authorName }: ArticleCardProps) {
     </Card>
   );
 }
-
