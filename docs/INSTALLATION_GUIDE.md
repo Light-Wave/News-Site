@@ -4,6 +4,7 @@ npm install
 
 Make sure you have a .env file with DATABASE_URL
 Also get BETTER_AUTH_SECRET and BETTER_AUTH_URL as described in better auth installation guide: https://www.better-auth.com/docs/installation
+For seeding, you will also need to set TESTING_PASSWORD, preferably to a strong password.
 
 Then maybe do some of this stuff???
 

@@ -60,7 +60,6 @@ async function generateUsers() {
 
 async function generateCategories() {
   console.log("\n📂 Generating categories...");
-  // Local, Sweden, World, Weather, Economy,
 
   const existingCategories = await prisma.category.findMany({
     select: { name: true },
@@ -84,10 +83,21 @@ async function generateCategories() {
 async function generatePosts() {
   console.log("\n📰 Generating articles...");
   const postCount = await prisma.article.count();
-  const target = 20;
-  console.log(`  Current articles: ${postCount}, Target: ${target}`);
-  for (let i = postCount; i < 20; i++) {
-    console.log(`  Creating article ${i + 1}/${target}...`);
+  const target_article_count = 20;
+  console.log(
+    `  Current articles: ${postCount}, Target: ${target_article_count}`,
+  );
+  let writerEmail =
+    (await prisma.user.count({
+      where: { email: "writer@testing.com" },
+    })) > 0
+      ? "writer@testing.com"
+      : (await prisma.user.findFirst())?.email;
+  if (!writerEmail) {
+    throw new Error("No users found for article writers.");
+  }
+  for (let i = postCount; i < target_article_count; i++) {
+    console.log(`  Creating article ${i + 1}/${target_article_count}...`);
     const summary = await lipsum.getText({
       amount: Math.floor(Math.random() * 2) + 1,
       what: "sentences",
@@ -121,16 +131,6 @@ async function generatePosts() {
       default:
         break;
     }
-    let writerEmail =
-      (await prisma.user.count({
-        where: { email: "writer@testing.com" },
-      })) > 0
-        ? "writer@testing.com"
-        : (await prisma.user.findFirst())?.email;
-    if (!writerEmail) {
-      throw new Error("No users found for article writers.");
-    }
-
     await prisma.article.create({
       data: {
         headline,
@@ -144,7 +144,9 @@ async function generatePosts() {
       },
     });
   }
-  console.log(`✅ Articles complete (${20 - postCount} created)`);
+  console.log(
+    `✅ Articles complete (${target_article_count - postCount} created)`,
+  );
 }
 
 async function subscribeUser() {

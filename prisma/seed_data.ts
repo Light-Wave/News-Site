@@ -40,6 +40,12 @@ export const testUserData: {
     password: process.env.TESTING_PASSWORD,
     role: "editor",
   },
+  {
+    email: "multi_role_user@testing.com",
+    name: "Test Multi Role User",
+    password: process.env.TESTING_PASSWORD,
+    role: ["user", "writer", "editor", "admin"],
+  },
 ];
 
 export const clickbait_suffixes: string[] = [
