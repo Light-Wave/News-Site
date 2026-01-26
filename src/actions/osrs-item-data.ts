@@ -3,10 +3,26 @@
 import { ActionResult } from "@/types/action-result";
 import { ItemSummary, Root } from "@/types/osrs";
 
-export async function itemData(url: string): Promise<ActionResult<ItemSummary>> {
-  // Example URL: https://secure.runescape.com/m=itemdb_oldschool/api/catalogue/detail.json?item=4151 (google item id if you want other items, I picked 1333, 4151, 11804)
+const OSRS_API_BASE =
+  "https://secure.runescape.com/m=itemdb_oldschool/api/catalogue/detail.json";
+
+export async function getOsrsItemData(
+  itemId: string,
+): Promise<ActionResult<ItemSummary>> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8_000); // 8s timeout
+
+  // Item IDs: 1333, 4151, 11804 (google item ID if you want other items)
   try {
-    const response = await fetch(`${url}`);
+    const response = await fetch(`${OSRS_API_BASE}?item=${itemId}`, {
+      signal: controller.signal,
+
+      // Next.js cache configuration
+      cache: "force-cache", // or "no-store" if you always want fresh data
+      next: {
+        revalidate: 60 * 5, // revalidate every 5 minutes
+      },
+    });
 
     if (!response.ok) {
       return {
@@ -35,5 +51,7 @@ export async function itemData(url: string): Promise<ActionResult<ItemSummary>> 
       success: false,
       message: error instanceof Error ? error.message : "Unknown error",
     };
+  } finally {
+    clearTimeout(timeout);
   }
 }
