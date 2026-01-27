@@ -4,6 +4,7 @@ npm install
 
 Make sure you have a .env file with DATABASE_URL
 Also get BETTER_AUTH_SECRET and BETTER_AUTH_URL as described in better auth installation guide: https://www.better-auth.com/docs/installation
+For seeding, you will also need to set TESTING_PASSWORD, preferably to a strong password.
 
 Then maybe do some of this stuff???
 
@@ -12,9 +13,12 @@ npx prisma migrate reset
 npx prisma migrate dev
 npx prisma generate
 npx prisma migrate deploy
+npx prisma db seed
 npx prisma studio
 npm run dev
 ```
+
+If better-auth has changed, you might need to run `npx @better-auth/cli generate`
 
 And check out this page to see if better auth is working: http://localhost:3000/api/auth/get-session
 If it works, the page should say 'null'
