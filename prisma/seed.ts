@@ -75,9 +75,9 @@ async function generateCategories() {
 async function generateArticles() {
   console.log("\n📰 Generating articles...");
   const articleCount = await prisma.article.count();
-  const target_article_count = 20;
+  const targetArticleCount = 20;
   console.log(
-    `  Current articles: ${articleCount}, Target: ${target_article_count}`,
+    `  Current articles: ${articleCount}, Target: ${targetArticleCount}`,
   );
   let writerEmail =
     (await prisma.user.count({
@@ -88,8 +88,8 @@ async function generateArticles() {
   if (!writerEmail) {
     throw new Error("No users found for article writers.");
   }
-  for (let i = articleCount; i < target_article_count; i++) {
-    console.log(`  Creating article ${i + 1}/${target_article_count}...`);
+  for (let i = articleCount; i < targetArticleCount; i++) {
+    console.log(`  Creating article ${i + 1}/${targetArticleCount}...`);
     const summary = await lipsum.getText({
       amount: Math.floor(Math.random() * 2) + 1,
       what: "sentences",
@@ -137,12 +137,8 @@ async function generateArticles() {
     });
   }
   console.log(
-    `✅ Articles complete (${target_article_count - articleCount} created)`,
+    `✅ Articles complete (${targetArticleCount - articleCount} created)`,
   );
-}
-
-async function subscribeUser() {
-  //TODO
 }
 
 async function main() {
@@ -153,6 +149,9 @@ async function main() {
     });
     console.log("✅ Cleaned up test users in production");
     return;
+  }
+  if (!process.env.TESTING_PASSWORD) {
+    throw new Error("TESTING_PASSWORD environment variable not set.");
   }
   console.log("🌱 Starting database seeding...");
   console.log("================================");
@@ -171,7 +170,7 @@ async function main() {
   await generateCategories();
   await generateArticles();
 
-  await subscribeUser();
+  // TODO: Subscribe users
 
   console.log("\n================================");
   console.log("✅ Database seeding completed!");
