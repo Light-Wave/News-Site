@@ -160,6 +160,7 @@
       0 10px 25px -5px rgb(0 0 0 / 0.1),
       inset 0 0 80px oklch(0.85 0.1 75 / 0.3);
     border: 1px solid oklch(0.8 0.1 70 / 0.4);
+    border-radius: 0px;
   }
 
   /* Gives the icon a shine animation when hovered over */

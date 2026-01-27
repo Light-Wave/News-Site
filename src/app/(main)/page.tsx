@@ -1,7 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import ArticleCard from "@/components/layout/articleCard";
+import SmallArticleCard from "@/components/layout/smallArticleCard";
+import type { Article } from "@/generated/prisma/client";
 
+
+const exampleArticle: Article = {
+  id: "1",
+  headline: "Let sleeping dragons snooze",
+  content: "",
+  views: 0,
+  summary:
+    "Druids against the mistreatment of dragons report a rise in adventurer hunting parties disturbing the sleep of our reptilian friends. A spokesperson for the druids said 'The additional food supply is welcome, but the dragons need sleep too!'",
+  image: "/placeholder-dragon.png",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  userId: "1",
+  isActive: true,
+  categoryId: "fish",
+};
 /* NOTE - all sections should be lifted out of page and into seperate components*/
 export default function Home() {
   return (
@@ -16,38 +33,14 @@ export default function Home() {
         </section>
         {/* Main article section (editors choice? most popular? most recent?) */}
         <section>
-          <ArticleCard />
+          <ArticleCard article={exampleArticle} />
         </section>
         {/* Trending articles section (most popular? recommended to user?) */}
         <section>
-          <h2 className="font-bold gap-0 text-center">Hot and trending</h2>
-          <div className="p-2">
-            <h2 className="font-bold ">Article Title</h2>
-            <p className="text-gray-600">
-              Article super short version goes here. Lorem ipsum dolor, sit amet
-            </p>
-            <div className="w-full flex justify-end">
-              <Button className="p-2">Full article</Button>
-            </div>
-          </div>
-          <div className="p-2">
-            <h2 className="font-bold ">Article Title</h2>
-            <p className="text-gray-600">
-              Article super short version goes here. Lorem ipsum dolor, sit amet
-            </p>
-            <div className="w-full flex justify-end">
-              <Button className="p-2">Full article</Button>
-            </div>
-          </div>
-          <div className="p-2">
-            <h2 className="font-bold ">Article Title</h2>
-            <p className="text-gray-600">
-              Article super short version goes here. Lorem ipsum dolor, sit amet
-            </p>
-            <div className="w-full flex justify-end">
-              <Button className="p-2">Full article</Button>
-            </div>
-          </div>
+          <h2 className="font-bold gap-0 text-center">Articles from the Arcane Network</h2>
+          <SmallArticleCard article={exampleArticle} />
+          <SmallArticleCard />
+          <SmallArticleCard />
         </section>
         {/* Additional articles section - to be fetched from database depending on... soemthing... recommendations? date published? */}
         <section>
