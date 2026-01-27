@@ -48,7 +48,7 @@ export const testUserData: {
   },
 ];
 
-export const clickbait_suffixes: string[] = [
+export const clickbaitSuffixes: string[] = [
   " - Then everything went wrong.",
   " - Could be illegal",
   ", then the unexpected happened.",
@@ -57,7 +57,7 @@ export const clickbait_suffixes: string[] = [
   " - The secrets revealed!",
   " - Terrifying accounts from witnesses.",
 ];
-export const clickbait_prefixes: string[] = [
+export const clickbaitPrefixes: string[] = [
   "Uncertain future - ",
   "Trump warns ",
   "Doctors warn: ",
@@ -65,7 +65,7 @@ export const clickbait_prefixes: string[] = [
   "Team Better reveals: ",
 ];
 
-export const premade_categories = [
+export const premadeCategories = [
   "Local",
   "Sweden",
   "World",

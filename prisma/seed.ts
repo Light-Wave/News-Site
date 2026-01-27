@@ -2,9 +2,9 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import Lipsum from "node-lipsum";
 import {
-  clickbait_prefixes,
-  clickbait_suffixes,
-  premade_categories,
+  clickbaitPrefixes,
+  clickbaitSuffixes,
+  premadeCategories,
   testUserData,
 } from "./seed_data";
 
@@ -12,14 +12,6 @@ const lipsum = new Lipsum();
 
 async function generateUsers() {
   console.log("\n📝 Generating test users...");
-  // If we are in production, remove all test users instead
-  if (process.env.NODE_ENV === "production") {
-    await prisma.user.deleteMany({
-      where: { email: { endsWith: "@testing.com" } },
-    });
-    console.log("✅ Cleaned up test users in production");
-    return;
-  }
 
   const users = await prisma.user.findMany({
     where: { email: { endsWith: "@testing.com" } },
@@ -65,7 +57,7 @@ async function generateCategories() {
     select: { name: true },
   });
   let createdCount = 0;
-  for (const category of premade_categories) {
+  for (const category of premadeCategories) {
     const categoryExists = existingCategories.find((c) => c.name === category);
     if (!categoryExists) {
       console.log(`  Creating category: ${category}`);
@@ -80,12 +72,12 @@ async function generateCategories() {
   );
 }
 
-async function generatePosts() {
+async function generateArticles() {
   console.log("\n📰 Generating articles...");
-  const postCount = await prisma.article.count();
+  const articleCount = await prisma.article.count();
   const target_article_count = 20;
   console.log(
-    `  Current articles: ${postCount}, Target: ${target_article_count}`,
+    `  Current articles: ${articleCount}, Target: ${target_article_count}`,
   );
   let writerEmail =
     (await prisma.user.count({
@@ -96,7 +88,7 @@ async function generatePosts() {
   if (!writerEmail) {
     throw new Error("No users found for article writers.");
   }
-  for (let i = postCount; i < target_article_count; i++) {
+  for (let i = articleCount; i < target_article_count; i++) {
     console.log(`  Creating article ${i + 1}/${target_article_count}...`);
     const summary = await lipsum.getText({
       amount: Math.floor(Math.random() * 2) + 1,
@@ -117,15 +109,15 @@ async function generatePosts() {
     switch (i % 4) {
       case 0:
         headline =
-          clickbait_prefixes[
-            Math.floor(Math.random() * clickbait_prefixes.length)
+          clickbaitPrefixes[
+            Math.floor(Math.random() * clickbaitPrefixes.length)
           ] + headline;
         break;
       case 1:
         headline =
           headline +
-          clickbait_suffixes[
-            Math.floor(Math.random() * clickbait_suffixes.length)
+          clickbaitSuffixes[
+            Math.floor(Math.random() * clickbaitSuffixes.length)
           ];
         break;
       default:
@@ -139,13 +131,13 @@ async function generatePosts() {
         image: `https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/200/300`,
         user: { connect: { email: writerEmail } },
         category: {
-          connect: { name: premade_categories[i % premade_categories.length] },
+          connect: { name: premadeCategories[i % premadeCategories.length] },
         },
       },
     });
   }
   console.log(
-    `✅ Articles complete (${target_article_count - postCount} created)`,
+    `✅ Articles complete (${target_article_count - articleCount} created)`,
   );
 }
 
@@ -154,6 +146,14 @@ async function subscribeUser() {
 }
 
 async function main() {
+  // If we are in production, remove all test users instead
+  if (process.env.NODE_ENV === "production") {
+    await prisma.user.deleteMany({
+      where: { email: { endsWith: "@testing.com" } },
+    });
+    console.log("✅ Cleaned up test users in production");
+    return;
+  }
   console.log("🌱 Starting database seeding...");
   console.log("================================");
 
@@ -169,7 +169,7 @@ async function main() {
     );
   }
   await generateCategories();
-  await generatePosts();
+  await generateArticles();
 
   await subscribeUser();
 
