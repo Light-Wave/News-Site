@@ -1,18 +1,25 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Sidebar({
   articles,
+  category,
 }: {
   articles: { id: string; headline: string; image: string }[];
+  category: string;
 }) {
   return (
     <aside className="space-y-6">
       <h1 className="text-sm font-semibold uppercase tracking-wide">
-        Latest Europe
+        Latest in {category}
       </h1>
 
       {articles.map((article) => (
-        <div key={article.headline} className="flex flex-col">
+        <Link
+          href={`/article/${article.id}`}
+          key={article.id}
+          className="flex flex-col"
+        >
           <div className="relative max-w-100 max-h-100 w-full aspect-square">
             <Image
               src={article.image}
@@ -22,7 +29,7 @@ export default function Sidebar({
             />
           </div>
           <p className="max-w-100">{article.headline}</p>
-        </div>
+        </Link>
       ))}
     </aside>
   );

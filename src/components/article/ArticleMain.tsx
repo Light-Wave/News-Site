@@ -1,17 +1,16 @@
+import { ArticleExpended } from "@/types/article";
 import Image from "next/image";
 
-export default function ArticleMain({ article }: any) {
+export default function ArticleMain({ article }: { article: ArticleExpended }) {
   return (
     <article>
       {/* Headline */}
       <h1 className="text-5xl font-serif font-bold leading-tight mb-4">
-        {article.headline} {/* ✅ FIX */}
+        {article.headline} {/* FIX */}
       </h1>
 
       {/* Sub heading */}
-      <p className="text-xl text-gray-600 mb-6">
-        Europe reacts strongly as political and economic tensions rise.
-      </p>
+      <p className="text-xl text-gray-600 mb-6">{article.summary}</p>
 
       {/* Main Image */}
       <div className="relative w-full h-105 mb-6">

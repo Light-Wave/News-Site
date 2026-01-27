@@ -14,7 +14,7 @@ export default async function ArticlePage({
     where: { id: id },
     include: {
       category: true,
-      user: true,
+      user: { select: { name: true } },
     },
   });
 
@@ -64,7 +64,10 @@ export default async function ArticlePage({
           <ArticleMain article={article} />
         </div>
 
-        <ArticleSidebar articles={latestArticles} />
+        <ArticleSidebar
+          articles={latestArticles}
+          category={article.category.name}
+        />
       </div>
     </div>
   );
