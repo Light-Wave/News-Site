@@ -32,9 +32,12 @@ export default function ArticleMain({ article }: any) {
 
       {/* Content */}
       <div className="space-y-6 text-lg leading-8">
-        {article.content.split("\n").map((para: string, i: number) => (
-          <p key={i}>{para}</p>
-        ))}
+        {article.content
+          .split("\n")
+          .filter((para: string) => para.trim() !== "")
+          .map((para: string, i: number) => (
+            <p key={i}>{para}</p>
+          ))}
       </div>
     </article>
   );
