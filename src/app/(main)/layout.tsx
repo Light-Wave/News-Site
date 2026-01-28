@@ -7,6 +7,7 @@ import {
 } from "next/font/google";
 import "@/app/globals.css";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +47,10 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col overflow-x-hidden">
         <Header />
-        {children}
+        <main className="flex-1 mx-auto w-full max-w-7xl px-1 md:px-8 pt-2 pb-8">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

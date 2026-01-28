@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import {
   Sheet,
@@ -10,19 +8,11 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
-
-const categories = [
-  { name: "Home", href: "/" },
-  { name: "World", href: "/world" },
-  { name: "Politics", href: "/politics" },
-  { name: "Business", href: "/business" },
-  { name: "Technology", href: "/technology" },
-  { name: "Sports", href: "/sports" },
-];
+import { categories } from "@/types/categories";
 
 export default function Header() {
   return (
-    <header className="border-b bg-white">
+    <header className="border-b bg-gray-100">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Left: Menu + Logo */}
         <div className="flex items-center gap-4">
@@ -42,7 +32,7 @@ export default function Header() {
                 </div>
               </SheetHeader>
 
-              <nav className=" flex flex-col gap-3">
+              <nav className="flex flex-col gap-3">
                 {categories.map((item) => (
                   <Link
                     key={item.name}
@@ -77,18 +67,17 @@ export default function Header() {
         </div>
 
         {/* Desktop Categories */}
-        <nav className="hidden md:flex gap-6">
+        <nav className="max-w-7xl mx-auto px-6 py-4 flex gap-6">
           {categories.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className="text-base font-semibold text-gray-700 hover:text-black"
+              className="text-sm font-medium hover:text-blue-600"
             >
               {item.name}
             </Link>
           ))}
         </nav>
-
         {/* Right */}
         <Link
           href="/subscribe"
