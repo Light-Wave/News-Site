@@ -6,7 +6,6 @@ const WEATHER_API_BASE = "https://weather.lexlink.se/forecast/location/";
 export async function getWeatherData(
   location: string,
 ): Promise<ActionResult<Weather>> {
-
   if (!isValidLocationInput(location)) {
     return {
       success: false,
@@ -42,7 +41,7 @@ export async function getWeatherData(
 
     return {
       success: true,
-      data: data,
+      data,
     };
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
@@ -69,9 +68,24 @@ function isValidSeries(series: unknown): series is Series {
 
   return (
     typeof s.validTime === "string" &&
+    typeof s.airPressure === "number" &&
     typeof s.temp === "number" &&
+    typeof s.visibility === "number" &&
+    typeof s.windDirection === "number" &&
     typeof s.windSpeed === "number" &&
     typeof s.humidity === "number" &&
+    typeof s.thunderProbability === "number" &&
+    typeof s.cloudCover === "number" &&
+    typeof s.lowerCloudCover === "number" &&
+    typeof s.higherCloudCover === "number" &&
+    typeof s.windGust === "number" &&
+    typeof s.precipitationMin === "number" &&
+    typeof s.precipitationMax === "number" &&
+    typeof s.precipitationFrozen === "number" &&
+    typeof s.precipitationCategoryValue === "number" &&
+    typeof s.precipitationCategory === "string" &&
+    typeof s.precipitationMean === "number" &&
+    typeof s.precipitationMedian === "number" &&
     typeof s.symbol === "number" &&
     typeof s.summary === "string"
   );
@@ -92,12 +106,32 @@ function isValidWeather(data: unknown): data is Weather {
     Array.isArray(w.timeseries) &&
     w.timeseries.length > 0 &&
     w.timeseries.every(isValidSeries) &&
-    typeof w.location === "object" &&
-    w.location !== null
+    isValidLocation(w.location)
   );
 }
 
-function isValidLocationInput(location: string): location is string {
+function isValidLocation(loc: any): loc is Location {
+  return (
+    typeof loc === "object" &&
+    loc !== null &&
+    typeof loc.place_id === "number" &&
+    typeof loc.licence === "string" &&
+    typeof loc.osm_type === "string" &&
+    typeof loc.osm_id === "number" &&
+    typeof loc.lat === "string" &&
+    typeof loc.lon === "string" &&
+    typeof loc.category === "string" &&
+    typeof loc.type === "string" &&
+    typeof loc.place_rank === "number" &&
+    typeof loc.importance === "number" &&
+    typeof loc.addresstype === "string" &&
+    typeof loc.name === "string" &&
+    typeof loc.display_name === "string" &&
+    Array.isArray(loc.boundingbox)
+  );
+}
+
+function isValidLocationInput(location: string): boolean {
   return (
     location.trim().length > 0 && /^[\p{L}\p{M}0-9\s,.'-]+$/u.test(location)
   );
