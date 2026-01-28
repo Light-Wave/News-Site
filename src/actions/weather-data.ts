@@ -44,17 +44,21 @@ export async function getWeatherData(
       };
     }
     const candidate = data as {
-      timeseries?: unknown;
-      location?: unknown;
-      lat?: unknown;
-      lon?: unknown;
+      lat: unknown;
+      lon: unknown;
+      referenceTime: unknown;
+      approvedTime: unknown;
+      timeseries: unknown;
+      location: unknown;
     };
     if (
       !Array.isArray(candidate.timeseries) ||
       typeof candidate.location !== "object" ||
       candidate.location === null ||
       typeof candidate.lat !== "number" ||
-      typeof candidate.lon !== "number"
+      typeof candidate.lon !== "number" ||
+      typeof candidate.approvedTime !== "string" ||
+      typeof candidate.referenceTime !== "string"
     ) {
       return {
         success: false,
