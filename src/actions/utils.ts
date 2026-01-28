@@ -7,6 +7,7 @@ export function isNumericString(value: string): value is `${number}` {
 
 export function degreesToDirection(deg: number): string {
   const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-  const index = Math.round(deg / 45) % 8;
+  const normalizedDeg = ((deg % 360) + 360) % 360;
+  const index = Math.round(normalizedDeg / 45) % 8;
   return directions[index];
 }

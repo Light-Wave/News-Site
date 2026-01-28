@@ -30,6 +30,20 @@ export async function getWeatherData(
         message: "Invalid API response structure",
       };
     }
+    if (
+      typeof data !== "object" ||
+      data === null ||
+      !Array.isArray(data.timeseries) ||
+      typeof data.location !== "object" ||
+      data.location === null ||
+      typeof data.lat !== "number" ||
+      typeof data.lon !== "number"
+    ) {
+      return {
+        success: false,
+        message: "Invalid or incomplete weather data from API",
+      };
+    }
     return {
       success: true,
       data,
@@ -48,19 +62,4 @@ export async function getWeatherData(
   } finally {
     clearTimeout(timeout);
   }
-}
-
-function filterToday(data: Weather): Weather {
-  const today = new Date().toISOString().split("T")[0];
-
-  return {
-    location: data.location,
-    timeseries: data.timeseries.filter(
-      (item) => item.validTime.split("T")[0] === today,
-    ),
-    lat: data.lat,
-    lon: data.lon,
-    referenceTime: data.referenceTime,
-    approvedTime: data.approvedTime,
-  };
 }
