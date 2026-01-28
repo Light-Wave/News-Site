@@ -1,3 +1,5 @@
+"use server"
+
 import { ActionResult } from "@/types/action-result";
 import { ItemSummary, Root } from "@/types/osrs";
 import { isNumericString } from "./utils";
