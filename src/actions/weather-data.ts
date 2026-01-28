@@ -1,24 +1,20 @@
 import { ActionResult } from "@/types/action-result";
-import { Weather } from "@/types/weather";
+import { Series, Weather } from "@/types/weather";
 
 const WEATHER_API_BASE = "https://weather.lexlink.se/forecast/location/";
 
 export async function getWeatherData(
   location: string,
 ): Promise<ActionResult<Weather>> {
-  const trimmedLocation = location.trim();
 
-  if (
-    trimmedLocation.length === 0 ||
-    !/^[a-zA-Z0-9\s,.-]+$/.test(trimmedLocation)
-  ) {
+  if (!isValidLocationInput(location)) {
     return {
       success: false,
       message: "Invalid location format",
     };
   }
 
-  const encodedLocation = encodeURIComponent(trimmedLocation);
+  const encodedLocation = encodeURIComponent(location);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8_000);
 
@@ -37,38 +33,16 @@ export async function getWeatherData(
     }
 
     const data: unknown = await response.json();
-    if (data === null || typeof data !== "object") {
-      return {
-        success: false,
-        message: "Invalid API response structure",
-      };
-    }
-    const candidate = data as {
-      lat: unknown;
-      lon: unknown;
-      referenceTime: unknown;
-      approvedTime: unknown;
-      timeseries: unknown;
-      location: unknown;
-    };
-    if (
-      !Array.isArray(candidate.timeseries) ||
-      typeof candidate.location !== "object" ||
-      candidate.location === null ||
-      typeof candidate.lat !== "number" ||
-      typeof candidate.lon !== "number" ||
-      typeof candidate.approvedTime !== "string" ||
-      typeof candidate.referenceTime !== "string"
-    ) {
+    if (!isValidWeather(data)) {
       return {
         success: false,
         message: "Invalid or incomplete weather data from API",
       };
     }
-    const weatherData = data as Weather;
+
     return {
       success: true,
-      data: weatherData,
+      data: data,
     };
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
@@ -84,4 +58,47 @@ export async function getWeatherData(
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function isValidSeries(series: unknown): series is Series {
+  if (typeof series !== "object" || series === null) {
+    return false;
+  }
+
+  const s = series as Partial<Series>;
+
+  return (
+    typeof s.validTime === "string" &&
+    typeof s.temp === "number" &&
+    typeof s.windSpeed === "number" &&
+    typeof s.humidity === "number" &&
+    typeof s.symbol === "number" &&
+    typeof s.summary === "string"
+  );
+}
+
+function isValidWeather(data: unknown): data is Weather {
+  if (typeof data !== "object" || data === null) {
+    return false;
+  }
+
+  const w = data as Partial<Weather>;
+
+  return (
+    typeof w.lat === "number" &&
+    typeof w.lon === "number" &&
+    typeof w.referenceTime === "string" &&
+    typeof w.approvedTime === "string" &&
+    Array.isArray(w.timeseries) &&
+    w.timeseries.length > 0 &&
+    w.timeseries.every(isValidSeries) &&
+    typeof w.location === "object" &&
+    w.location !== null
+  );
+}
+
+function isValidLocationInput(location: string): location is string {
+  return (
+    location.trim().length > 0 && /^[\p{L}\p{M}0-9\s,.'-]+$/u.test(location)
+  );
 }
