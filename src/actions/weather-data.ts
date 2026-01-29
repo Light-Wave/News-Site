@@ -1,5 +1,5 @@
 import { ActionResult } from "@/types/action-result";
-import { Series, Weather } from "@/types/weather";
+import { Location, Series, Weather } from "@/types/weather";
 
 const WEATHER_API_BASE = "https://weather.lexlink.se/forecast/location/";
 
@@ -127,7 +127,8 @@ function isValidLocation(loc: any): loc is Location {
     typeof loc.addresstype === "string" &&
     typeof loc.name === "string" &&
     typeof loc.display_name === "string" &&
-    Array.isArray(loc.boundingbox)
+    Array.isArray(loc.boundingbox) &&
+    loc.boundingbox.every((item: unknown) => typeof item === "string")
   );
 }
 
