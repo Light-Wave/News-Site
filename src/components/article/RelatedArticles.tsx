@@ -53,8 +53,10 @@ export default function RelatedArticles({
         </CarouselContent>
 
         {/* Arrow controls */}
-        <CarouselPrevious />
-        <CarouselNext />
+        <div className="hidden md:flex">
+          <CarouselPrevious />
+          <CarouselNext />
+        </div>
       </Carousel>
     </section>
   );

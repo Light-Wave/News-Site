@@ -10,14 +10,19 @@ export default function ArticleMain({
   relatedArticles: { id: string; headline: string; image: string }[];
 }) {
   return (
-    <article>
+    <article className="w-full max-w-none lg:max-w-3xl">
       {/* Headline */}
-      <h1 className="text-5xl font-serif font-bold leading-tight mb-4">
+      <h1
+        className="font-serif font-bold leading-tight mb-4 
+               text-[2rem] sm:text-40px lg:text-52px"
+      >
         {article.headline}
       </h1>
 
       {/* Summary */}
-      <p className="text-xl text-gray-600 mb-6">{article.summary}</p>
+      <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6">
+        {article.summary}
+      </p>
 
       {/* Main Image */}
       <div className="relative w-full aspect-video mb-6">
@@ -37,7 +42,7 @@ export default function ArticleMain({
       </p>
 
       {/* Content */}
-      <div className="space-y-6 text-lg leading-8">
+      <div className="space-y-5 text-[1rem] sm:text-16px lg:text-18px leading-relaxed">
         {article.content
           .split("\n")
           .filter((para) => para.trim() !== "")

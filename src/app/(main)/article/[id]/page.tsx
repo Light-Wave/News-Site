@@ -42,7 +42,7 @@ export default async function ArticlePage({
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
+    <div className="w-full px-4 py-6 lg:max-w-7xl lg:mx-auto lg:px-6 lg:py-10">
       {/* Breadcrumb */}
       <nav className="text-sm text-gray-500 mb-6">
         <Link href="/" className="hover:underline">
