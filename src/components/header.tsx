@@ -62,7 +62,7 @@ export default function Header() {
             href="/"
             className="text-xl font-bold tracking-tight text-red-500"
           >
-            NewsSite
+            The Bibliomancer’s Brief
           </Link>
         </div>
 
