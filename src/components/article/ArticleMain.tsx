@@ -1,19 +1,26 @@
 import { ArticleExpended } from "@/types/article";
 import Image from "next/image";
+import RelatedArticles from "@/components/article/RelatedArticles";
 
-export default function ArticleMain({ article }: { article: ArticleExpended }) {
+export default function ArticleMain({
+  article,
+  relatedArticles,
+}: {
+  article: ArticleExpended;
+  relatedArticles: { id: string; headline: string; image: string }[];
+}) {
   return (
     <article>
       {/* Headline */}
       <h1 className="text-5xl font-serif font-bold leading-tight mb-4">
-        {article.headline} {/* FIX */}
+        {article.headline}
       </h1>
 
-      {/* Sub heading */}
+      {/* Summary */}
       <p className="text-xl text-gray-600 mb-6">{article.summary}</p>
 
       {/* Main Image */}
-      <div className="relative w-full h-105 mb-6">
+      <div className="relative w-full aspect-video mb-6">
         <Image
           src={article.image}
           alt={article.headline}
@@ -33,11 +40,14 @@ export default function ArticleMain({ article }: { article: ArticleExpended }) {
       <div className="space-y-6 text-lg leading-8">
         {article.content
           .split("\n")
-          .filter((para: string) => para.trim() !== "")
-          .map((para: string, i: number) => (
+          .filter((para) => para.trim() !== "")
+          .map((para, i) => (
             <p key={i}>{para}</p>
           ))}
       </div>
+
+      {/* Related Articles */}
+      <RelatedArticles articles={relatedArticles} />
     </article>
   );
 }

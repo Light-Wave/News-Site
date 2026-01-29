@@ -38,7 +38,7 @@ export default async function ArticlePage({
     orderBy: {
       createdAt: "desc",
     },
-    take: 3,
+    take: 8,
   });
 
   return (
@@ -61,7 +61,7 @@ export default async function ArticlePage({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2">
-          <ArticleMain article={article} />
+          <ArticleMain article={article} relatedArticles={latestArticles} />
         </div>
 
         <ArticleSidebar
