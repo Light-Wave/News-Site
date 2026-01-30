@@ -6,51 +6,51 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import { categories } from "@/types/categories";
+import { getAllCategories } from "@/types/categories";
 
-export default function Header() {
+export default async function Header() {
+  const categories = await getAllCategories();
+
   return (
-    <header className="border-b bg-gray-100">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Left: Menu + Logo */}
+    <header className="border-b bg-[#f8f4ee]">
+      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4">
+        {/* LEFT: Mobile menu + Logo */}
         <div className="flex items-center gap-4">
           {/* Mobile Menu */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button className="md:hidden text-2xl" aria-label="Open menu">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                aria-label="Open menu"
+              >
                 <Menu />
               </Button>
             </SheetTrigger>
 
-            <SheetContent side="left" className="w-full sm:w-[320px] px-6">
-              <SheetHeader className="py-2 px-0">
-                <SheetTitle className="text-left text-xl">Menu</SheetTitle>
-                <div className="pt-1">
-                  <hr />
-                </div>
+            <SheetContent side="left" className="w-75 px-6">
+              <SheetHeader>
+                <SheetTitle className="text-lg">Menu</SheetTitle>
               </SheetHeader>
 
-              <nav className="flex flex-col gap-3">
-                {categories.map((item) => (
+              {/* MOBILE NAV */}
+              <nav className="mt-6 flex flex-col gap-4 text-lg font-serif">
+                {categories.map((category) => (
                   <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-lg font-semibold"
+                    key={category.id}
+                    href={`/category/${category.name.toLowerCase()}`}
+                    className="hover:text-red-600"
                   >
-                    {item.name}
+                    {category.name}
                   </Link>
                 ))}
 
-                <div className="pt-2">
-                  <hr />
-                </div>
+                <hr className="my-4" />
 
-                <Link
-                  href="/subscribe"
-                  className="text-lg font-semibold text-red-600 py-2"
-                >
+                <Link href="/subscribe" className="font-semibold text-red-600">
                   Subscribe
                 </Link>
               </nav>
@@ -58,30 +58,28 @@ export default function Header() {
           </Sheet>
 
           {/* Logo */}
-          <Link
-            href="/"
-            className="text-xl font-bold tracking-tight text-red-500"
-          >
+          <Link href="/" className="text-lg font-serif font-bold text-red-600">
             The Bibliomancer’s Brief
           </Link>
         </div>
 
-        {/* Desktop Categories */}
-        <nav className="max-w-7xl mx-auto px-6 py-4 flex gap-6">
-          {categories.map((item) => (
+        {/* DESKTOP NAV */}
+        <nav className="hidden md:flex gap-8 text-lg font-serif">
+          {categories.map((category) => (
             <Link
-              key={item.name}
-              href={item.href}
-              className="text-sm font-medium hover:text-blue-600"
+              key={category.id}
+              href={`/category/${category.name.toLowerCase()}`}
+              className="hover:text-red-600 transition"
             >
-              {item.name}
+              {category.name}
             </Link>
           ))}
         </nav>
-        {/* Right */}
+
+        {/* RIGHT */}
         <Link
           href="/subscribe"
-          className="text-base font-semibold hover:underline"
+          className="hidden md:block text-base font-semibold hover:underline"
         >
           Subscribe
         </Link>
