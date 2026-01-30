@@ -8,6 +8,7 @@ import {
 import "@/app/globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +51,7 @@ export default function RootLayout({
         <main className="flex-1 mx-auto w-full max-w-7xl px-1 md:px-8 pt-2 pb-8">
           {children}
         </main>
+        <Toaster />
         <Footer />
       </body>
     </html>
