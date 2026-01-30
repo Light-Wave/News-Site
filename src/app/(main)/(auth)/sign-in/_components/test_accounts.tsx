@@ -20,7 +20,7 @@ type Params = {
 export default function LoginTestAccounts({ users, testPassword }: Params) {
   const router = useRouter();
   async function logInAs(email: string) {
-    console.log(`Logging in as ${email} with password ${testPassword}`);
+    console.log(`Logging in as ${email}`);
     const response = await authClient.signIn.email({
       email,
       password: testPassword,
