@@ -110,25 +110,14 @@ export function SignInForm({
                   Forgot your password?
                 </Link>
               </div>
-              {showPasswordToggle ? (
-                <Input
-                  type="password"
-                  {...field}
-                  id="sign-in-password"
-                  placeholder="Password"
-                  aria-invalid={fieldState.invalid}
-                  autoComplete="current-password"
-                />
-              ) : (
-                <Input
-                  {...field}
-                  id="sign-in-password"
-                  type="password"
-                  placeholder="password"
-                  aria-invalid={fieldState.invalid}
-                  autoComplete="current-password"
-                />
-              )}
+              <Input
+                {...field}
+                id="sign-in-password"
+                type="password"
+                placeholder="Password"
+                aria-invalid={fieldState.invalid}
+                autoComplete="current-password"
+              />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
