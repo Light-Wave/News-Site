@@ -1,13 +1,5 @@
 import Link from "next/link";
-
-const categories = [
-  { name: "Home", href: "/" },
-  { name: "World", href: "/world" },
-  { name: "Politics", href: "/politics" },
-  { name: "Business", href: "/business" },
-  { name: "Technology", href: "/technology" },
-  { name: "Sports", href: "/sports" },
-];
+import { categories } from "@/types/categories";
 
 export default function Footer() {
   return (
