@@ -1,8 +1,18 @@
-export const categories = [
-  { name: "Home", href: "/" },
-  { name: "World", href: "/world" },
-  { name: "Politics", href: "/politics" },
-  { name: "Business", href: "/business" },
-  { name: "Technology", href: "/technology" },
-  { name: "Sports", href: "/sports" },
-];
+import prisma from "@/lib/prisma";
+
+export async function getCategoryBySlug(slug: string) {
+  return prisma.category.findFirst({
+    where: {
+      name: {
+        equals: slug,
+        mode: "insensitive",
+      },
+    },
+  });
+}
+
+export async function getAllCategories() {
+  return prisma.category.findMany({
+    orderBy: { name: "asc" },
+  });
+}
