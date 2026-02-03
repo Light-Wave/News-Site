@@ -31,7 +31,7 @@ export default async function Header() {
               </Button>
             </SheetTrigger>
 
-            <SheetContent side="left" className="w-75 px-6">
+            <SheetContent side="left" className="w-3/4 px-6">
               <SheetHeader>
                 <SheetTitle className="text-lg">Menu</SheetTitle>
               </SheetHeader>
