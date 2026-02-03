@@ -136,3 +136,20 @@ export async function deleteArticle(
     };
   }
 }
+
+export async function getArticleById(articleId: string) {
+  try {
+    const article = await prisma.article.findFirst({
+      where: {
+        id: articleId,
+        isActive: true,
+      },
+    });
+    return { success: true, article };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}

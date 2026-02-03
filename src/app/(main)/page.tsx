@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import ArticleCard from "@/components/layout/articleCard";
 import SmallArticleCard from "@/components/layout/smallArticleCard";
 import type { Article } from "@/generated/prisma/client";
+import { getArticleById } from "@/actions/article";
 
 
 const exampleArticle: Article[] = [{
@@ -33,7 +34,8 @@ const exampleArticle: Article[] = [{
   categoryId: "fish",
 }];
 /* NOTE - all sections should be lifted out of page and into seperate components*/
-export default function Home() {
+export default async function Home() {
+  const fetchedArticle = await getArticleById("apa123");
   return (
     <div className="">
       <main className="">
@@ -56,87 +58,17 @@ export default function Home() {
             </span>
           </h2>
           <SmallArticleCard article={exampleArticle[1]} />
-          <SmallArticleCard article={exampleArticle[2]} />
-          <SmallArticleCard article={exampleArticle[3]} />
+          <SmallArticleCard article={exampleArticle[0]} />
+          <SmallArticleCard article={fetchedArticle?.article ?? undefined} />
         </section>
         {/* Additional articles section - to be fetched from database depending on... soemthing... recommendations? date published? */}
         <section>
-          <h2 className="font-bold gap-0 text-center">Recommended for you</h2>
-          <Card>
-            <div className="bg-gray-200 h-50">
-              <p>image here</p>
-            </div>
-            <div className="flex p-2 justify-between items-center gap-4 text-sm text-gray-600">
-              <span>Author</span>
-              <span>•</span>
-              <span>Posted date</span>
-              <span>•</span>
-              <span>5 min read</span>
-            </div>
-            <CardContent>
-              <h2 className="text-xl font-bold text-center">Article Title</h2>
-              <p className="text-gray-600">
-                Article short version goes here. Lorem ipsum dolor, sit amet
-                consectetur adipisicing elit. Laborum vero quis asperiores
-                labore impedit, tempore, voluptates, ipsam accusantium
-                consequuntur facere beatae neque sapiente officia aliquid.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <p className="">social links ❌👍🔗</p>
-              <Button>Full article</Button>
-            </CardFooter>
-          </Card>
-          <Card>
-            <div className="bg-gray-200 h-50">
-              <p>image here</p>
-            </div>
-            <div className="flex p-2 justify-between items-center gap-4 text-sm text-gray-600">
-              <span>Author</span>
-              <span>•</span>
-              <span>Posted date</span>
-              <span>•</span>
-              <span>5 min read</span>
-            </div>
-            <CardContent>
-              <h2 className="text-xl font-bold text-center">Article Title</h2>
-              <p className="text-gray-600">
-                Article short version goes here. Lorem ipsum dolor, sit amet
-                consectetur adipisicing elit. Laborum vero quis asperiores
-                labore impedit, tempore, voluptates, ipsam accusantium
-                consequuntur facere beatae neque sapiente officia aliquid.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <p className="">social links ❌👍🔗</p>
-              <Button>Full article</Button>
-            </CardFooter>
-          </Card>
-          <Card>
-            <div className="bg-gray-200 h-50">
-              <p>image here</p>
-            </div>
-            <div className="flex p-2 sm:justify-between items-center gap-4 text-sm text-gray-600">
-              <span>Author</span>
-              <span>•</span>
-              <span>Posted date</span>
-              <span>•</span>
-              <span>5 min read</span>
-            </div>
-            <CardContent>
-              <h2 className="text-xl font-bold text-center">Article Title</h2>
-              <p className="text-gray-600">
-                Article short version goes here. Lorem ipsum dolor, sit amet
-                consectetur adipisicing elit. Laborum vero quis asperiores
-                labore impedit, tempore, voluptates, ipsam accusantium
-                consequuntur facere beatae neque sapiente officia aliquid.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <p className="">social links ❌👍🔗</p>
-              <Button>Full article</Button>
-            </CardFooter>
-          </Card>
+          <h2 className="metal-plate font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8">
+            <span className="text-magic-glint">Recommended for you</span>
+          </h2>
+          <ArticleCard article={exampleArticle[0]} />
+          <ArticleCard article={exampleArticle[1]} />
+          <ArticleCard article={exampleArticle[2]} />
         </section>
         {/* Newsletter subscription section */}
         <section className="flex flex-col items-center gap-2 bg-black text-white p-2">
