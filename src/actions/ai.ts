@@ -1,10 +1,11 @@
 "use server";
 
-import prisma from "@/lib/prisma";
 import { google } from "@ai-sdk/google";
 import { generateImage, generateText, Output } from "ai";
 import z from "zod";
 import { createArticle } from "./article";
+import { getAiInstructions, getUserIdByEmail } from "./user";
+import { getCategoryIdByName } from "./category";
 
 const AiArticleSchema = z.object({
   headline: z
@@ -18,16 +19,31 @@ const AiArticleSchema = z.object({
   summary: z
     .string()
     .min(10, "Summary must be at least 10 characters")
-    .max(100, "Summary can be at most 100 characters"),
+    .max(500, "Summary can be at most 500 characters"),
+});
+
+const AiImageSchema = AiArticleSchema.extend({
   image: z.string().min(1, "Image url must be at least 1 character"),
 });
 
-const PersistedArticleSchema = AiArticleSchema.extend({
-  categoryId: z.string().min(1, "Article needs a category"),
+const PersistedArticleSchema = AiImageSchema.extend({
+  categoryIds: z.array(z.string()).min(1, "Article needs a category"),
   userId: z.string().min(1, "Article needs a writer"),
 });
 
-export async function generateOsrsEconomyArticle(prompt: string) {
+/**
+ *
+ * @param prompt What kind of news article you want to generate
+ * @param categoryName Which category you want to create it in
+ * @param aiWriterEmail Email connected to the Ai Writer, will be used to fetch ID of writer
+ * @returns Nothing, creates an AI generated article
+ */
+
+export async function generateArticle(
+  prompt: string,
+  categoryNames: string[],
+  aiWriterEmail: string,
+) {
   if (typeof prompt !== "string") {
     return {
       success: false,
@@ -35,17 +51,34 @@ export async function generateOsrsEconomyArticle(prompt: string) {
     };
   }
 
+  const categoryIds: string[] = [];
+  for (const c of categoryNames) {
+    if (typeof c === "string") {
+      const result = await getCategoryIdByName(c);
+      if (result) categoryIds.push(result.id);
+    }
+  }
+
+  const writerId = await getUserIdByEmail(aiWriterEmail);
+  const aiInstructions = await getAiInstructions(writerId!.id);
+
   const { output } = await generateText({
-    // Remove system prompt and add to db (AiInstructions) and fetch it from there instead
-    system:
-      "You are a news reported writing about the Old School Runescape economy. Write each article as it would be designed for a real person in real life, (image it's not a video game)",
+    system: aiInstructions?.aiInstructions,
     model: google("gemini-2.5-flash"),
     prompt,
     output: Output.object({
       schema: z.object({
-        headline: z.string().describe("Headline of the article"),
-        content: z.string().describe("Content of the article"),
-        summary: z.string().describe("Summarize the content of the article"),
+        headline: z
+          .string()
+          .describe("Headline of the article. No more than 80 characters"),
+        content: z
+          .string()
+          .describe("Content of the article. No more than 10000 characters"),
+        summary: z
+          .string()
+          .describe(
+            "Summarize the content of the article. No more than 400 characters",
+          ),
       }),
     }),
   });
@@ -53,7 +86,6 @@ export async function generateOsrsEconomyArticle(prompt: string) {
   const validOutput = validateOutput(output);
 
   // TODO: Implement feature to generate image, add test data, move prisma queries to their own file
-
   // const image = await generateOsrsEconomyImage(output.summary);
   // const validImage = validateOutput(image);
 
@@ -64,7 +96,6 @@ export async function generateOsrsEconomyArticle(prompt: string) {
     };
   }
 
-
   // if (!validImage.success) {
   //   return {
   //     success: false,
@@ -72,33 +103,18 @@ export async function generateOsrsEconomyArticle(prompt: string) {
   //   };
   // }
 
-  // const categoryId = await prisma.category.findUnique({
-  //   where: {
-  //     name: "Economy",
-  //   },
-  // });
-
-  // const writerId = await prisma.user.findUnique({
-  //   where: {
-  //     email: "EconomyWriter@hotmail.com",
-  //   },
-  //   select: {
-  //     id: true,
-  //   },
-  // });
-
   await createArticle(
     PersistedArticleSchema.parse({
       ...validOutput.data,
-      // image: validImage,
-      // categoryId,
-      // userId: writerId,
+      image: "Implement real image once we can generate with AI",
+      categoryIds: categoryIds,
+      userId: writerId?.id,
     }),
   );
 
-  console.log(`Headline: ${output.headline} \n`);
-  console.log(`Summary: ${output.summary}\n`);
-  console.log(`Content: ${output.content}\n`);
+  // console.log(`Headline: ${validOutput.data.headline}\n`);
+  // console.log(`Summary: ${validOutput.data.summary}\n`);
+  // console.log(`Content: ${validOutput.data.content}\n`);
 }
 
 async function generateOsrsEconomyImage(summary: string) {
@@ -112,4 +128,8 @@ async function generateOsrsEconomyImage(summary: string) {
 
 function validateOutput(output: unknown) {
   return AiArticleSchema.safeParse(output);
+}
+
+function validateImage(image: unknown) {
+  return AiImageSchema.safeParse(image);
 }

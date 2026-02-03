@@ -125,3 +125,14 @@ export async function deleteCategory(
     };
   }
 }
+
+export async function getCategoryIdByName(name: string) {
+  return await prisma.category.findUnique({
+    where: {
+      name: name,
+    },
+    select: {
+      id: true,
+    },
+  });
+}

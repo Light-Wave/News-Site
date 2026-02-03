@@ -21,11 +21,12 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  role          String?   @default("user")
+  role          String?
   banned        Boolean?  @default(false)
   banReason     String?
   banExpires    DateTime?
 
+  aiWriter       AiWriter?
   sessions       Session[]
   accounts       Account[]
   subscriptions  Subscription[]
@@ -86,23 +87,21 @@ model Verification {
 }
 
 model Article {
-  id         String   @id @default(uuid())
+  id         String     @id @default(uuid())
   headline   String
   content    String
   summary    String
-  views      Int      @default(0)
+  views      Int        @default(0)
   image      String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
-  isActive   Boolean  @default(true)
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @default(now())
+  isActive   Boolean    @default(true)
+  categories Category[]
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   editorsChoices EditorsChoice[]
 
-  @@index([categoryId])
   @@index([userId])
   @@map("article")
 }
@@ -122,13 +121,27 @@ model EditorsChoice {
   @@map("editorschoice")
 }
 
+model AiWriter {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  aiInstructions      String
+  preferredCategories Category[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("aiwriter")
+}
+
 model Category {
   id   String @id @default(uuid())
-  name String
+  name String @unique
 
   articles Article[]
+  writers  AiWriter[]
 
-  @@unique([name])
   @@map("category")
 }
 
