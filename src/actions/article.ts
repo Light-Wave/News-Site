@@ -54,7 +54,7 @@ export async function createArticle(
         },
         categories: {
           connect: categoryIds.map((id) => ({
-            id: String(id),
+            id,
           })),
         },
       },

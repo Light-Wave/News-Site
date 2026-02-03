@@ -11,15 +11,18 @@ const AiArticleSchema = z.object({
   headline: z
     .string()
     .min(2, "Headline must be at least 2 characters")
-    .max(100, "Headline can be at most 100 characters"),
+    .max(100, "Headline can be at most 100 characters")
+    .describe("Headline of the article."),
   content: z
     .string()
     .min(10, "Content must be at least 10 characters")
-    .max(10000, "Content can be at most 10000 characters"),
+    .max(10000, "Content can be at most 10000 characters")
+    .describe("Content of the article."),
   summary: z
     .string()
     .min(10, "Summary must be at least 10 characters")
-    .max(500, "Summary can be at most 500 characters"),
+    .max(500, "Summary can be at most 500 characters")
+    .describe("Summarize the content of the article."),
 });
 
 const AiImageSchema = AiArticleSchema.extend({
@@ -34,9 +37,9 @@ const PersistedArticleSchema = AiImageSchema.extend({
 /**
  *
  * @param prompt What kind of news article you want to generate
- * @param categoryName Which category you want to create it in
+ * @param categoryNames Which categories you want to create it in
  * @param aiWriterEmail Email connected to the Ai Writer, will be used to fetch ID of writer
- * @returns Nothing, creates an AI generated article
+ * @returns Result object indicating success or failure of the AI-generated article creation
  */
 
 export async function generateArticle(
@@ -44,44 +47,50 @@ export async function generateArticle(
   categoryNames: string[],
   aiWriterEmail: string,
 ) {
-  if (typeof prompt !== "string") {
+  const categoryIds: string[] = [];
+  const notFoundCategories: string[] = [];
+  for (const c of categoryNames) {
+    const result = await getCategoryIdByName(c);
+    if (result) {
+      categoryIds.push(result.id);
+    } else {
+      notFoundCategories.push(c);
+    }
+  }
+  if (categoryIds.length === 0) {
     return {
       success: false,
-      error: "Prompt must be a valid string",
+      message:
+        notFoundCategories.length > 0
+          ? `No matching categories found for: ${notFoundCategories.join(", ")}`
+          : "At least one valid category is required to generate an article",
     };
   }
 
-  const categoryIds: string[] = [];
-  for (const c of categoryNames) {
-    if (typeof c === "string") {
-      const result = await getCategoryIdByName(c);
-      if (result) categoryIds.push(result.id);
-    }
-  }
-
   const writerId = await getUserIdByEmail(aiWriterEmail);
+  if (!writerId) {
+    return {
+      success: false,
+      message: "Couldn't fetch writer ID",
+    };
+  }
   const aiInstructions = await getAiInstructions(writerId!.id);
-
-  const { output } = await generateText({
-    system: aiInstructions?.aiInstructions,
-    model: google("gemini-2.5-flash"),
-    prompt,
-    output: Output.object({
-      schema: z.object({
-        headline: z
-          .string()
-          .describe("Headline of the article. No more than 80 characters"),
-        content: z
-          .string()
-          .describe("Content of the article. No more than 10000 characters"),
-        summary: z
-          .string()
-          .describe(
-            "Summarize the content of the article. No more than 400 characters",
-          ),
+  let output;
+  try {
+    output = await generateText({
+      system: aiInstructions?.aiInstructions,
+      model: google("gemini-2.5-flash"),
+      prompt,
+      output: Output.object({
+        schema: AiArticleSchema,
       }),
-    }),
-  });
+    });
+  } catch {
+    return {
+      success: false,
+      message: "Error talking with API",
+    };
+  }
 
   const validOutput = validateOutput(output);
 
@@ -92,14 +101,14 @@ export async function generateArticle(
   if (!validOutput.success) {
     return {
       success: false,
-      error: validOutput.error.message,
+      message: validOutput.error.message,
     };
   }
 
   // if (!validImage.success) {
   //   return {
   //     success: false,
-  //     error: validImage.error.message,
+  //     message: validImage.error.message,
   //   };
   // }
 
@@ -111,10 +120,6 @@ export async function generateArticle(
       userId: writerId?.id,
     }),
   );
-
-  // console.log(`Headline: ${validOutput.data.headline}\n`);
-  // console.log(`Summary: ${validOutput.data.summary}\n`);
-  // console.log(`Content: ${validOutput.data.content}\n`);
 }
 
 async function generateOsrsEconomyImage(summary: string) {

@@ -38,21 +38,33 @@ export async function createAiWriter(
   }
 
   const userId = user.id;
-  await prisma.$transaction([
-    prisma.user.update({
-      where: { id: userId },
-      data: { role: "writer" },
-    }),
-    prisma.aiWriter.create({
-      data: {
-        userId,
-        aiInstructions,
-        preferredCategories: {
-          connect: preferredCategoryName.map((name) => ({ name })),
+  try {
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: userId },
+        data: { role: "writer" },
+      }),
+      prisma.aiWriter.create({
+        data: {
+          userId,
+          aiInstructions,
+          preferredCategories: {
+            connect: preferredCategoryName.map((name) => ({ name })),
+          },
         },
-      },
-    }),
-  ]);
+      }),
+    ]);
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error("Failed to create AI writer", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to create AI writer",
+    };
+  }
 }
 
 export async function createTestUser() {
