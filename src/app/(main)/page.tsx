@@ -5,7 +5,7 @@ import SmallArticleCard from "@/components/layout/smallArticleCard";
 import type { Article } from "@/generated/prisma/client";
 
 
-const exampleArticle: Article = {
+const exampleArticle: Article[] = [{
   id: "1",
   headline: "Let sleeping dragons snooze",
   content: "",
@@ -18,7 +18,20 @@ const exampleArticle: Article = {
   userId: "1",
   isActive: true,
   categoryId: "fish",
-};
+},
+{
+  id: "2",
+  headline: "Price of daggers rising",
+  content: "",
+  views: 13,
+  summary: "A recent upswing in the rogue guild's activity has led to a shortage of daggers across the realm. Prices have risen by as much as 50% in some areas.",
+  image: "/dragonplaceholder.png",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  userId: "1",
+  isActive: true,
+  categoryId: "fish",
+}];
 /* NOTE - all sections should be lifted out of page and into seperate components*/
 export default function Home() {
   return (
@@ -33,14 +46,18 @@ export default function Home() {
         </section>
         {/* Main article section (editors choice? most popular? most recent?) */}
         <section>
-          <ArticleCard article={exampleArticle} />
+          <ArticleCard article={exampleArticle[0]} />
         </section>
         {/* Trending articles section (most popular? recommended to user?) */}
         <section>
-          <h2 className="font-bold gap-0 text-center">Articles from the Arcane Network</h2>
-          <SmallArticleCard article={exampleArticle} />
-          <SmallArticleCard />
-          <SmallArticleCard />
+          <h2 className="metal-plate font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8">
+            <span className="text-magic-glint">
+              Articles from the Arcane Network
+            </span>
+          </h2>
+          <SmallArticleCard article={exampleArticle[1]} />
+          <SmallArticleCard article={exampleArticle[2]} />
+          <SmallArticleCard article={exampleArticle[3]} />
         </section>
         {/* Additional articles section - to be fetched from database depending on... soemthing... recommendations? date published? */}
         <section>
