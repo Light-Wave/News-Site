@@ -103,15 +103,39 @@ export async function generateArticle(
   //   };
   // }
 
-  await createArticle(
-    PersistedArticleSchema.parse({
-      ...validOutput.data,
-      image: "Implement real image once we can generate with AI",
-      categoryIds: categoryIds,
-      userId: writerId?.id,
-    }),
-  );
+  try {
+    const createResult = await createArticle(
+      PersistedArticleSchema.parse({
+        ...validOutput.data,
+        image: "Implement real image once we can generate with AI",
+        categoryIds: categoryIds,
+        userId: writerId?.id,
+      }),
+    );
 
+    if (
+      createResult &&
+      typeof createResult === "object" &&
+      "error" in createResult &&
+      (createResult as { error?: unknown }).error
+    ) {
+      return {
+        success: false,
+        error:
+          typeof (createResult as { error?: unknown }).error === "string"
+            ? (createResult as { error?: unknown }).error
+            : "Failed to create article",
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while creating the article",
+    };
+  }
   // console.log(`Headline: ${validOutput.data.headline}\n`);
   // console.log(`Summary: ${validOutput.data.summary}\n`);
   // console.log(`Content: ${validOutput.data.content}\n`);
