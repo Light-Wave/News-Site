@@ -126,13 +126,47 @@ export async function deleteCategory(
   }
 }
 
-export async function getCategoryIdByName(name: string) {
+export async function getCategoryIdByName(
+  name: string,
+): Promise<{ id: string } | null> {
+  const trimmedName = name.trim();
+  if (!trimmedName) {
+    return null;
+  }
   return await prisma.category.findUnique({
     where: {
-      name: name,
+      name: trimmedName,
     },
     select: {
       id: true,
     },
   });
+}
+
+export async function getCategoryIdsByNames(names: string[]): Promise<{
+  found: { id: string; name: string }[];
+  notFound: string[];
+}> {
+  const trimmed = names.map((n) => n.trim()).filter(Boolean);
+
+  if (!trimmed.length) {
+    return { found: [], notFound: [] };
+  }
+
+  const categories = await prisma.category.findMany({
+    where: {
+      name: { in: trimmed },
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  const foundNames = new Set(categories.map((c) => c.name));
+
+  return {
+    found: categories,
+    notFound: trimmed.filter((n) => !foundNames.has(n)),
+  };
 }

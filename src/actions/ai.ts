@@ -5,7 +5,7 @@ import { generateImage, generateText, Output } from "ai";
 import z from "zod";
 import { createArticle } from "./article";
 import { getAiInstructions, getUserIdByEmail } from "./user";
-import { getCategoryIdByName } from "./category";
+import { getCategoryIdByName, getCategoryIdsByNames } from "./category";
 
 const AiArticleSchema = z.object({
   headline: z
@@ -47,16 +47,30 @@ export async function generateArticle(
   categoryNames: string[],
   aiWriterEmail: string,
 ) {
-  const categoryIds: string[] = [];
-  const notFoundCategories: string[] = [];
-  for (const c of categoryNames) {
-    const result = await getCategoryIdByName(c);
-    if (result) {
-      categoryIds.push(result.id);
-    } else {
-      notFoundCategories.push(c);
-    }
+  if (!prompt || prompt.trim().length === 0) {
+    return {
+      success: false,
+      message: "Prompt must not be empty.",
+    };
   }
+  if (!Array.isArray(categoryNames) || categoryNames.length === 0) {
+    return {
+      success: false,
+      message: "At least one category name is required.",
+    };
+  }
+  const emailValidation = z.string().email().safeParse(aiWriterEmail);
+  if (!emailValidation.success) {
+    return {
+      success: false,
+      message: "A valid aiWriterEmail must be provided.",
+    };
+  }
+
+  const { found, notFound } = await getCategoryIdsByNames(categoryNames);
+  const categoryIds = found.map((c) => c.id);
+  const notFoundCategories = notFound;
+
   if (categoryIds.length === 0) {
     return {
       success: false,
@@ -74,21 +88,46 @@ export async function generateArticle(
       message: "Couldn't fetch writer ID",
     };
   }
-  const aiInstructions = await getAiInstructions(writerId!.id);
+  const aiInstructions = await getAiInstructions(writerId.id);
+  const systemInstructions =
+    aiInstructions &&
+    typeof aiInstructions.aiInstructions === "string" &&
+    aiInstructions.aiInstructions.trim().length > 0
+      ? aiInstructions.aiInstructions
+      : "You are an AI assistant that lives in a fantasy world writing news articles for 'The Bibliomancer's Brief'";
   let output;
   try {
     output = await generateText({
-      system: aiInstructions?.aiInstructions,
+      system: systemInstructions,
       model: google("gemini-2.5-flash"),
       prompt,
       output: Output.object({
         schema: AiArticleSchema,
       }),
     });
-  } catch {
+  } catch (error) {
+    // Log the underlying error for debugging/observability
+    console.error("Error generating text with AI API:", error);
+    let errorMessage = "Error talking with API";
+    if (error instanceof Error && error.message) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("rate limit")) {
+        errorMessage = "AI API rate limit exceeded. Please try again later.";
+      } else if (
+        msg.includes("unauthorized") ||
+        msg.includes("forbidden") ||
+        msg.includes("authentication")
+      ) {
+        errorMessage =
+          "Authentication error while communicating with the AI API.";
+      } else if (msg.includes("network") || msg.includes("timeout")) {
+        errorMessage =
+          "Network error while communicating with the AI API. Please check your connection and try again.";
+      }
+    }
     return {
       success: false,
-      message: "Error talking with API",
+      message: errorMessage,
     };
   }
 
@@ -118,28 +157,30 @@ export async function generateArticle(
         ...validOutput.data,
         image: "Implement real image once we can generate with AI",
         categoryIds: categoryIds,
-        userId: writerId?.id,
+        userId: writerId.id,
       }),
     );
 
-    if (
-      createResult &&
-      typeof createResult === "object" &&
-      "error" in createResult &&
-      (createResult as { error?: unknown }).error
-    ) {
+    const { success, error: createError } = createResult as {
+      success?: boolean;
+      error?: unknown;
+    };
+    if (success === false) {
       return {
         success: false,
         error:
-          typeof (createResult as { error?: unknown }).error === "string"
-            ? (createResult as { error?: unknown }).error
+          typeof createError === "string"
+            ? createError
             : "Failed to create article",
       };
     }
+    return {
+      success: true,
+    };
   } catch (error) {
     return {
       success: false,
-      error:
+      message:
         error instanceof Error
           ? error.message
           : "An unexpected error occurred while creating the article",

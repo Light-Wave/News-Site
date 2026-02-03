@@ -61,7 +61,6 @@ export async function createArticle(
     });
     return { success: true };
   } catch (error) {
-    console.error("PRISMA ERROR:", error);
     return {
       success: false,
       message: error instanceof Error ? error.message : String(error),

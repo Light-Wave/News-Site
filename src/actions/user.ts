@@ -33,7 +33,7 @@ export async function createAiWriter(
   if (!user) {
     return {
       success: false,
-      error: "Couldn't find user",
+      message: "Couldn't find user",
     };
   }
 
@@ -61,7 +61,7 @@ export async function createAiWriter(
     console.error("Failed to create AI writer", error);
     return {
       success: false,
-      error:
+      message:
         error instanceof Error ? error.message : "Failed to create AI writer",
     };
   }
@@ -79,17 +79,21 @@ export async function createTestUser() {
 
 // Read functions
 
-export async function getUserIdByEmail(email: string) {
+export async function getUserIdByEmail(
+  email: string,
+): Promise<{ id: string } | null> {
   return await prisma.user.findUnique({
-    where: { email: email },
+    where: { email },
     select: { id: true },
   });
 }
 
-export async function getAiInstructions(id: string) {
+export async function getAiInstructions(
+  id: string,
+): Promise<{ aiInstructions: string } | null> {
   return await prisma.aiWriter.findUnique({
     where: {
-      id: id,
+      id,
     },
     select: {
       aiInstructions: true,
