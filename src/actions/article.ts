@@ -153,19 +153,13 @@ export async function getArticleById(
   }
 
   try {
-    const article = await prisma.article.findFirst({
+    const article = await prisma.article.findUnique({
       where: {
         id: parsed.data.id,
         isActive: true,
       },
     });
-    const article = await prisma.article.findUnique({
-      where: {
-        id: parsed.data.id,
-      },
-    });
-    const activeArticle = article && article.isActive ? article : null;
-    return { success: true, article: activeArticle };
+    return { success: true, article };
   } catch (error) {
     return {
       success: false,

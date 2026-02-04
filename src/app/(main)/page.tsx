@@ -49,7 +49,7 @@ export default async function Home() {
               <SmallArticleCard key={article.id} article={article} />
             ))}
             {(!recommendedArticles || recommendedArticles.length === 0) && (
-              <p className="text-center text-white">No articles found in the arcane network.</p>
+              <p className="text-center text-foreground">No articles found in the arcane network.</p>
             )}
           </div>
         </section>
@@ -66,7 +66,7 @@ export default async function Home() {
             />
           ))}
           {(!randomForYouArticles || randomForYouArticles.length === 0) && (
-            <p className="text-center text-white">No recommended articles found.</p>
+            <p className="text-center text-foreground">No recommended articles found.</p>
           )}
         </section>
         {/* Newsletter subscription section */}

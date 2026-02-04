@@ -1,4 +1,4 @@
-import { Article } from "@/generated/prisma/client";
+import type { Article } from "@/generated/prisma/client";
 
 
 export const exampleArticle: Article[] = [{

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import type { Article } from "@/generated/prisma/client";
-import { Card } from "../ui/card";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
 interface SmallArticleCardProps {
