@@ -23,13 +23,13 @@ export default function ArticleCard({ article, authorName }: ArticleCardProps) {
     : "Sun's Height, Third Era";
 
   return (
-    <Card className="parchment-card gap-0 py-2 rounded-none sm:max-w-[1024px] m-auto">
+    <Card className="parchment-card py-0 gap-0 rounded-none sm:max-w-[1024px] m-auto mb-4">
       <div className="relative w-full aspect-square sm:aspect-[4/3]">
         <Image
           src={imageUrl}
           alt={title}
           fill
-          className="object-contain"
+          className="object-cover object-top"
           sizes="(max-width: 1024px) 100vw, 50vw"
         />
       </div>

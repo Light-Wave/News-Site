@@ -1,41 +1,27 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import ArticleCard from "@/components/layout/articleCard";
 import SmallArticleCard from "@/components/layout/smallArticleCard";
-import type { Article } from "@/generated/prisma/client";
-import { getArticleById } from "@/actions/article";
+import { getArticleById, getLatestArticles, getRandomArticles } from "@/actions/article";
+import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 
 
-const exampleArticle: Article[] = [{
-  id: "1",
-  headline: "Let sleeping dragons snooze",
-  content: "",
-  views: 0,
-  summary:
-    "Druids against the mistreatment of dragons report a rise in adventurer hunting parties disturbing the sleep of our reptilian friends. A spokesperson for the druids said 'The additional food supply is welcome, but the dragons need sleep too!'",
-  image: "/placeholder-dragon.png",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: "1",
-  isActive: true,
-  categoryId: "fish",
-},
-{
-  id: "2",
-  headline: "Price of daggers rising",
-  content: "",
-  views: 13,
-  summary: "A recent upswing in the rogue guild's activity has led to a shortage of daggers across the realm. Prices have risen by as much as 50% in some areas.",
-  image: "/dragonplaceholder.png",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: "1",
-  isActive: true,
-  categoryId: "fish",
-}];
-/* NOTE - all sections should be lifted out of page and into seperate components*/
+/*  NOTE - all sections should be lifted out of page and into seperate components
+    NOTE2 - Right now it shows a fixed example article from tempPlaceholderArticle.tsx
+    NOTE3 - Right now it shows the three first articles from the database without any sorting or filtering other then "isActive"
+    NOTE4 - Right now it shows three example articles for the recommended for you section, this need to be changed
+    TODO: Decide on what mainArticle should be (set by admin? just latest article? most popular?)
+    TODO: Make a more intelligent choice of articles for Arcane Network section
+    TODO: Make a more intelligent choice of articles for Recommended for you section
+*/
 export default async function Home() {
-  const fetchedArticle = await getArticleById("apa123");
+  const latestArticlesData = await getLatestArticles({ limit: 3 });
+  const recommendedArticles = latestArticlesData.success ? latestArticlesData.articles : [];
+
+  const randomArticlesData = await getRandomArticles({ limit: 3 });
+  const randomForYouArticles = randomArticlesData.success ? randomArticlesData.articles : [];
+
+  const mainArticle = exampleArticle[0];
+
   return (
     <div className="">
       <main className="">
@@ -48,27 +34,35 @@ export default async function Home() {
         </section>
         {/* Main article section (editors choice? most popular? most recent?) */}
         <section>
-          <ArticleCard article={exampleArticle[0]} />
+          <ArticleCard article={mainArticle} />
         </section>
         {/* Trending articles section (most popular? recommended to user?) */}
         <section>
-          <h2 className="metal-plate font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8">
+          <h2 className="metal-plate font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8 rounded-none sm:rounded-lg">
             <span className="text-magic-glint">
               Articles from the Arcane Network
             </span>
           </h2>
-          <SmallArticleCard article={exampleArticle[1]} />
-          <SmallArticleCard article={exampleArticle[0]} />
-          <SmallArticleCard article={fetchedArticle?.article ?? undefined} />
+          <div className="flex flex-col gap-4">
+            {recommendedArticles?.map((article) => (
+              <SmallArticleCard key={article.id} article={article} />
+            ))}
+            {(!recommendedArticles || recommendedArticles.length === 0) && (
+              <p className="text-center text-white">No articles found in the arcane network.</p>
+            )}
+          </div>
         </section>
         {/* Additional articles section - to be fetched from database depending on... soemthing... recommendations? date published? */}
         <section>
-          <h2 className="metal-plate font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8">
+          <h2 className="metal-plate  font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8 rounded-none sm:rounded-lg">
             <span className="text-magic-glint">Recommended for you</span>
           </h2>
-          <ArticleCard article={exampleArticle[0]} />
-          <ArticleCard article={exampleArticle[1]} />
-          <ArticleCard article={exampleArticle[2]} />
+          {randomForYouArticles?.map((article) => (
+            <ArticleCard key={article.id} article={article} />
+          ))}
+          {(!randomForYouArticles || randomForYouArticles.length === 0) && (
+            <p className="text-center text-white">No recommended articles found.</p>
+          )}
         </section>
         {/* Newsletter subscription section */}
         <section className="flex flex-col items-center gap-2 bg-black text-white p-2">

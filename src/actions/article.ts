@@ -137,11 +137,25 @@ export async function deleteArticle(
   }
 }
 
-export async function getArticleById(articleId: string) {
+// Get Article by ID - should be ready for subscription check in the future
+// NOTE: Currently unused
+
+const getArticleByIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+export async function getArticleById(
+  input: z.infer<typeof getArticleByIdSchema>,
+) {
+  const parsed = getArticleByIdSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
   try {
     const article = await prisma.article.findFirst({
       where: {
-        id: articleId,
+        id: parsed.data.id,
         isActive: true,
       },
     });
@@ -153,3 +167,73 @@ export async function getArticleById(articleId: string) {
     };
   }
 }
+
+// Get Latest Articles (Defaults to 3)
+
+const getLatestArticlesSchema = z.object({
+  limit: z.number().int().min(1).max(20).default(3),
+});
+
+export async function getLatestArticles(
+  input: z.input<typeof getLatestArticlesSchema> = {},
+) {
+  const parsed = getLatestArticlesSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
+  try {
+    const articles = await prisma.article.findMany({
+      orderBy: { createdAt: "desc" },
+      take: parsed.data.limit,
+      where: { isActive: true },
+    });
+    return { success: true, articles };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// Get Random Articles. runs through the database to grab all id-s, then pick out a random selection equal to the set limit (default 3)
+// it then returns an array of the grabbed articles. 
+// NOTE: Not sure this has any real use in the finished product, but it's here for now for when we need completely random articles
+
+const getRandomArticlesSchema = z.object({
+  limit: z.number().int().min(1).max(20).default(3),
+});
+
+export async function getRandomArticles(
+  input: z.input<typeof getRandomArticlesSchema> = {},
+) {
+  const parsed = getRandomArticlesSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
+  try {
+    const ids = await prisma.article.findMany({
+      where: { isActive: true },
+      select: { id: true },
+    });
+
+    const shuffled = ids.sort(() => 0.5 - Math.random());
+    const selectedIds = shuffled
+      .slice(0, parsed.data.limit)
+      .map((item) => item.id);
+
+    const articles = await prisma.article.findMany({
+      where: { id: { in: selectedIds } },
+    });
+
+    return { success: true, articles };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
