@@ -1,7 +1,7 @@
 import CategoryArticleCard from "@/components/category/CategoryArticleCard";
-import prisma from "@/lib/prisma";
-import { getCategoryBySlug } from "@/types/categories";
-import { get } from "http";
+import { getCategoryArticles, getCategoryBySlug } from "@/types/categories";
+import page from "../../page";
+import Link from "next/link";
 
 const PAGE_SIZE = 5;
 
@@ -23,25 +23,9 @@ export default async function CategoryPage({
     return <div className="p-10">Category not found</div>;
   }
 
-  // Get articles
-  const articles = await prisma.article.findMany({
-    where: {
-      isActive: true,
-      category: {
-        name: {
-          equals: resolvedParams.slug,
-          mode: "insensitive",
-        },
-      },
-    },
-    include: {
-      user: {
-        select: { name: true },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-    skip: (page - 1) * PAGE_SIZE,
-    take: PAGE_SIZE,
+  const articles = await getCategoryArticles({
+    slug: resolvedParams.slug,
+    page: page,
   });
 
   return (
@@ -62,12 +46,12 @@ export default async function CategoryPage({
 
       {articles.length === PAGE_SIZE && (
         <div className="mt-16 text-center ">
-          <a
+          <Link
             href={`/category/${resolvedParams.slug}?page=${page + 1}`}
             className="inline-block border px-6 py-3 text-sm font-medium hover:bg-black hover:text-white transition"
           >
             Load More
-          </a>
+          </Link>
         </div>
       )}
     </div>
