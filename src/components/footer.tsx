@@ -1,10 +1,12 @@
+import { getAllCategories } from "@/types/categories";
 import Link from "next/link";
-import { categories } from "@/types/categories";
 
-export default function Footer() {
+export default async function Footer() {
+  const categories = await getAllCategories();
+
   return (
     <footer className="border-t bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Sections */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {/* Categories */}
@@ -14,15 +16,16 @@ export default function Footer() {
                 Sections
               </h1>
             </div>
+
             <nav>
               <ul className="mt-4 space-y-1">
-                {categories.map((item) => (
-                  <li key={item.name}>
+                {categories.map((category) => (
+                  <li key={category.id}>
                     <Link
-                      href={item.href}
+                      href={`/category/${category.name.toLowerCase()}`}
                       className="text-sm text-gray-700 hover:text-black"
                     >
-                      {item.name}
+                      {category.name}
                     </Link>
                   </li>
                 ))}
@@ -69,7 +72,8 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="mt-6 border-t border-gray-300 pt-4 text-center text-xs text-gray-600">
-          © {new Date().getFullYear()} All rights reserved.
+          © {new Date().getFullYear()} The Bibliomancer’s Brief. All rights
+          reserved.
         </div>
       </div>
     </footer>
