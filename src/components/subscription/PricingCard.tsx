@@ -1,47 +1,47 @@
-import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
 export default function PricingCard({
   title,
   price,
   features,
-  highlighted = false,
 }: {
   title: string;
   price: string;
   features: string[];
-  highlighted?: boolean;
 }) {
   return (
-    <div
-      className={cn(
-        "rounded-xl border p-8 bg-white text-left",
-        highlighted && "border-black shadow-lg scale-[1.03]",
-      )}
-    >
-      <h1 className="text-xl font-semibold mb-2">{title}</h1>
+    <div className="flex flex-col rounded-xl border bg-white p-6">
+      <h1 className="text-xl font-semibold mb-4">{title}</h1>
 
-      <p className="text-4xl font-bold mb-6">
-        ${price}
-        <span className="text-base font-normal text-gray-500"> / month</span>
-      </p>
+      <div className="mb-6">
+        <span className="text-4xl font-bold">${price}</span>
+        <span className="text-gray-500"> / month</span>
+      </div>
 
       <ul className="space-y-3 mb-8">
-        {features.map((feature) => (
-          <li key={feature} className="text-gray-700">
-            • {feature}
+        {features.map((item) => (
+          <li key={item} className="flex items-center gap-2 text-sm">
+            <Check className="h-4 w-4 text-green-600" />
+            {item}
           </li>
         ))}
       </ul>
 
       <button
-        className={cn(
-          "w-full py-3 rounded font-medium",
-          highlighted
-            ? "bg-black text-white"
-            : "border border-black hover:bg-black hover:text-white",
-        )}
+        className="
+          mt-6
+          w-full
+          rounded-lg
+          border
+          py-3
+          text-sm
+          font-medium
+         bg-yellow-500
+          transition-colors
+         hover:bg-orange-600
+        "
       >
-        Subscribe
+        Choose Plan
       </button>
     </div>
   );
