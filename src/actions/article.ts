@@ -159,6 +159,12 @@ export async function getArticleById(
         isActive: true,
       },
     });
+    if (!article) {
+      return {
+        success: false,
+        message: "Article not found",
+      };
+    }
     return { success: true, article };
   } catch (error) {
     return {
