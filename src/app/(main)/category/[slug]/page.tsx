@@ -16,7 +16,7 @@ export default async function CategoryPage({
   const resolvedSearchParams = await searchParams;
   const page = Number(resolvedSearchParams.page) || 1;
 
-  // // Get category
+  // Get category
   const category = await getCategoryBySlug(resolvedParams.slug);
 
   if (!category) {
