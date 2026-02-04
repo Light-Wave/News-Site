@@ -22,7 +22,7 @@ export default function FAQ() {
         <AccordionItem value="item-2">
           <AccordionTrigger>Do you offer a free trial?</AccordionTrigger>
           <AccordionContent>
-            We occasionally offer trials during special promotions.Stay tuned
+            We occasionally offer trials during special promotions. Stay tuned
             for updates.
           </AccordionContent>
         </AccordionItem>
