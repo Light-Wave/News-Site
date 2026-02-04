@@ -225,7 +225,7 @@ export async function getRandomArticles(
       .map((item) => item.id);
 
     const articles = await prisma.article.findMany({
-      where: { id: { in: selectedIds } },
+      where: { id: { in: selectedIds }, isActive: true },
     });
 
     return { success: true, articles };
