@@ -216,7 +216,7 @@ export async function getRandomArticles(
   try {
     const articles = await prisma.$queryRaw<any[]>`
       SELECT *
-      FROM "Article"
+      FROM "article"
       WHERE "isActive" = true
       ORDER BY random()
       LIMIT ${parsed.data.limit};
