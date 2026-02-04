@@ -31,7 +31,7 @@ export default function SmallArticleCard({ article }: SmallArticleCardProps) {
             </p>
           </div>
           <div className="w-full flex justify-end mt-2">
-            <Button variant="ghost" size="sm" className="text-xs font-cinzel hover:bg-primary/5">
+            <Button type="button" variant="ghost" size="sm" className="text-xs font-cinzel hover:bg-primary/5">
               Read Scroll
             </Button>
           </div>
