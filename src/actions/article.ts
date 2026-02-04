@@ -1,9 +1,10 @@
 "use server";
 
+import { Article } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
-import z from "zod";
+import { z } from "zod";
 
 // Create Article
 
@@ -153,12 +154,7 @@ export async function getArticleById(
   }
 
   try {
-    const article = await prisma.article.findUnique({
-      where: {
-        id: parsed.data.id,
-        isActive: true,
-      },
-    });
+    const article = await prisma.article.findFirst({ where: { id: parsed.data.id, isActive: true } })
     return { success: true, article };
   } catch (error) {
     return {
@@ -197,10 +193,10 @@ export async function getLatestArticles(
   }
 }
 
-// Get Random Articles. runs through the database to grab all id-s, then pick out a random selection equal to the set limit (default 3)
+// Get Random Articles. grabs a random selection equal to the set limit (default 3)
 // it then returns an array of the grabbed articles. 
 // NOTE: Not sure this has any real use in the finished product, but it's here for now for when we need completely random articles
-
+// NOTE2: This solution with queryRaw was suggested by copilot, but I'm pretty sure it's not the best way to do it.
 const getRandomArticlesSchema = z.object({
   limit: z.number().int().min(1).max(20).default(3),
 });
@@ -214,7 +210,7 @@ export async function getRandomArticles(
   }
 
   try {
-    const articles = await prisma.$queryRaw<any[]>`
+    const articles = await prisma.$queryRaw<Article[]>`
       SELECT *
       FROM "article"
       WHERE "isActive" = true

@@ -5,7 +5,7 @@ import { getLatestArticles, getRandomArticles } from "@/actions/article";
 import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 
 
-/*  NOTE - all sections should be lifted out of page and into seperate components
+/*  NOTE - all sections should be lifted out of page and into separate components
     NOTE2 - Right now the main article shows a fixed example article from tempPlaceholderArticle.tsx
     NOTE3 - Right now the Arcane Network section shows the latest active articles from the database (ordered by createdAt desc)
     NOTE4 - Right now the Recommended for you section shows random active articles from the database via getRandomArticles
@@ -18,7 +18,7 @@ export default async function Home() {
     getLatestArticles({ limit: 3 }),
     getRandomArticles({ limit: 3 }),
   ]);
-  const recommendedArticles = latestArticlesData.success ? latestArticlesData.articles : [];
+  const tempLatestArticles = latestArticlesData.success ? latestArticlesData.articles : [];
   const randomForYouArticles = randomArticlesData.success ? randomArticlesData.articles : [];
 
   const mainArticle = exampleArticle[0];
@@ -33,10 +33,12 @@ export default async function Home() {
             Wizard council warns of dragon season approaching.
           </p>
         </section>
+
         {/* Main article section (editors choice? most popular? most recent?) */}
         <section>
           <ArticleCard article={mainArticle} />
         </section>
+
         {/* Trending articles section (most popular? recommended to user?) */}
         <section>
           <h2 className="metal-plate font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8 rounded-none sm:rounded-lg">
@@ -45,15 +47,16 @@ export default async function Home() {
             </span>
           </h2>
           <div className="flex flex-col gap-4">
-            {recommendedArticles?.map((article) => (
+            {tempLatestArticles?.map((article) => (
               <SmallArticleCard key={article.id} article={article} />
             ))}
-            {(!recommendedArticles || recommendedArticles.length === 0) && (
+            {(!tempLatestArticles || tempLatestArticles.length === 0) && (
               <p className="text-center text-foreground">No articles found in the arcane network.</p>
             )}
           </div>
         </section>
-        {/* Additional articles section - to be fetched from database depending on... soemthing... recommendations? date published? */}
+
+        {/* Additional articles section - to be fetched from database depending on... something... recommendations? date published? */}
         <section>
           <h2 className="metal-plate  font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8 rounded-none sm:rounded-lg">
             <span className="text-magic-glint">Recommended for you</span>
@@ -69,6 +72,7 @@ export default async function Home() {
             <p className="text-center text-foreground">No recommended articles found.</p>
           )}
         </section>
+
         {/* Newsletter subscription section */}
         <section className="flex flex-col items-center gap-2 bg-black text-white p-2">
           <h2 className="font-bold gap-0 text-center">SUBSCRIBE!</h2>
