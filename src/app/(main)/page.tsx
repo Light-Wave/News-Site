@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import ArticleCard from "@/components/layout/articleCard";
 import SmallArticleCard from "@/components/layout/smallArticleCard";
-import { getArticleById, getLatestArticles, getRandomArticles } from "@/actions/article";
+import { getLatestArticles, getRandomArticles } from "@/actions/article";
 import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 
 
