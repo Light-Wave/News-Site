@@ -6,9 +6,9 @@ import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 
 
 /*  NOTE - all sections should be lifted out of page and into seperate components
-    NOTE2 - Right now it shows a fixed example article from tempPlaceholderArticle.tsx
-    NOTE3 - Right now it shows the three first articles from the database without any sorting or filtering other then "isActive"
-    NOTE4 - Right now it shows three example articles for the recommended for you section, this need to be changed
+    NOTE2 - Right now the main article shows a fixed example article from tempPlaceholderArticle.tsx
+    NOTE3 - Right now the Arcane Network section shows the latest active articles from the database (ordered by createdAt desc)
+    NOTE4 - Right now the Recommended for you section shows random active articles from the database via getRandomArticles
     TODO: Decide on what mainArticle should be (set by admin? just latest article? most popular?)
     TODO: Make a more intelligent choice of articles for Arcane Network section
     TODO: Make a more intelligent choice of articles for Recommended for you section
