@@ -8,7 +8,7 @@ import {
 export default function FAQ() {
   return (
     <div className="max-w-3xl mx-auto mt-20">
-      <h2 className="text-2xl font-serif font-bold mb-6 text-center">FAQ</h2>
+      <h1 className="text-2xl font-serif font-bold mb-6 text-center">FAQ</h1>
 
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1">

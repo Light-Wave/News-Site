@@ -1,14 +1,21 @@
 import { Check } from "lucide-react";
+import { Button } from "../ui/button";
 
 export default function PricingCard({
   title,
-  price,
+  priceMonthly,
+  priceYearly,
+  yearly,
   features,
 }: {
   title: string;
-  price: string;
+  priceMonthly: number;
+  priceYearly: number;
+  yearly: boolean;
   features: string[];
 }) {
+  const price = yearly ? priceYearly : priceMonthly;
+
   return (
     <div className="flex flex-col rounded-xl border bg-white p-6">
       <h1 className="text-xl font-semibold mb-4">{title}</h1>
@@ -27,7 +34,7 @@ export default function PricingCard({
         ))}
       </ul>
 
-      <button
+      <Button
         className="
           mt-6
           w-full
@@ -42,7 +49,7 @@ export default function PricingCard({
         "
       >
         Choose Plan
-      </button>
+      </Button>
     </div>
   );
 }
