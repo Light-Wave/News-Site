@@ -58,7 +58,11 @@ export default async function Home() {
             <span className="text-magic-glint">Recommended for you</span>
           </h2>
           {randomForYouArticles?.map((article) => (
-            <ArticleCard key={article.id} article={article} />
+            <ArticleCard
+              key={article.id}
+              article={article}
+              authorName="Unknown author"
+            />
           ))}
           {(!randomForYouArticles || randomForYouArticles.length === 0) && (
             <p className="text-center text-white">No recommended articles found.</p>
