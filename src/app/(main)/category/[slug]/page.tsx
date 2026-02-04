@@ -45,7 +45,7 @@ export default async function CategoryPage({
       )}
 
       {articles.length === PAGE_SIZE && (
-        <div className="mt-16 text-center ">
+        <div className="mt-16 text-center">
           <Link
             href={`/category/${resolvedParams.slug}?page=${page + 1}`}
             className="inline-block border px-6 py-3 text-sm font-medium hover:bg-black hover:text-white transition"
