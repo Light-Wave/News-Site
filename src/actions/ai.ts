@@ -4,25 +4,25 @@ import { google } from "@ai-sdk/google";
 import { generateImage, generateText, Output } from "ai";
 import z from "zod";
 import { createArticle } from "./article";
+import { getCategoryIdsByNames } from "./category";
 import { getAiInstructions, getUserIdByEmail } from "./user";
-import { getCategoryIdByName, getCategoryIdsByNames } from "./category";
 
 const AiArticleSchema = z.object({
   headline: z
     .string()
     .min(2, "Headline must be at least 2 characters")
     .max(100, "Headline can be at most 100 characters")
-    .describe("Headline of the article."),
-  content: z
+    .describe("Headline to the article. No more than 100 characters"),
+    content: z
     .string()
     .min(10, "Content must be at least 10 characters")
-    .max(10000, "Content can be at most 10000 characters")
-    .describe("Content of the article."),
-  summary: z
+    .max(10000, "Content can be at most 1000 characters")
+    .describe("Content to the article. No more than 9000 characters"),
+    summary: z
     .string()
     .min(10, "Summary must be at least 10 characters")
     .max(500, "Summary can be at most 500 characters")
-    .describe("Summarize the content of the article."),
+    .describe("Summary to the article. No more than 400 characters"),
 });
 
 const AiImageSchema = AiArticleSchema.extend({
@@ -95,41 +95,15 @@ export async function generateArticle(
     aiInstructions.aiInstructions.trim().length > 0
       ? aiInstructions.aiInstructions
       : "You are an AI assistant that lives in a fantasy world writing news articles for 'The Bibliomancer's Brief'";
-  let output;
-  try {
-    output = await generateText({
-      system: systemInstructions,
-      model: google("gemini-2.5-flash"),
-      prompt,
-      output: Output.object({
-        schema: AiArticleSchema,
-      }),
-    });
-  } catch (error) {
-    // Log the underlying error for debugging/observability
-    console.error("Error generating text with AI API:", error);
-    let errorMessage = "Error talking with API";
-    if (error instanceof Error && error.message) {
-      const msg = error.message.toLowerCase();
-      if (msg.includes("rate limit")) {
-        errorMessage = "AI API rate limit exceeded. Please try again later.";
-      } else if (
-        msg.includes("unauthorized") ||
-        msg.includes("forbidden") ||
-        msg.includes("authentication")
-      ) {
-        errorMessage =
-          "Authentication error while communicating with the AI API.";
-      } else if (msg.includes("network") || msg.includes("timeout")) {
-        errorMessage =
-          "Network error while communicating with the AI API. Please check your connection and try again.";
-      }
-    }
-    return {
-      success: false,
-      message: errorMessage,
-    };
-  }
+
+  const { output } = await generateText({
+    system: systemInstructions,
+    model: google("gemini-2.5-flash"), // Remember to add your GOOGLE_GENERATIVE_AI_API_KEY in .env
+    prompt,
+    output: Output.object({
+      schema: AiArticleSchema,
+    }),
+  });
 
   const validOutput = validateOutput(output);
 
@@ -150,7 +124,6 @@ export async function generateArticle(
   //     message: validImage.error.message,
   //   };
   // }
-
   try {
     const createResult = await createArticle(
       PersistedArticleSchema.parse({

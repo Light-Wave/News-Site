@@ -89,11 +89,11 @@ export async function getUserIdByEmail(
 }
 
 export async function getAiInstructions(
-  id: string,
+  writerId: string,
 ): Promise<{ aiInstructions: string } | null> {
   return await prisma.aiWriter.findUnique({
     where: {
-      id,
+      id: writerId,
     },
     select: {
       aiInstructions: true,
