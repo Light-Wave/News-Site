@@ -14,10 +14,11 @@ import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
     TODO: Make a more intelligent choice of articles for Recommended for you section
 */
 export default async function Home() {
-  const latestArticlesData = await getLatestArticles({ limit: 3 });
+  const [latestArticlesData, randomArticlesData] = await Promise.all([
+    getLatestArticles({ limit: 3 }),
+    getRandomArticles({ limit: 3 }),
+  ]);
   const recommendedArticles = latestArticlesData.success ? latestArticlesData.articles : [];
-
-  const randomArticlesData = await getRandomArticles({ limit: 3 });
   const randomForYouArticles = randomArticlesData.success ? randomArticlesData.articles : [];
 
   const mainArticle = exampleArticle[0];
