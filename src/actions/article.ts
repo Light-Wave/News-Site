@@ -159,13 +159,13 @@ export async function getArticleById(
         isActive: true,
       },
     });
-    if (!article) {
-      return {
-        success: false,
-        message: "Article not found",
-      };
-    }
-    return { success: true, article };
+    const article = await prisma.article.findUnique({
+      where: {
+        id: parsed.data.id,
+      },
+    });
+    const activeArticle = article && article.isActive ? article : null;
+    return { success: true, article: activeArticle };
   } catch (error) {
     return {
       success: false,
