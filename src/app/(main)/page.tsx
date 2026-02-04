@@ -1,9 +1,28 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import ArticleCard from "@/components/layout/articleCard";
+import SmallArticleCard from "@/components/layout/smallArticleCard";
+import { getLatestArticles, getRandomArticles } from "@/actions/article";
+import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 
-/* NOTE - all sections should be lifted out of page and into seperate components*/
-export default function Home() {
+
+/*  NOTE - all sections should be lifted out of page and into separate components
+    NOTE2 - Right now the main article shows a fixed example article from tempPlaceholderArticle.tsx
+    NOTE3 - Right now the Arcane Network section shows the latest active articles from the database (ordered by createdAt desc)
+    NOTE4 - Right now the Recommended for you section shows random active articles from the database via getRandomArticles
+    TODO: Decide on what mainArticle should be (set by admin? just latest article? most popular?)
+    TODO: Make a more intelligent choice of articles for Arcane Network section
+    TODO: Make a more intelligent choice of articles for Recommended for you section
+*/
+export default async function Home() {
+  const [latestArticlesData, randomArticlesData] = await Promise.all([
+    getLatestArticles({ limit: 3 }),
+    getRandomArticles({ limit: 3 }),
+  ]);
+  const tempLatestArticles = latestArticlesData.success ? latestArticlesData.articles : [];
+  const randomForYouArticles = randomArticlesData.success ? randomArticlesData.articles : [];
+
+  const mainArticle = exampleArticle[0];
+
   return (
     <div className="">
       <main className="">
@@ -14,120 +33,46 @@ export default function Home() {
             Wizard council warns of dragon season approaching.
           </p>
         </section>
+
         {/* Main article section (editors choice? most popular? most recent?) */}
         <section>
-          <ArticleCard />
+          <ArticleCard article={mainArticle} />
         </section>
+
         {/* Trending articles section (most popular? recommended to user?) */}
         <section>
-          <h2 className="font-bold gap-0 text-center">Hot and trending</h2>
-          <div className="p-2">
-            <h2 className="font-bold ">Article Title</h2>
-            <p className="text-gray-600">
-              Article super short version goes here. Lorem ipsum dolor, sit amet
-            </p>
-            <div className="w-full flex justify-end">
-              <Button className="p-2">Full article</Button>
-            </div>
-          </div>
-          <div className="p-2">
-            <h2 className="font-bold ">Article Title</h2>
-            <p className="text-gray-600">
-              Article super short version goes here. Lorem ipsum dolor, sit amet
-            </p>
-            <div className="w-full flex justify-end">
-              <Button className="p-2">Full article</Button>
-            </div>
-          </div>
-          <div className="p-2">
-            <h2 className="font-bold ">Article Title</h2>
-            <p className="text-gray-600">
-              Article super short version goes here. Lorem ipsum dolor, sit amet
-            </p>
-            <div className="w-full flex justify-end">
-              <Button className="p-2">Full article</Button>
-            </div>
+          <h2 className="metal-plate font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8 rounded-none sm:rounded-lg">
+            <span className="text-magic-glint">
+              Articles from the Arcane Network
+            </span>
+          </h2>
+          <div className="flex flex-col gap-4">
+            {tempLatestArticles?.map((article) => (
+              <SmallArticleCard key={article.id} article={article} />
+            ))}
+            {(!tempLatestArticles || tempLatestArticles.length === 0) && (
+              <p className="text-center text-foreground">No articles found in the arcane network.</p>
+            )}
           </div>
         </section>
-        {/* Additional articles section - to be fetched from database depending on... soemthing... recommendations? date published? */}
+
+        {/* Additional articles section - to be fetched from database depending on... something... recommendations? date published? */}
         <section>
-          <h2 className="font-bold gap-0 text-center">Recommended for you</h2>
-          <Card>
-            <div className="bg-gray-200 h-50">
-              <p>image here</p>
-            </div>
-            <div className="flex p-2 justify-between items-center gap-4 text-sm text-gray-600">
-              <span>Author</span>
-              <span>•</span>
-              <span>Posted date</span>
-              <span>•</span>
-              <span>5 min read</span>
-            </div>
-            <CardContent>
-              <h2 className="text-xl font-bold text-center">Article Title</h2>
-              <p className="text-gray-600">
-                Article short version goes here. Lorem ipsum dolor, sit amet
-                consectetur adipisicing elit. Laborum vero quis asperiores
-                labore impedit, tempore, voluptates, ipsam accusantium
-                consequuntur facere beatae neque sapiente officia aliquid.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <p className="">social links ❌👍🔗</p>
-              <Button>Full article</Button>
-            </CardFooter>
-          </Card>
-          <Card>
-            <div className="bg-gray-200 h-50">
-              <p>image here</p>
-            </div>
-            <div className="flex p-2 justify-between items-center gap-4 text-sm text-gray-600">
-              <span>Author</span>
-              <span>•</span>
-              <span>Posted date</span>
-              <span>•</span>
-              <span>5 min read</span>
-            </div>
-            <CardContent>
-              <h2 className="text-xl font-bold text-center">Article Title</h2>
-              <p className="text-gray-600">
-                Article short version goes here. Lorem ipsum dolor, sit amet
-                consectetur adipisicing elit. Laborum vero quis asperiores
-                labore impedit, tempore, voluptates, ipsam accusantium
-                consequuntur facere beatae neque sapiente officia aliquid.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <p className="">social links ❌👍🔗</p>
-              <Button>Full article</Button>
-            </CardFooter>
-          </Card>
-          <Card>
-            <div className="bg-gray-200 h-50">
-              <p>image here</p>
-            </div>
-            <div className="flex p-2 sm:justify-between items-center gap-4 text-sm text-gray-600">
-              <span>Author</span>
-              <span>•</span>
-              <span>Posted date</span>
-              <span>•</span>
-              <span>5 min read</span>
-            </div>
-            <CardContent>
-              <h2 className="text-xl font-bold text-center">Article Title</h2>
-              <p className="text-gray-600">
-                Article short version goes here. Lorem ipsum dolor, sit amet
-                consectetur adipisicing elit. Laborum vero quis asperiores
-                labore impedit, tempore, voluptates, ipsam accusantium
-                consequuntur facere beatae neque sapiente officia aliquid.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <p className="">social links ❌👍🔗</p>
-              <Button>Full article</Button>
-            </CardFooter>
-          </Card>
+          <h2 className="metal-plate  font-bold gap-0 text-center text-3xl py-4 w-fit mx-auto px-12 my-8 rounded-none sm:rounded-lg">
+            <span className="text-magic-glint">Recommended for you</span>
+          </h2>
+          {randomForYouArticles?.map((article) => (
+            <ArticleCard
+              key={article.id}
+              article={article}
+              authorName="Unknown author"
+            />
+          ))}
+          {(!randomForYouArticles || randomForYouArticles.length === 0) && (
+            <p className="text-center text-foreground">No recommended articles found.</p>
+          )}
         </section>
+
         {/* Newsletter subscription section */}
         <section className="flex flex-col items-center gap-2 bg-black text-white p-2">
           <h2 className="font-bold gap-0 text-center">SUBSCRIBE!</h2>

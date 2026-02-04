@@ -160,6 +160,7 @@
       0 10px 25px -5px rgb(0 0 0 / 0.1),
       inset 0 0 80px oklch(0.85 0.1 75 / 0.3);
     border: 1px solid oklch(0.8 0.1 70 / 0.4);
+    border-radius: 0px;
   }
 
   /* Gives the icon a shine animation when hovered over */
@@ -184,5 +185,46 @@
     50% {
       transform: translateY(-5px);
     }
+  }
+
+  @keyframes magic-shimmer {
+    0% {
+      background-position: -200% center;
+    }
+
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  /* CSS Class for background "metal" plate, currently in use on the "Articles from the Arcane Network" section */
+  .metal-plate {
+    @apply relative rounded-lg border-2 border-neutral-800;
+    background: linear-gradient(180deg,
+        #525252 0%,
+        #404040 10%,
+        #262626 50%,
+        #404040 90%,
+        #262626 100%);
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+
+  /* CSS Class to give text a glint effect. Only tested on a header with the metal-plate class. Currently in use on section header for smallArticle on landing page*/
+  .text-magic-glint {
+    background: linear-gradient(110deg,
+        #b8860b 20%,
+        #eec900 40%,
+        #ffffff 50%,
+        #eec900 60%,
+        #b8860b 80%);
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 0px rgba(0, 0, 0, 0.8));
+    animation: magic-shimmer 5s linear infinite;
   }
 }
