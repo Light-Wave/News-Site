@@ -19,6 +19,7 @@ export default function SmallArticleCard({ article }: SmallArticleCardProps) {
             src={article?.image || '/placeholder-dragon.png'}
             alt={title}
             fill
+            sizes="(min-width: 1024px) 20vw, (min-width: 640px) 25vw, 40vw"
             className="object-cover"
           />
         </div>
