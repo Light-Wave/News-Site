@@ -3,18 +3,16 @@ import { Button } from "../ui/button";
 
 export default function PricingCard({
   title,
-  priceMonthly,
-  priceYearly,
+  monthlyPrice,
   yearly,
   features,
 }: {
   title: string;
-  priceMonthly: number;
-  priceYearly: number;
+  monthlyPrice: number;
   yearly: boolean;
   features: string[];
 }) {
-  const price = yearly ? priceYearly : priceMonthly;
+  const price = yearly ? calculateYearlyPrice(monthlyPrice) : monthlyPrice;
 
   return (
     <div className="flex flex-col rounded-xl border bg-white p-6">
@@ -52,4 +50,7 @@ export default function PricingCard({
       </Button>
     </div>
   );
+}
+function calculateYearlyPrice(monthlyPrice: number) {
+  return monthlyPrice * 12 * 0.8; // 20% discount
 }

@@ -23,8 +23,7 @@ export default function SubscribePage() {
       <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
         <PricingCard
           title="Basic"
-          priceMonthly={0}
-          priceYearly={0}
+          monthlyPrice={0}
           yearly={yearly}
           features={[
             "Essential Features",
@@ -36,8 +35,7 @@ export default function SubscribePage() {
 
         <PricingCard
           title="Pro"
-          priceMonthly={9}
-          priceYearly={86} // 20% off example
+          monthlyPrice={9}
           yearly={yearly}
           features={[
             "Everything in Basic",
@@ -49,8 +47,7 @@ export default function SubscribePage() {
 
         <PricingCard
           title="Premium"
-          priceMonthly={19}
-          priceYearly={182}
+          monthlyPrice={19}
           yearly={yearly}
           features={[
             "Everything in Pro",
