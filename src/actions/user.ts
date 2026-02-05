@@ -3,6 +3,20 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
+import z from "zod";
+import { getCategoryIdsByNames } from "./category";
+
+const createAiWriterSchema = z.object({
+  email: z.string().email(),
+  aiInstructions: z
+    .string()
+    .trim()
+    .min(10, "Instructions must be at least 10 characters")
+    .max(5000, "Instructions too long"),
+  preferredCategoryName: z
+    .array(z.string().trim().min(1))
+    .min(1, "At least one category is required"),
+});
 
 export async function createAiWriter(
   email: string,
@@ -21,42 +35,58 @@ export async function createAiWriter(
   //   if (!success) {
   //     return { success: false, message: "Unauthorized" };
   //   }
+  const parsed = createAiWriterSchema.safeParse({
+    email,
+    aiInstructions,
+    preferredCategoryName,
+  });
+
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
+  const {
+    email: safeEmail,
+    aiInstructions: safeInstructions,
+    preferredCategoryName: safeCategories,
+  } = parsed.data;
+
   const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-    },
+    where: { email: safeEmail },
+    select: { id: true },
   });
 
   if (!user) {
+    return { success: false, message: "Couldn't find user" };
+  }
+
+  const { found, notFound } = await getCategoryIdsByNames(safeCategories);
+
+  if (notFound.length) {
     return {
       success: false,
-      message: "Couldn't find user",
+      message: `Unknown categories: ${notFound.join(", ")}`,
     };
   }
 
-  const userId = user.id;
   try {
     await prisma.$transaction([
       prisma.user.update({
-        where: { id: userId },
+        where: { id: user.id },
         data: { role: "writer" },
       }),
       prisma.aiWriter.create({
         data: {
-          userId,
-          aiInstructions,
+          userId: user.id,
+          aiInstructions: safeInstructions,
           preferredCategories: {
-            connect: preferredCategoryName.map((name) => ({ name })),
+            connect: found.map((c) => ({ id: c.id })),
           },
         },
       }),
     ]);
-    return {
-      success: true,
-    };
+
+    return { success: true };
   } catch (error) {
     console.error("Failed to create AI writer", error);
     return {
@@ -82,17 +112,27 @@ export async function createTestUser() {
 export async function getUserIdByEmail(
   email: string,
 ): Promise<{ id: string } | null> {
-  return await prisma.user.findUnique({
-    where: { email },
-    select: { id: true },
-  });
+  try {
+    return await prisma.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+  } catch (error) {
+    console.error("Failed to get User Id by Email", error);
+    return null;
+  }
 }
 
 export async function getAiInstructionsByUserId(
   userId: string,
 ): Promise<{ aiInstructions: string } | null> {
-  return await prisma.aiWriter.findUnique({
-    where: { userId },
-    select: { aiInstructions: true },
-  });
+  try {
+    return await prisma.aiWriter.findUnique({
+      where: { userId },
+      select: { aiInstructions: true },
+    });
+  } catch (error) {
+    console.error("Failed to get AI instructions by userId", error);
+    return null;
+  }
 }

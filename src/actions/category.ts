@@ -133,14 +133,18 @@ export async function getCategoryIdByName(
   if (!trimmedName) {
     return null;
   }
-  return await prisma.category.findUnique({
-    where: {
-      name: trimmedName,
-    },
-    select: {
-      id: true,
-    },
-  });
+  try {
+    return await prisma.category.findUnique({
+      where: {
+        name: trimmedName,
+      },
+      select: {
+        id: true,
+      },
+    });
+  } catch (error) {
+    return null;
+  }
 }
 
 export async function getCategoryIdsByNames(names: string[]): Promise<{
@@ -153,20 +157,27 @@ export async function getCategoryIdsByNames(names: string[]): Promise<{
     return { found: [], notFound: [] };
   }
 
-  const categories = await prisma.category.findMany({
-    where: {
-      name: { in: trimmed },
-    },
-    select: {
-      id: true,
-      name: true,
-    },
-  });
+  try {
+    const categories = await prisma.category.findMany({
+      where: {
+        name: { in: trimmed },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
 
-  const foundNames = new Set(categories.map((c) => c.name));
+    const foundNames = new Set(categories.map((c) => c.name));
 
-  return {
-    found: categories,
-    notFound: trimmed.filter((n) => !foundNames.has(n)),
-  };
+    return {
+      found: categories,
+      notFound: trimmed.filter((n) => !foundNames.has(n)),
+    };
+  } catch {
+    return {
+      found: [],
+      notFound: trimmed,
+    };
+  }
 }

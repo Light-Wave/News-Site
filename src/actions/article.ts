@@ -11,7 +11,7 @@ const createArticleSchema = z.object({
   headline: z
     .string()
     .min(2, "Headline must be at least 2 characters")
-    .max(100, "Headline can be at most 100 characters"),
+    .max(200, "Headline can be at most 200 characters"),
   content: z
     .string()
     .min(10, "Content must be at least 10 characters")
@@ -19,7 +19,7 @@ const createArticleSchema = z.object({
   summary: z
     .string()
     .min(10, "Summary must be at least 10 characters")
-    .max(500, "Summary can be at most 500 characters"),
+    .max(800, "Summary can be at most 800 characters"),
   image: z.string().min(1, "Image url must be at least 1 character"),
   categoryIds: z.array(z.string()).min(1, "Article needs a category"),
   userId: z.string().min(1, "Article needs a writer"),

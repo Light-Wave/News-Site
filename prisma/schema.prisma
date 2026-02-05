@@ -124,7 +124,7 @@ model EditorsChoice {
 model AiWriter {
   id     String @id @default(uuid())
   userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   aiInstructions      String
   preferredCategories Category[]

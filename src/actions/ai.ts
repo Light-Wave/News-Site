@@ -7,27 +7,33 @@ import { createArticle } from "./article";
 import { getCategoryIdsByNames } from "./category";
 import { getAiInstructionsByUserId, getUserIdByEmail } from "./user";
 
+const HEADLINE_MAX = 200;
+const CONTENT_MAX = 10000;
+const SUMMARY_MAX = 800;
+
 const AiArticleSchema = z.object({
   headline: z
     .string()
     .trim()
     .min(2, "Headline must be at least 2 characters")
-    .max(200, "Headline can be at most 200 characters")
-    .transform((s) => s.slice(0, 100))
-    .describe("Headline to the article. Can be at most 100 characters"),
+    .max(HEADLINE_MAX, "Headline can be at most 200 characters")
+    .transform((s) => s.slice(0, HEADLINE_MAX))
+    .pipe(z.string().min(2).max(HEADLINE_MAX))
+    .describe("Headline to the article. Can be at most 200 characters"),
   content: z
     .string()
     .trim()
     .min(10, "Content must be at least 10 characters")
-    .max(10000, "Content can be at most 10000 characters")
+    .max(CONTENT_MAX, "Content can be at most 10000 characters")
     .describe("Content to the article. Can be at most 10000 characters"),
   summary: z
     .string()
     .trim()
     .min(10, "Summary must be at least 10 characters")
-    .max(800, "Summary can be at most 800 characters")
-    .transform((s) => s.slice(0, 400))
-    .describe("Summary to the article. Can be at most 400 characters"),
+    .max(SUMMARY_MAX, "Summary can be at most 800 characters")
+    .transform((s) => s.slice(0, SUMMARY_MAX))
+    .pipe(z.string().min(10).max(SUMMARY_MAX))
+    .describe("Summary to the article. Can be at most 800 characters"),
 });
 
 const AiImageSchema = AiArticleSchema.extend({
@@ -76,14 +82,13 @@ export async function generateArticle(
 
   const { found, notFound } = await getCategoryIdsByNames(categoryNames);
   const categoryIds = found.map((c) => c.id);
-  const notFoundCategories = notFound;
 
   if (categoryIds.length === 0) {
     return {
       success: false,
       message:
-        notFoundCategories.length > 0
-          ? `No matching categories found for: ${notFoundCategories.join(", ")}`
+        notFound.length > 0
+          ? `No matching categories found for: ${notFound.join(", ")}`
           : "At least one valid category is required to generate an article",
     };
   }
@@ -100,14 +105,26 @@ export async function generateArticle(
     ? aiInstructions.aiInstructions
     : DEFAULT_INSTRUCTIONS;
 
-  const { output } = await generateText({
-    system: systemInstructions,
-    model: google("gemini-2.5-flash"), // Remember to add your GOOGLE_GENERATIVE_AI_API_KEY in .env
-    prompt,
-    output: Output.object({
-      schema: AiArticleSchema,
-    }),
-  });
+  let output: unknown;
+  try {
+    const result = await generateText({
+      system: systemInstructions,
+      model: google("gemini-2.5-flash"), // Remember to add your GOOGLE_GENERATIVE_AI_API_KEY in .env
+      prompt,
+      output: Output.object({
+        schema: AiArticleSchema,
+      }),
+    });
+    output = result.output;
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while generating the article",
+    };
+  }
 
   const validOutput = validateOutput(output);
 
@@ -133,19 +150,19 @@ export async function generateArticle(
       PersistedArticleSchema.parse({
         ...validOutput.data,
         image: "Implement real image once we can generate with AI",
-        categoryIds: categoryIds,
+        categoryIds,
         userId: writerId.id,
       }),
     );
 
-    const { success, error: createError } = createResult as {
+    const { success, message: createError } = createResult as {
       success?: boolean;
-      error?: unknown;
+      message?: unknown;
     };
     if (success === false) {
       return {
         success: false,
-        error:
+        message:
           typeof createError === "string"
             ? createError
             : "Failed to create article",
