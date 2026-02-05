@@ -15,25 +15,25 @@ const AiArticleSchema = z.object({
   headline: z
     .string()
     .trim()
-    .min(2, "Headline must be at least 2 characters")
-    .max(HEADLINE_MAX, "Headline can be at most 200 characters")
+    .min(2, `Headline must be at least 2 characters`)
+    .max(HEADLINE_MAX, `Headline can be at most ${HEADLINE_MAX} characters`)
     .transform((s) => s.slice(0, HEADLINE_MAX))
     .pipe(z.string().min(2).max(HEADLINE_MAX))
-    .describe("Headline to the article. Can be at most 200 characters"),
+    .describe(`Headline to the article. Can be at most ${HEADLINE_MAX} characters`),
   content: z
     .string()
     .trim()
-    .min(10, "Content must be at least 10 characters")
-    .max(CONTENT_MAX, "Content can be at most 10000 characters")
-    .describe("Content to the article. Can be at most 10000 characters"),
+    .min(10, `Content must be at least 10 characters`)
+    .max(CONTENT_MAX, `Content can be at most ${CONTENT_MAX} characters`)
+    .describe(`Content to the article. Can be at most ${CONTENT_MAX} characters`),
   summary: z
     .string()
     .trim()
-    .min(10, "Summary must be at least 10 characters")
-    .max(SUMMARY_MAX, "Summary can be at most 800 characters")
+    .min(10, `Summary must be at least 10 characters`)
+    .max(SUMMARY_MAX, `Summary can be at most ${SUMMARY_MAX} characters`)
     .transform((s) => s.slice(0, SUMMARY_MAX))
     .pipe(z.string().min(10).max(SUMMARY_MAX))
-    .describe("Summary to the article. Can be at most 800 characters"),
+    .describe(`Summary to the article. Can be at most ${SUMMARY_MAX} characters`),
 });
 
 const AiImageSchema = AiArticleSchema.extend({
