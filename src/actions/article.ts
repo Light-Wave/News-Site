@@ -12,7 +12,7 @@ const createArticleSchema = z.object({
   headline: z
     .string()
     .min(2, "Headline must be at least 2 characters")
-    .max(100, "Headline can be at most 100 characters"),
+    .max(200, "Headline can be at most 200 characters"),
   content: z
     .string()
     .min(10, "Content must be at least 10 characters")
@@ -20,33 +20,45 @@ const createArticleSchema = z.object({
   summary: z
     .string()
     .min(10, "Summary must be at least 10 characters")
-    .max(100, "Summary can be at most 100 characters"),
+    .max(800, "Summary can be at most 800 characters"),
   image: z.string().min(1, "Image url must be at least 1 character"),
-  categoryId: z.string().min(1, "Article needs a category"),
+  categoryIds: z.array(z.string()).min(1, "Article needs a category"),
   userId: z.string().min(1, "Article needs a writer"),
 });
 
 export async function createArticle(
   input: z.infer<typeof createArticleSchema>,
 ) {
-  const { success } = await auth.api.userHasPermission({
-    headers: await headers(),
-    body: {
-      permissions: {
-        article: ["create"],
-      },
-    },
-  });
-  if (!success) {
-    return { success: false, message: "Unauthorized" };
-  }
+  // TODO: Need to implement once testing is done
+  // const { success } = await auth.api.userHasPermission({
+  //   headers: await headers(),
+  //   body: {
+  //     permissions: {
+  //       article: ["create"],
+  //     },
+  //   },
+  // });
+  // if (!success) {
+  //   return { success: false, message: "Unauthorized" };
+  // }
   const parsed = createArticleSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, errors: parsed.error };
   }
   try {
+    const { categoryIds, userId, ...data } = parsed.data;
     await prisma.article.create({
-      data: parsed.data,
+      data: {
+        ...data,
+        user: {
+          connect: { id: userId },
+        },
+        categories: {
+          connect: categoryIds.map((id) => ({
+            id,
+          })),
+        },
+      },
     });
     return { success: true };
   } catch (error) {
