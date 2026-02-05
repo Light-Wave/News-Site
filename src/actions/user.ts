@@ -88,15 +88,11 @@ export async function getUserIdByEmail(
   });
 }
 
-export async function getAiInstructions(
-  writerId: string,
+export async function getAiInstructionsByUserId(
+  userId: string,
 ): Promise<{ aiInstructions: string } | null> {
   return await prisma.aiWriter.findUnique({
-    where: {
-      id: writerId,
-    },
-    select: {
-      aiInstructions: true,
-    },
+    where: { userId },
+    select: { aiInstructions: true },
   });
 }

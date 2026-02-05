@@ -5,24 +5,29 @@ import { generateImage, generateText, Output } from "ai";
 import z from "zod";
 import { createArticle } from "./article";
 import { getCategoryIdsByNames } from "./category";
-import { getAiInstructions, getUserIdByEmail } from "./user";
+import { getAiInstructionsByUserId, getUserIdByEmail } from "./user";
 
 const AiArticleSchema = z.object({
   headline: z
     .string()
+    .trim()
     .min(2, "Headline must be at least 2 characters")
-    .max(100, "Headline can be at most 100 characters")
-    .describe("Headline to the article. No more than 100 characters"),
-    content: z
+    .max(200, "Headline can be at most 200 characters")
+    .transform((s) => s.slice(0, 100))
+    .describe("Headline to the article. Can be at most 100 characters"),
+  content: z
     .string()
+    .trim()
     .min(10, "Content must be at least 10 characters")
-    .max(10000, "Content can be at most 1000 characters")
-    .describe("Content to the article. No more than 9000 characters"),
-    summary: z
+    .max(10000, "Content can be at most 10000 characters")
+    .describe("Content to the article. Can be at most 10000 characters"),
+  summary: z
     .string()
+    .trim()
     .min(10, "Summary must be at least 10 characters")
-    .max(500, "Summary can be at most 500 characters")
-    .describe("Summary to the article. No more than 400 characters"),
+    .max(800, "Summary can be at most 800 characters")
+    .transform((s) => s.slice(0, 400))
+    .describe("Summary to the article. Can be at most 400 characters"),
 });
 
 const AiImageSchema = AiArticleSchema.extend({
@@ -34,6 +39,8 @@ const PersistedArticleSchema = AiImageSchema.extend({
   userId: z.string().min(1, "Article needs a writer"),
 });
 
+const DEFAULT_INSTRUCTIONS =
+  "You are an AI assistant that lives in a fantasy world writing news articles for 'The Bibliomancer's Brief'";
 /**
  *
  * @param prompt What kind of news article you want to generate
@@ -59,7 +66,7 @@ export async function generateArticle(
       message: "At least one category name is required.",
     };
   }
-  const emailValidation = z.string().email().safeParse(aiWriterEmail);
+  const emailValidation = z.email().safeParse(aiWriterEmail);
   if (!emailValidation.success) {
     return {
       success: false,
@@ -88,13 +95,10 @@ export async function generateArticle(
       message: "Couldn't fetch writer ID",
     };
   }
-  const aiInstructions = await getAiInstructions(writerId.id);
-  const systemInstructions =
-    aiInstructions &&
-    typeof aiInstructions.aiInstructions === "string" &&
-    aiInstructions.aiInstructions.trim().length > 0
-      ? aiInstructions.aiInstructions
-      : "You are an AI assistant that lives in a fantasy world writing news articles for 'The Bibliomancer's Brief'";
+  const aiInstructions = await getAiInstructionsByUserId(writerId.id);
+  const systemInstructions = aiInstructions?.aiInstructions?.trim()
+    ? aiInstructions.aiInstructions
+    : DEFAULT_INSTRUCTIONS;
 
   const { output } = await generateText({
     system: systemInstructions,
@@ -107,16 +111,15 @@ export async function generateArticle(
 
   const validOutput = validateOutput(output);
 
-  // TODO: Implement feature to generate image, add test data, move prisma queries to their own file
-  // const image = await generateOsrsEconomyImage(output.summary);
-  // const validImage = validateOutput(image);
-
   if (!validOutput.success) {
     return {
       success: false,
       message: validOutput.error.message,
     };
   }
+  // TODO: Implement feature to generate image, add test data, move prisma queries to their own file
+  // const image = await generateOsrsEconomyImage(output.summary);
+  // const validImage = validateOutput(image);
 
   // if (!validImage.success) {
   //   return {
@@ -124,6 +127,7 @@ export async function generateArticle(
   //     message: validImage.error.message,
   //   };
   // }
+
   try {
     const createResult = await createArticle(
       PersistedArticleSchema.parse({
