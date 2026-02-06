@@ -68,6 +68,14 @@
   --heading: oklch(0.15 0.03 30);
   /* end of fantasy theme parchment modifications */
 
+  /* Scroll component colors */
+  --scroll-wood: #8b5a2b;
+  --scroll-wood-dark: #5c4033;
+  --scroll-wood-darker: #3e2723;
+  --scroll-paper: #f4e4bc;
+  --scroll-paper-edge: #d7c49e;
+  --scroll-text: #4a3728;
+
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -239,7 +247,7 @@
   }
 
   .animate-marquee {
-    animation: marquee 20s linear infinite;
+    animation: marquee var(--marquee-duration, 20s) linear infinite;
     will-change: transform;
   }
 }
