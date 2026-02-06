@@ -1,0 +1,9 @@
+export default function UtilitySideBar() {
+    return (
+        <section>
+            <div className="parchment-card">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam tenetur iure quod eaque sed minima, ullam sapiente, earum nemo porro exercitationem cupiditate unde sequi nobis totam, sint dolores dignissimos neque vitae amet quis blanditiis! Maiores mollitia adipisci consequatur, asperiores nihil temporibus eaque a, placeat harum unde accusantium doloremque voluptates facilis earum vero consequuntur molestiae? Possimus excepturi voluptates illo veniam quod deleniti eaque maxime saepe! Natus provident atque corrupti unde explicabo, sunt vel asperiores harum ab minus magni. Asperiores dignissimos officiis voluptatibus corporis ab sint, nam ad quaerat est dolore et incidunt qui perferendis, ducimus quam laborum molestias obcaecati nihil eaque atque natus. Ducimus, id officia consectetur minima itaque dolorum similique laboriosam laudantium voluptatum quas, quidem esse error nemo accusamus. Nemo dolorem quidem maxime dolorum voluptas eligendi libero doloremque est perferendis rerum impedit ratione nisi quibusdam cupiditate blanditiis iusto nobis consequatur distinctio dolore, vero amet. Enim consequatur alias error molestiae. Deleniti laborum ducimus, animi magnam soluta cupiditate ea accusamus ratione corporis suscipit! Blanditiis esse tenetur unde non perferendis quod ullam ea vel enim, ex quis in voluptas perspiciatis veritatis voluptates repudiandae molestias veniam voluptate quas aut deserunt consequuntur dolor doloribus? Dolores officiis quod deserunt quam mollitia corrupti, a, ipsum voluptatem architecto quos fugit modi id. Architecto vel dolore facilis, nisi voluptate dolorum! Beatae commodi voluptatem quo, ipsum unde fuga in.</p>
+            </div>
+        </section>
+    )
+}
