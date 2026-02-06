@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export function SignUp() {
+export default function SignUp() {
   const router = useRouter();
   const params = useSearchParams();
 

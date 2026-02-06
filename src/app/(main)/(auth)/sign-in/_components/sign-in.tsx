@@ -14,14 +14,8 @@ import {
 } from "@/components/ui/card";
 
 export default function SignIn() {
-  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
-  const params = useSearchParams();
   const callbackURL = "/";
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   return (
     <Card className="w-full rounded-none max-h-[90vh] overflow-y-auto">
