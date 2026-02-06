@@ -36,7 +36,6 @@ export default async function Home() {
         </p>
       </section>
       <div className="grid grid-cols-7 m-auto">
-        <UtilitySideBar />
         <section id="main content" className="col-span-5 col-start-2 mx-4">
           {/* breaking news ticker section*/}
 
