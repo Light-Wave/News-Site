@@ -4,6 +4,8 @@ import SmallArticleCard from "@/components/layout/smallArticleCard";
 import { getLatestArticles, getRandomArticles } from "@/actions/article";
 import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 import UtilitySideBar from "@/components/layout/utilitySideBar";
+import BreakingNewsScroll from "@/components/layout/BreakingNewsScroll";
+
 
 /*  NOTE - all sections should be lifted out of page and into separate components
     NOTE2 - Right now the main article shows a fixed example article from tempPlaceholderArticle.tsx
@@ -12,32 +14,26 @@ import UtilitySideBar from "@/components/layout/utilitySideBar";
     TODO: Decide on what mainArticle should be (set by admin? just latest article? most popular?)
     TODO: Make a more intelligent choice of articles for Arcane Network section
     TODO: Make a more intelligent choice of articles for Recommended for you section
+    TODO: Decide where to get breaking news from (admin? latest article?)
 */
+
 export default async function Home() {
   const [latestArticlesData, randomArticlesData] = await Promise.all([
     getLatestArticles({ limit: 3 }),
     getRandomArticles({ limit: 3 }),
   ]);
-  const tempLatestArticles = latestArticlesData.success
-    ? latestArticlesData.articles
-    : [];
-  const randomForYouArticles = randomArticlesData.success
-    ? randomArticlesData.articles
-    : [];
-
+  const tempLatestArticles = latestArticlesData.success ? latestArticlesData.articles : [];
+  const randomForYouArticles = randomArticlesData.success ? randomArticlesData.articles : [];
+  const breakingNews = "Witches call for cauldron regulations after coven turned into swans due to faulty cauldron"
   const mainArticle = exampleArticle[0];
 
   return (
     <div className="">
-      <section className="">
-        <p className="bg-black text-white text-center">
-          Breaking news: <br />
-          Wizard council warns of dragon season approaching.
-        </p>
-      </section>
-      <div className="grid grid-cols-7 m-auto">
-        <section id="main content" className="col-span-5 col-start-2 mx-4">
-          {/* breaking news ticker section*/}
+      <main className="">
+        {/* breaking news ticker section*/}
+        <section className="bg-transparent pb-0">
+          <BreakingNewsScroll text={breakingNews} />
+        </section>
 
           {/* Main article section (editors choice? most popular? most recent?) */}
           <section>
