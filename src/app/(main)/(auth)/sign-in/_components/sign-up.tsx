@@ -34,6 +34,7 @@ export default function SignUp() {
               href="https://better-auth.com"
               className="underline"
               target="_blank"
+              rel="noopener noreferrer"
             >
               <span className="dark:text-white/70 cursor-pointer">
                 better-auth.
