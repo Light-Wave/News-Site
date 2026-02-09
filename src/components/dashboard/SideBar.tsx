@@ -5,10 +5,16 @@ import {
   Star,
   Users,
   CreditCard,
+  House,
 } from "lucide-react";
 
 export default function SideBar() {
   const menu = [
+    {
+      name: "Homepage",
+      icon: House,
+      href: "/",
+    },
     {
       name: "Dashboard",
       icon: LayoutDashboard,
