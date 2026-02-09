@@ -62,7 +62,9 @@ export function SignUpForm({ onSuccess, callbackURL = "/" }: SignUpFormProps) {
             toast.error(ctx.error.message);
           },
           onSuccess: async () => {
-            toast.success("Successfully signed up");
+            toast.success(
+              "Sign up successful. Please check your email to verify your account before signing in."
+            );
             onSuccess?.();
           },
         },
