@@ -48,7 +48,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col overflow-x-hidden">
         <Header />
-        <main className="flex-1 mx-auto w-full max-w-7xl m-auto">
+        <main className="flex-1 w-full max-w-7xl m-auto">
           {children}
         </main>
         <Toaster />
