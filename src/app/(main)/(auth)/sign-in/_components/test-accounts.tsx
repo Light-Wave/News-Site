@@ -19,7 +19,6 @@ export default function LoginTestAccounts({ users, testPassword }: Params) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   async function logInAs(email: string) {
-    console.log(`Logging in as ${email}`);
     setLoading(true);
     try {
       const response = await authClient.signIn.email({
