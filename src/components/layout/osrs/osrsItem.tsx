@@ -53,7 +53,7 @@ export default async function OsrsItem({
         <>
           <h3 className="text-center font-bold">{item.data.name}</h3>
           <div className="grid col-3">
-            <div className="col-start-1 pt-3 p-2">
+            <div className="col-start-2 pl-4 sm:col-start-1 sm:pt-3 sm:p-2">
               <p>Price: {item.data.current.price}</p>
               <p>{item.data.day30.change}</p>
               <p>

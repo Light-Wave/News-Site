@@ -1,4 +1,4 @@
-import OsrsItemContainer from "./osrsItemContainer";
+import OsrsItemContainer from "./osrs/osrsItemContainer";
 
 export default function UtilitySideBar() {
   return (

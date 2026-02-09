@@ -38,8 +38,11 @@ export default async function Home() {
         <section className="bg-transparent pb-0">
           <BreakingNewsScroll text={breakingNews} />
         </section>
-        <div className="grid grid-cols-7 m-auto">
-          <section id="main content" className="col-span-5 col-start-2 mx-4">
+        <div className="grid grid-cols-7 m-auto order-1">
+          <section
+            id="main content"
+            className="col-span-7 sm:col-span-5 sm:col-start-2 sm:mx-4"
+          >
             {/* Main article section (editors choice? most popular? most recent?) */}
             <section>
               <ArticleCard article={mainArticle} />
@@ -103,7 +106,7 @@ export default async function Home() {
               <Button className="p-2 bg-blue-500 text-white">Subscribe</Button>
             </section>
           </section>
-          <section id="sidebar" className="col-span-1">
+          <section id="sidebar" className="col-span-7 sm:col-span-1 order-2">
             <UtilitySideBar />
           </section>
         </div>
