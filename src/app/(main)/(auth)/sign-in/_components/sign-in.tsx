@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { SignInForm } from "@/components/forms/sign-in-form";
 import {
   Card,
