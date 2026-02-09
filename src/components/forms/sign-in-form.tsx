@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
 const signInSchema = z.object({
-  email: z.email("Please enter a valid email address."),
+  email: z.string().email("Please enter a valid email address."),
   password: z.string().min(1, "Password is required."),
   rememberMe: z.boolean(),
 });
