@@ -27,9 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        {/* Content: Full width with minimal padding */}
         <main className="flex-1 overflow-y-auto p-6">
-          {/* REMOVED max-w-[1600px] to let it fill the screen */}
           <div className="w-full">{children}</div>
         </main>
       </div>
