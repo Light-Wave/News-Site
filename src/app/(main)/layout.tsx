@@ -44,7 +44,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${goudyBookletter1911.variable} ${cinzel.variable} dark`}
+      className={`${geistSans.variable} ${geistMono.variable} light
+      `}
     >
       <body className="min-h-screen flex flex-col overflow-x-hidden">
         <Header />
