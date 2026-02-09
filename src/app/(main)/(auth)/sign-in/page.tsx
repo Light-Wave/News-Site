@@ -1,10 +1,10 @@
 import SignIn from "./_components/sign-in";
-import SignUp from "./_components/sign-up";
+import { SignUp } from "./_components/sign-up";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import SignOut from "./_components/sign-out";
-import LoginTestAccounts from "./_components/test-accounts";
+import LoginTestAccounts from "./_components/test_accounts";
 import prisma from "@/lib/prisma";
 
 export default async function Page() {
@@ -38,16 +38,10 @@ export default async function Page() {
               </TabsContent>
               {process.env.NODE_ENV !== "production" && (
                 <TabsContent value="test_accounts">
-                  {process.env.TESTING_PASSWORD ? (
-                    <LoginTestAccounts
-                      users={testAccounts}
-                      testPassword={process.env.TESTING_PASSWORD || ""}
-                    />
-                  ) : (
-                    <p className="text-sm text-red-500">
-                      No TESTING_PASSWORD set in .env file.
-                    </p>
-                  )}
+                  <LoginTestAccounts
+                    users={testAccounts}
+                    testPassword={process.env.TESTING_PASSWORD || ""}
+                  />
                 </TabsContent>
               )}
             </Tabs>

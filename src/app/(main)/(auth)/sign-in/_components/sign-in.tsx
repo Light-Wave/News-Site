@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { SignInForm } from "@/components/forms/sign-in-form";
 import {
   Card,
@@ -13,8 +14,14 @@ import {
 } from "@/components/ui/card";
 
 export default function SignIn() {
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  const params = useSearchParams();
   const callbackURL = "/";
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <Card className="w-full rounded-none max-h-[90vh] overflow-y-auto">

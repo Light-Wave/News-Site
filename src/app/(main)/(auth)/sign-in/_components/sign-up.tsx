@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SignUpForm } from "@/components/forms/sign-up-form";
 import {
   Card,
@@ -12,8 +12,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function SignUp() {
+export function SignUp() {
   const router = useRouter();
+  const params = useSearchParams();
 
   return (
     <Card className="rounded-md rounded-t-none w-full">
