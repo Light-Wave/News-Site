@@ -21,14 +21,24 @@ export default function LoginTestAccounts({ users, testPassword }: Params) {
   async function logInAs(email: string) {
     console.log(`Logging in as ${email}`);
     setLoading(true);
-    const response = await authClient.signIn.email({
-      email,
-      password: testPassword,
-    });
-    if (!response.error) {
+    try {
+      const response = await authClient.signIn.email({
+        email,
+        password: testPassword,
+      });
+      if (response.error) {
+        window.alert(
+          response.error.message ?? "Failed to sign in. Please try again.",
+        );
+        return;
+      }
       router.refresh();
+    } catch (error) {
+      console.error("Failed to log in as test account:", error);
+      window.alert("An unexpected error occurred while signing in. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
