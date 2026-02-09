@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState, useTransition } from "react";
+import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -29,20 +29,10 @@ type SignInFormValues = z.infer<typeof signInSchema>;
 interface SignInFormProps {
   onSuccess?: () => void;
   callbackURL?: string;
-  showPasswordToggle?: boolean;
 }
 
-export function SignInForm({
-  onSuccess,
-  callbackURL = "/",
-  showPasswordToggle = false,
-}: SignInFormProps) {
+export function SignInForm({ onSuccess, callbackURL = "/" }: SignInFormProps) {
   const [loading, startTransition] = useTransition();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const form = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
