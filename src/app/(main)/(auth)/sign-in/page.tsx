@@ -11,10 +11,13 @@ export default async function Page() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  const testAccounts = await prisma.user.findMany({
-    where: { email: { endsWith: "@testing.com" } },
-    select: { email: true, name: true },
-  });
+  let testAccounts: { email: string; name: string }[] = [];
+  if (process.env.NODE_ENV !== "production" && !session?.user) {
+    testAccounts = await prisma.user.findMany({
+      where: { email: { endsWith: "@testing.com" } },
+      select: { email: true, name: true },
+    });
+  }
   return (
     <div className="w-full">
       <div className="flex items-center flex-col justify-center w-full md:py-10">

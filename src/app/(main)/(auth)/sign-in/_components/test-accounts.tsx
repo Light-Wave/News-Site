@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -25,7 +26,7 @@ export default function LoginTestAccounts({ users, testPassword }: Params) {
         password: testPassword,
       });
       if (response.error) {
-        window.alert(
+        toast.error(
           response.error.message ?? "Failed to sign in. Please try again.",
         );
         return;
@@ -33,7 +34,9 @@ export default function LoginTestAccounts({ users, testPassword }: Params) {
       router.refresh();
     } catch (error) {
       console.error("Failed to log in as test account:", error);
-      window.alert("An unexpected error occurred while signing in. Please try again.");
+      toast.error(
+        "An unexpected error occurred while signing in. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
