@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import {
   Sheet,
@@ -9,12 +10,48 @@ import {
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { getAllCategories } from "@/types/categories";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
-export default async function Header() {
-  const categories = await getAllCategories();
+export default function Header({
+  categories,
+}: {
+  categories: Awaited<ReturnType<typeof getAllCategories>>;
+}) {
+  const [show, setShow] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  const controlNavbar = () => {
+    if (typeof window !== "undefined") {
+      if (window.scrollY > lastScrollY) {
+        // Scrolling down - hide navbar
+        setShow(false);
+      } else {
+        // Scrolling up - show navbar
+        setShow(true);
+      }
+      setLastScrollY(window.scrollY);
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", controlNavbar);
+
+      // Cleanup listener
+      return () => {
+        window.removeEventListener("scroll", controlNavbar);
+      };
+    }
+  }, [lastScrollY]);
 
   return (
-    <header className="border-b bg-[#f8f4ee]">
+    <header
+      className={cn(
+        "border-b fixed top-0 left-0 w-full z-50 h-16 bg-[#f8f4ee] transition-transform duration-300 parchment-card",
+        !true && "-translate-y-full", // Hides when state is false
+      )}
+    >
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4">
         {/* LEFT: Mobile menu + Logo */}
         <div className="flex items-center gap-4">
@@ -63,19 +100,6 @@ export default async function Header() {
           </Link>
         </div>
 
-        {/* DESKTOP NAV */}
-        <nav className="hidden md:flex gap-8 text-lg font-serif">
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/category/${category.name.toLowerCase()}`}
-              className="hover:text-red-600 transition"
-            >
-              {category.name}
-            </Link>
-          ))}
-        </nav>
-
         {/* RIGHT */}
         <Link
           href="/subscribe"
@@ -84,6 +108,23 @@ export default async function Header() {
           Subscribe
         </Link>
       </div>
+      {/* DESKTOP NAV */}
+      <nav
+        className={cn(
+          "hidden md:flex w-full justify-center gap-8 text-lg font-serif bg-[#f8f4ee] items-center",
+          !show && "-translate-y-full", // Hides when state is false
+        )}
+      >
+        {categories.map((category) => (
+          <Link
+            key={category.id}
+            href={`/category/${category.name.toLowerCase()}`}
+            className="hover:text-red-600 transition"
+          >
+            {category.name}
+          </Link>
+        ))}
+      </nav>
     </header>
   );
 }
