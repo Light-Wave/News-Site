@@ -39,10 +39,10 @@ export default async function Home() {
         <section className="bg-transparent pb-0">
           <BreakingNewsScroll text={breakingNews} />
         </section>
-        <div className="grid grid-cols-7 m-auto order-1">
+        <div className="grid grid-cols-7 m-auto ">
           <section
             id="main content"
-            className="col-span-7 sm:col-span-5 sm:col-start-2 sm:mx-4"
+            className="col-span-7 sm:col-span-5 sm:col-start-2 sm:mx-4 order-1"
           >
             {/* Main article section (editors choice? most popular? most recent?) */}
             <section>
@@ -87,13 +87,14 @@ export default async function Home() {
               )}
             </section>
 
-            {/* Newsletter subscription section */}
-            <section>
-              <SubscriptionBox />
-            </section>
+
           </section>
           <section id="sidebar" className="col-span-7 sm:col-span-1 order-2">
             <UtilitySideBar />
+          </section>
+          {/* Newsletter subscription section */}
+          <section className="col-span-7 order-3">
+            <SubscriptionBox />
           </section>
         </div>
       </div>
