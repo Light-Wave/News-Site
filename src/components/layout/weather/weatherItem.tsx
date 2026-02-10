@@ -77,7 +77,7 @@ export default function WeatherItem() {
         <SelectContent>
           {[...fantasyToCity.keys()].map((city) => (
             <SelectItem key={city} value={city}>
-              <h3 className="text-l font-bold">{city}</h3>
+              <h3 className="font-bold">{city}</h3>
             </SelectItem>
           ))}
         </SelectContent>
