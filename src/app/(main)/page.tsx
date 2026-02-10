@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
 import ArticleCard from "@/components/layout/articleCard";
 import SmallArticleCard from "@/components/layout/smallArticleCard";
 import { getLatestArticles, getRandomArticles } from "@/actions/article";
 import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 import UtilitySideBar from "@/components/layout/utilitySideBar";
 import BreakingNewsScroll from "@/components/layout/BreakingNewsScroll";
+import SubscriptionBox from "@/components/layout/SubscriptionBox";
 
 /*  NOTE - all sections should be lifted out of page and into separate components
     NOTE2 - Right now the main article shows a fixed example article from tempPlaceholderArticle.tsx
@@ -38,10 +38,10 @@ export default async function Home() {
         <section className="bg-transparent pb-0">
           <BreakingNewsScroll text={breakingNews} />
         </section>
-        <div className="grid grid-cols-7 m-auto order-1">
+        <div className="grid grid-cols-7 m-auto ">
           <section
             id="main content"
-            className="col-span-7 sm:col-span-5 sm:col-start-2 sm:mx-4"
+            className="col-span-7 sm:col-span-5 sm:col-start-2 sm:mx-4 order-1"
           >
             {/* Main article section (editors choice? most popular? most recent?) */}
             <section>
@@ -86,28 +86,14 @@ export default async function Home() {
               )}
             </section>
 
-            {/* Newsletter subscription section */}
-            <section className="flex flex-col items-center gap-2 bg-black text-white p-2">
-              <h2 className="font-bold gap-0 text-center">SUBSCRIBE!</h2>
-              <p>
-                Stay updated with the latest articles and news. Subscribe to our
-                newsletter!
-              </p>
-              <p className="italic">
-                this action is mandatory under world law enforcement. Sign up
-                now or else face the consequences.
-              </p>
-              <input
-                className="border p-2"
-                id="subMail"
-                type="email"
-                placeholder="Enter your email"
-              />
-              <Button className="p-2 bg-blue-500 text-white">Subscribe</Button>
-            </section>
+
           </section>
           <section id="sidebar" className="col-span-7 sm:col-span-1 order-2">
             <UtilitySideBar />
+          </section>
+          {/* Newsletter subscription section */}
+          <section className="col-span-7 order-3">
+            <SubscriptionBox />
           </section>
         </div>
       </div>
