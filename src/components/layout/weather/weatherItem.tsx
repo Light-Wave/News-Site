@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { getWeatherData } from "@/actions/weather-data";
+import { useEffect, useState } from "react";
 
 import {
   Select,
@@ -10,6 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ActionResult } from "@/types/action-result";
+import { Weather } from "@/types/weather";
 
 /* ✨ Fantasy weather mapping */
 const summaryMap: Record<string, { emoji: string; label: string }> = {
@@ -31,27 +33,31 @@ function getWeather(summary: string) {
   return summaryMap[summary] ?? { emoji: "🌍", label: summary };
 }
 
-export default function WeatherItem() {
-  const citiesToFantasy = new Map<string, string>([
-    ["Stormspire", "Stockholm"],
-    ["Emberfall", "Falun"],
-    ["Runewick", "Linköping"],
-    ["Seaguard Haven", "Göteborg"],
-    ["Frosthollow", "Umeå"],
-  ]);
+const fantasyToCity = new Map<string, string>([
+  ["Stormspire", "Stockholm"],
+  ["Emberfall", "Falun"],
+  ["Runewick", "Linköping"],
+  ["Seaguard Haven", "Göteborg"],
+  ["Frosthollow", "Umeå"],
+]);
 
+export default function WeatherItem() {
   const [location, setLocation] = useState("Stormspire");
-  const [weather, setWeather] = useState<any>(null);
+  const [weather, setWeather] = useState<ActionResult<Weather> | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function loadWeather(city: string) {
     setLoading(true);
 
-    const realCity = citiesToFantasy.get(city) ?? "Stockholm";
-    const result = await getWeatherData(realCity);
-
-    setWeather(result);
-    setLoading(false);
+    try {
+      const realCity = fantasyToCity.get(city) ?? "Stockholm";
+      const result = await getWeatherData(realCity);
+      setWeather(result);
+    } catch (error) {
+      console.error("Failed to load weather data:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -61,14 +67,17 @@ export default function WeatherItem() {
   return (
     <div className="flex flex-col items-center">
       <Select value={location} onValueChange={setLocation}>
-        <SelectTrigger className="border-0 shadow-none focus:ring-0">
+        <SelectTrigger
+          className="border-0 shadow-none focus:ring-0"
+          aria-label="Select city"
+        >
           <SelectValue />
         </SelectTrigger>
 
         <SelectContent>
-          {[...citiesToFantasy.keys()].map((city) => (
+          {[...fantasyToCity.keys()].map((city) => (
             <SelectItem key={city} value={city}>
-              {city}
+              <h3 className="text-l font-bold">{city}</h3>
             </SelectItem>
           ))}
         </SelectContent>
@@ -83,8 +92,6 @@ export default function WeatherItem() {
 
             return (
               <div className="text-center space-y-1">
-                <h3 className="text-xl font-bold">{location}</h3>
-
                 <div className="flex items-center justify-center gap-2 text-lg">
                   <p className="text-muted-foreground">{data.temp}°C</p>
                   <span>{emoji}</span>
