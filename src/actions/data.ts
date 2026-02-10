@@ -20,7 +20,7 @@ export async function getDashboardData() {
           headline: true,
           views: true,
           isActive: true,
-          category: { select: { name: true } },
+          categories: { select: { name: true } },
         },
       }),
       prisma.article.findMany({
