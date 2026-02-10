@@ -5,6 +5,7 @@ import { getLatestArticles, getRandomArticles } from "@/actions/article";
 import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 import UtilitySideBar from "@/components/layout/utilitySideBar";
 import BreakingNewsScroll from "@/components/layout/BreakingNewsScroll";
+import SubscriptionBox from "@/components/layout/SubscriptionBox";
 
 /*  NOTE - all sections should be lifted out of page and into separate components
     NOTE2 - Right now the main article shows a fixed example article from tempPlaceholderArticle.tsx
@@ -87,23 +88,8 @@ export default async function Home() {
             </section>
 
             {/* Newsletter subscription section */}
-            <section className="flex flex-col items-center gap-2 bg-black text-white p-2">
-              <h2 className="font-bold gap-0 text-center">SUBSCRIBE!</h2>
-              <p>
-                Stay updated with the latest articles and news. Subscribe to our
-                newsletter!
-              </p>
-              <p className="italic">
-                this action is mandatory under world law enforcement. Sign up
-                now or else face the consequences.
-              </p>
-              <input
-                className="border p-2"
-                id="subMail"
-                type="email"
-                placeholder="Enter your email"
-              />
-              <Button className="p-2 bg-blue-500 text-white">Subscribe</Button>
+            <section>
+              <SubscriptionBox />
             </section>
           </section>
           <section id="sidebar" className="col-span-7 sm:col-span-1 order-2">
