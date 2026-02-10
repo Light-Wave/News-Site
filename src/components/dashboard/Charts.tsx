@@ -21,7 +21,14 @@ export function TrendsChart() {
   );
 }
 
-export function TopArticles({ articles }: { articles: any[] }) {
+interface TopArticle {
+  id: string;
+  headline: string;
+  views: number;
+}
+
+// Use the interface in props
+export function TopArticles({ articles }: { articles: TopArticle[] }) {
   return (
     <Card className="bg-white border-slate-200">
       <CardHeader>
@@ -31,11 +38,15 @@ export function TopArticles({ articles }: { articles: any[] }) {
       </CardHeader>
       <CardContent className="space-y-4">
         {articles.map((art, i) => (
-          <div key={art.id} className="text-sm border-b border-slate-50 pb-2">
+          <div
+            key={art.id}
+            className="text-sm border-b border-slate-50 pb-2 last:border-0"
+          >
             <p className="text-slate-700 font-medium">
               {i + 1}. {art.headline}
             </p>
             <p className="text-slate-400 text-xs">
+              {/* Now TS knows for sure views is a number */}
               {art.views.toLocaleString()} views
             </p>
           </div>

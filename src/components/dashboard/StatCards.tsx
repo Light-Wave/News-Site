@@ -1,6 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export function NewsStats({ stats }: any) {
+interface DashboardStats {
+  revenue: number;
+  users: number;
+  views: number;
+  conversion: string | number;
+}
+
+export function NewsStats({ stats }: { stats: DashboardStats }) {
   const cards = [
     { label: "Total Revenue", value: `$${stats.revenue.toLocaleString()}` },
     { label: "Active Readers", value: stats.users.toLocaleString() },

@@ -16,6 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <input
               type="text"
               placeholder="Search data..."
+              aria-label="Search dashboard articles and users"
               className="w-full bg-slate-100 rounded-lg px-4 py-2 text-sm outline-none focus:ring-1 ring-blue-500"
             />
           </div>

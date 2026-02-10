@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { toggleUserBan } from "@/types/action-admin";
+import { toggleUserBan } from "@/actions/action-admin";
 
 export function UserModeration({ users }: { users: any[] }) {
   return (

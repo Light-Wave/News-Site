@@ -1,8 +1,12 @@
 "use client";
+
 import { Switch } from "@/components/ui/switch";
-import { toggleArticleStatus } from "@/types/action-admin";
 
 export function ContentPerformance({ articles }: { articles: any[] }) {
+  function toggleArticleStatus(id: any, isActive: any): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
       <div className="flex justify-between items-center mb-5">
