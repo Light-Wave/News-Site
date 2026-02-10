@@ -3,11 +3,11 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-
+import * as React from "react"
 /**
  * SubscriptionBox Component
- * TODO - Implemnent an actual check for user subscription status
- * TODO - Add an actual function to the submit button other then spitting out a console.log
+ * TODO - Implement an actual check for user subscription status
+ * TODO - Add an actual function to the submit button other than spitting out a console.log
  */
 
 
@@ -29,11 +29,7 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
 
   return (
     <div className={cn("relative w-full max-w-[1024px] mx-auto py-8 px-4", className)}>
-      <div
-        className="relative"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
+      <div className="relative">
         {/* Corner highlights*/}
         <div className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-amber-700/60 rounded-tl-sm" />
         <div className="absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 border-amber-700/60 rounded-tr-sm" />
@@ -74,6 +70,7 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
 
             {/* Subscription form */}
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row sm:items-center gap-3 w-full max-w-md mt-2">
+              <label htmlFor="email" className="sr-only">Email Address</label>
               <input
                 type="email"
                 value={email}
