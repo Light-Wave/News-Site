@@ -55,10 +55,10 @@ export async function updateUserRole(userId: string, newRole: string) {
 
     // Use Better Auth's internal admin API to update the user
     // This automatically handles the database update for the role
-    await auth.api.updateUser({
+    await auth.api.adminUpdateUser({
       headers: await headers(),
       body: {
-        userID: userId, // Use the dynamic ID passed to the function
+        userId: "userId", // Use the dynamic ID passed to the function
         data: {
           role: newRole, // Use the dynamic role passed to the function
         },

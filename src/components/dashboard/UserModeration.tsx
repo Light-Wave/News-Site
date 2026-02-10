@@ -14,7 +14,7 @@ interface UserModerationRow {
   id: string | number;
   name: string;
   email: string;
-  role: string;
+  role: string | null;
   banned?: boolean | null;
 }
 
@@ -52,7 +52,7 @@ export function UserModeration({ users }: { users: UserModerationRow[] }) {
               </TableCell>
               <TableCell className="py-2 text-right">
                 <button
-                  onClick={() => toggleUserBan(u.id, !!u.banned)}
+                  onClick={() => toggleUserBan(u.id.toString(), !!u.banned)}
                   className={`text-[11px] font-bold underline ${u.banned ? "text-green-600" : "text-red-500"}`}
                 >
                   {u.banned ? "Unban" : "Ban"}

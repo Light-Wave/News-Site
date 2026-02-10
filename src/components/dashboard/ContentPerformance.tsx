@@ -2,7 +2,21 @@
 
 import { Switch } from "@/components/ui/switch";
 
-export function ContentPerformance({ articles }: { articles: any[] }) {
+interface ContentPerformanceArticle {
+  id: string | number;
+  headline: string;
+  category?: {
+    name?: string | null;
+  } | null;
+  views: number;
+  isActive: boolean;
+}
+
+export function ContentPerformance({
+  articles,
+}: {
+  articles: ContentPerformanceArticle[];
+}) {
   function toggleArticleStatus(id: any, isActive: any): void {
     throw new Error("Function not implemented.");
   }
@@ -30,7 +44,12 @@ export function ContentPerformance({ articles }: { articles: any[] }) {
                 {art.headline}
               </p>
               <p className="text-[10px] text-slate-400 font-bold">
-                {art.category?.name}
+                {Array.isArray(art.category)
+                  ? art.category
+                      .map((c: any) => c?.name)
+                      .filter(Boolean)
+                      .join(", ")
+                  : art.category?.name}
               </p>
             </div>
             <div className="flex items-center gap-8">
@@ -39,8 +58,8 @@ export function ContentPerformance({ articles }: { articles: any[] }) {
               </span>
               <Switch
                 checked={art.isActive}
-                onCheckedChange={() =>
-                  toggleArticleStatus(art.id, art.isActive)
+                onCheckedChange={(checked) =>
+                  toggleArticleStatus(art.id, checked)
                 }
               />
               <button className="bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold">
