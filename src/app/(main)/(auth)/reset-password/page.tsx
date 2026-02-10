@@ -17,7 +17,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-      <Card className="w-[350px]">
+      <Card className="w-full max-w-[350px]">
         <CardHeader>
           <CardTitle>Reset password</CardTitle>
           <CardDescription>

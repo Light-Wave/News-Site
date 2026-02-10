@@ -20,8 +20,8 @@ export default function Page() {
 
   if (isSubmitted) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-        <Card className="w-[350px]">
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
+        <Card className="w-full max-w-[350px]">
           <CardHeader>
             <CardTitle>Check your email</CardTitle>
             <CardDescription>
@@ -45,13 +45,13 @@ export default function Page() {
             </Link>
           </CardFooter>
         </Card>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-      <Card className="w-[350px]">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
+      <Card className="w-full max-w-[350px]">
         <CardHeader>
           <CardTitle>Forgot password</CardTitle>
           <CardDescription>
@@ -70,6 +70,6 @@ export default function Page() {
           </Link>
         </CardFooter>
       </Card>
-    </main>
+    </div>
   );
 }
