@@ -36,7 +36,7 @@ export async function toggleUserBan(
         body: {
           userId,
           banReason: "Violating community guidelines",
-          banExpiresIn: 60 * 60 * 24 * 7, //ban expires in 7days
+          banExpiresIn: 60 * 60 * 24 * 7, // ban expires in 7 days
         },
       });
     }
