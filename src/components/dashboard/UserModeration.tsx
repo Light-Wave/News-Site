@@ -10,7 +10,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toggleUserBan } from "@/types/action-admin";
 
-export function UserModeration({ users }: { users: any[] }) {
+interface UserModerationRow {
+  id: string | number;
+  name: string;
+  email: string;
+  role: string;
+  banned?: boolean | null;
+}
+
+export function UserModeration({ users }: { users: UserModerationRow[] }) {
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="p-4 border-b flex justify-between items-center">
