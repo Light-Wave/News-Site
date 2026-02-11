@@ -75,6 +75,14 @@ async function generateCategories() {
 async function generateArticles() {
   console.log("\n📰 Generating articles...");
   const articleCount = await prisma.article.count();
+  if (articleCount > 0) {
+    console.log(
+      `Articles already exist (${articleCount}), removing old test articles.`,
+    );
+    await prisma.article.deleteMany({
+      where: { user: { email: { endsWith: "@testing.com" } } },
+    });
+  }
   const targetArticleCount = 20;
   console.log(
     `  Current articles: ${articleCount}, Target: ${targetArticleCount}`,
@@ -97,13 +105,13 @@ async function generateArticles() {
     let content = summary + "\n\n";
     for (let j = 0; j < i % 10; j++) {
       content += await lipsum.getText({
-        amount: Math.floor(Math.random() * 5) + 3,
+        amount: Math.floor(Math.random() * 3) + 1,
         what: "paragraphs",
       });
       content += "\n\n";
     }
     let headline = await lipsum.getText({
-      amount: Math.floor(Math.random() * 10) + 1,
+      amount: Math.floor(Math.random() * 3) + 2,
       what: "words",
     });
     switch (i % 4) {
