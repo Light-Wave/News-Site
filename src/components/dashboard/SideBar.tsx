@@ -30,8 +30,11 @@ export default function SideBar() {
       </div>
       <nav className="flex-1 p-4 space-y-1">
         {menu.map((item) => {
-          // Check if the link matches the current path
-          const isActive = pathname === item.href;
+          // Check if the link matches the current path (supports nested routes)
+          const isActive =
+            item.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(item.href);
 
           return (
             <Link
