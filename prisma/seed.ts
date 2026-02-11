@@ -123,6 +123,15 @@ async function generateArticles() {
       default:
         break;
     }
+    const newCategories = new Set([
+      premadeCategories[i % premadeCategories.length],
+    ]);
+    const extraCategoryCount = Math.floor(Math.random() * 2);
+    for (let k = 0; k < extraCategoryCount; k++) {
+      const extraCategory =
+        premadeCategories[Math.floor(Math.random() * premadeCategories.length)];
+      newCategories.add(extraCategory);
+    }
     await prisma.article.create({
       data: {
         headline,
@@ -130,8 +139,9 @@ async function generateArticles() {
         summary,
         image: `https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/200/300`,
         user: { connect: { email: writerEmail } },
-        category: {
-          connect: { name: premadeCategories[i % premadeCategories.length] },
+        views: i,
+        categories: {
+          connect: Array.from(newCategories).map((name) => ({ name })),
         },
       },
     });
