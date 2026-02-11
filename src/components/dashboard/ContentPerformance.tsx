@@ -5,9 +5,9 @@ import { Switch } from "@/components/ui/switch";
 interface ContentPerformanceArticle {
   id: string | number;
   headline: string;
-  category?: {
-    name?: string | null;
-  } | null;
+  categories: {
+    name: string;
+  }[];
   views: number;
   isActive: boolean;
 }
@@ -44,12 +44,10 @@ export function ContentPerformance({
                 {art.headline}
               </p>
               <p className="text-[10px] text-slate-400 font-bold">
-                {Array.isArray(art.category)
-                  ? art.category
-                      .map((c: any) => c?.name)
-                      .filter(Boolean)
-                      .join(", ")
-                  : art.category?.name}
+                {art.categories
+                  .map((c) => c.name)
+                  .filter(Boolean)
+                  .join(", ")}
               </p>
             </div>
             <div className="flex items-center gap-8">
