@@ -1,22 +1,14 @@
 "use client";
 
 import { Switch } from "@/components/ui/switch";
+import { ArticleModel } from "@/generated/prisma/models";
 
-interface ContentPerformanceArticle {
-  id: string | number;
-  headline: string;
-  categories: {
-    name: string;
-  }[];
-  views: number;
-  isActive: boolean;
-}
+type ArticleData = (Pick<
+  ArticleModel,
+  "id" | "headline" | "views" | "isActive"
+> & { categories: { name: string }[] })[];
 
-export function ContentPerformance({
-  articles,
-}: {
-  articles: ContentPerformanceArticle[];
-}) {
+export function ContentPerformance({ articles }: { articles: ArticleData }) {
   function toggleArticleStatus(id: any, isActive: any): void {
     throw new Error("Function not implemented.");
   }
