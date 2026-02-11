@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 type Props = {
   title: string;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export function UtilitySideBarTitle({ title, children }: Props) {
