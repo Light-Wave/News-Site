@@ -11,7 +11,9 @@ export default function Sidebar({
   return (
     <aside className="space-y-6">
       <h1 className="text-sm font-semibold uppercase tracking-wide">
-        Latest in {categories.map((cat) => cat.name).join(", ")}
+        {categories.length
+          ? `Latest in ${categories.map((cat) => cat.name).join(", ")}`
+          : "Latest"}
       </h1>
 
       {articles.map((article) => (
