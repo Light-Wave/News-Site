@@ -84,9 +84,6 @@ async function generateArticles() {
     });
   }
   const targetArticleCount = 20;
-  console.log(
-    `  Current articles: ${articleCount}, Target: ${targetArticleCount}`,
-  );
   let writerEmail =
     (await prisma.user.count({
       where: { email: "writer@testing.com" },
@@ -96,7 +93,7 @@ async function generateArticles() {
   if (!writerEmail) {
     throw new Error("No users found for article writers.");
   }
-  for (let i = articleCount; i < targetArticleCount; i++) {
+  for (let i = 0; i < targetArticleCount; i++) {
     console.log(`  Creating article ${i + 1}/${targetArticleCount}...`);
     const summary = await lipsum.getText({
       amount: Math.floor(Math.random() * 2) + 1,
@@ -154,9 +151,7 @@ async function generateArticles() {
       },
     });
   }
-  console.log(
-    `✅ Articles complete (${targetArticleCount - articleCount} created)`,
-  );
+  console.log(`✅ Articles complete (${targetArticleCount} created)`);
 }
 
 async function main() {
