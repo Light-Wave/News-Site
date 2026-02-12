@@ -28,6 +28,7 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
     console.log("Subscribing:", email);
   };
 
+  if (isLoading) return null; // Don't render anything while checking subscription status
   if (hasSubscription === true) return null; // Only hide if definitively subscribed
 
   return (

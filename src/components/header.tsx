@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import { getAllCategories } from "@/types/categories";
+import type { getAllCategories } from "@/types/categories";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
@@ -26,7 +26,7 @@ export default function Header({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
   const { data: session } = authClient.useSession();
-  const { hasSubscription } = useSubscription();
+  const { hasSubscription, isLoading } = useSubscription();
   const router = useRouter();
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Header({
   };
 
   // Sub-component for Category Links
-  const CategoryLinks = ({ isMobile = false }) => (
+  const CategoryLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
       {categories.map((category) => (
         <Link
@@ -75,20 +75,20 @@ export default function Header({
   );
 
   // Sub-component for Auth & Subscribe Buttons
-  const ActionButtons = ({ isMobile = false }) => (
+  const ActionButtons = ({ isMobile = false }: { isMobile?: boolean }) => (
     <div className={cn("flex items-center", isMobile ? "flex-col gap-3 mt-4" : "gap-6")}>
-      {!hasSubscription && (
-        <Link href="/subscribe" className={isMobile ? "w-full" : ""}>
-          <Button
-            className={cn(
-              "magic-button-gold font-bold transition-all duration-300",
-              isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
-            )}
-            onClick={isMobile ? closeMenu : undefined}
-          >
+      {hasSubscription === false && !isLoading && (
+        <Button
+          asChild
+          className={cn(
+            "magic-button-gold font-bold transition-all duration-300",
+            isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
+          )}
+        >
+          <Link href="/subscribe" onClick={isMobile ? closeMenu : undefined}>
             Subscribe
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       )}
 
       {session ? (
@@ -102,17 +102,17 @@ export default function Header({
           Sign Out
         </Button>
       ) : (
-        <Link href="/sign-in" className={isMobile ? "w-full" : ""}>
-          <Button
-            className={cn(
-              "magic-button text-amber-100 font-bold transition-all duration-300",
-              isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
-            )}
-            onClick={isMobile ? closeMenu : undefined}
-          >
+        <Button
+          asChild
+          className={cn(
+            "magic-button text-amber-100 font-bold transition-all duration-300",
+            isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
+          )}
+        >
+          <Link href="/sign-in" onClick={isMobile ? closeMenu : undefined}>
             Sign In
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       )}
     </div>
   );
