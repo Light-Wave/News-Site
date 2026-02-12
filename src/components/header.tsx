@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Sheet,
   SheetContent,
@@ -10,8 +11,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { getAllCategories } from "@/types/categories";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useSubscription } from "@/hooks/use-subscription";
 
 export default function Header({
   categories,
@@ -19,40 +23,41 @@ export default function Header({
   categories: Awaited<ReturnType<typeof getAllCategories>>;
 }) {
   const [show, setShow] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-
-  const controlNavbar = () => {
-    if (typeof window !== "undefined") {
-      if (window.scrollY > lastScrollY) {
-        // Scrolling down - hide navbar
-        setShow(false);
-      } else {
-        // Scrolling up - show navbar
-        setShow(true);
-      }
-      setLastScrollY(window.scrollY);
-    }
-  };
+  const lastScrollY = useRef(0);
+  const { data: session, isPending } = authClient.useSession();
+  const { hasSubscription } = useSubscription();
+  const router = useRouter();
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("scroll", controlNavbar);
+    const controlNavbar = () => {
+      if (typeof window !== "undefined") {
+        if (window.scrollY > lastScrollY.current && window.scrollY > 100) {
+          // Scrolling down - hide navbar
+          setShow(false);
+        } else {
+          // Scrolling up - show navbar
+          setShow(true);
+        }
+        lastScrollY.current = window.scrollY;
+      }
+    };
 
-      // Cleanup listener
-      return () => {
-        window.removeEventListener("scroll", controlNavbar);
-      };
-    }
-  }, [lastScrollY]);
+    window.addEventListener("scroll", controlNavbar);
+    return () => window.removeEventListener("scroll", controlNavbar);
+  }, []);
 
   return (
     <header
       className={cn(
-        "border-b fixed top-0 left-0 w-full z-50 h-16 bg-[#f8f4ee] transition-transform duration-300 parchment-card",
-        !true && "-translate-y-full", // Hides when state is false
+        "border-b fixed top-0 left-0 w-full z-50 h-auto bg-background transition-all duration-300 parchment-card",
       )}
     >
-      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4">
+      <div
+        className={cn(
+          "max-w-7xl mx-auto flex items-center justify-between px-4 transition-all duration-300",
+          show ? "h-16" : "h-12"
+        )}
+      >
         {/* LEFT: Mobile menu + Logo */}
         <div className="flex items-center gap-4">
           {/* Mobile Menu */}
@@ -74,12 +79,12 @@ export default function Header({
               </SheetHeader>
 
               {/* MOBILE NAV */}
-              <nav className="mt-6 flex flex-col gap-4 text-lg font-serif">
+              <nav className="mt-6 flex flex-col gap-4 text-lg font-cinzel">
                 {categories.map((category) => (
                   <Link
                     key={category.id}
                     href={`/category/${category.name.toLowerCase()}`}
-                    className="hover:text-red-600"
+                    className="hover:text-amber-600"
                   >
                     {category.name}
                   </Link>
@@ -87,39 +92,120 @@ export default function Header({
 
                 <hr className="my-4" />
 
-                <Link href="/subscribe" className="font-semibold text-red-600">
-                  Subscribe
-                </Link>
+                <div className="mt-2 flex flex-col gap-2">
+                  {!hasSubscription && (
+                    <Link href="/subscribe">
+                      <Button className="magic-button-gold w-full text-amber-950 font-bold">
+                        Subscribe
+                      </Button>
+                    </Link>
+                  )}
+
+                  {session ? (
+                    <Button
+                      className="magic-button w-full text-amber-100 font-bold"
+                      onClick={async () => {
+                        await authClient.signOut();
+                        router.refresh();
+                      }}
+                    >
+                      Sign Out
+                    </Button>
+                  ) : (
+                    <Link href="/sign-in">
+                      <Button className="magic-button w-full text-amber-100 font-bold">
+                        Sign In
+                      </Button>
+                    </Link>
+                  )}
+                </div>
               </nav>
             </SheetContent>
           </Sheet>
 
           {/* Logo */}
-          <Link href="/" className="text-lg font-serif font-bold text-red-600">
-            The Bibliomancer’s Brief
+          <Link
+            href="/"
+            className="flex items-center gap-2 group"
+          >
+            <Image
+              src="/biblo-logo_v4.svg"
+              alt="The Bibliomancer's Brief Logo"
+              width={40}
+              height={40}
+              className={cn(
+                "transition-all duration-300",
+                show ? "h-10 w-10" : "h-8 w-8" // Logo shrinks slightly on scroll
+              )}
+            />
+            <span
+              className={cn(
+                "font-cinzel font-bold text-amber-800 tracking-tighter transition-all duration-300",
+                show ? "text-xl" : "text-lg" // Logo text shrinks on scroll
+              )}
+            >
+              The Bibliomancer's Brief
+            </span>
           </Link>
         </div>
 
         {/* RIGHT */}
-        <Link
-          href="/subscribe"
-          className="hidden md:block text-base font-semibold hover:underline"
-        >
-          Subscribe
-        </Link>
+        <div className="hidden md:flex items-center gap-6">
+          {!hasSubscription && (
+            <Link href="/subscribe">
+              <Button
+                className={cn(
+                  "magic-button-gold px-4 text-amber-950 font-bold transition-all duration-300",
+                  show ? "h-9 text-sm" : "h-8 text-xs px-3"
+                )}
+              >
+                Subscribe
+              </Button>
+            </Link>
+          )}
+
+          {session ? (
+            <Button
+              className={cn(
+                "magic-button px-4 text-amber-100 font-bold transition-all duration-300",
+                show ? "h-9 text-sm" : "h-8 text-xs px-3"
+              )}
+              onClick={async () => {
+                await authClient.signOut();
+                router.refresh();
+              }}
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Link href="/sign-in">
+              <Button
+                className={cn(
+                  "magic-button px-4 text-amber-100 font-bold transition-all duration-300",
+                  show ? "h-9 text-sm" : "h-8 text-xs px-3"
+                )}
+              >
+                Sign In
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
       {/* DESKTOP NAV */}
       <nav
         className={cn(
-          "hidden md:flex w-full justify-center gap-8 text-lg font-serif bg-[#f8f4ee] items-center",
-          !show && "-translate-y-full", // Hides when state is false
+          "hidden md:flex w-full justify-center gap-8 font-cinzel bg-transparent items-center transition-all duration-300 overflow-hidden",
+          show ? "max-h-12 pb-2 opacity-100" : "max-h-0 pb-0 opacity-0 pointer-events-none", // Collapse and fade categories
         )}
       >
         {categories.map((category) => (
           <Link
             key={category.id}
             href={`/category/${category.name.toLowerCase()}`}
-            className="hover:text-red-600 transition"
+            className={cn(
+              "hover:text-amber-700 transition-all duration-300",
+              show ? "text-lg" : "text-base"
+            )}
           >
             {category.name}
           </Link>

@@ -182,3 +182,30 @@ export async function addSubscriptionToUser(
     };
   }
 }
+
+// Check if current user has an active subscription
+export async function checkActiveSubscription() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    return { hasActiveSubscription: false };
+  }
+
+  try {
+    const subscription = await prisma.subscription.findFirst({
+      where: {
+        userId: session.user.id,
+        expiresAt: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    return { hasActiveSubscription: !!subscription };
+  } catch (error) {
+    console.error("Error checking subscription status:", error);
+    return { hasActiveSubscription: false };
+  }
+}
