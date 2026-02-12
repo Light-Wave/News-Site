@@ -20,7 +20,6 @@ interface SubscriptionBoxProps {
 
 export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
   const [email, setEmail] = useState("");
-  const [isHovered, setIsHovered] = useState(false);
   const { hasSubscription, isLoading } = useSubscription();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,7 +28,7 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
     console.log("Subscribing:", email);
   };
 
-  if (hasSubscription || isLoading) return null; // Hide if already subscribed or loading status
+  if (hasSubscription === true) return null; // Only hide if definitively subscribed
 
   return (
     <div className={cn("relative w-full max-w-[1024px] mx-auto py-8 px-4", className)}>
@@ -86,7 +85,7 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
               />
               <Button
                 type="submit"
-                className="magic-button-gold h-auto px-6 py-3 rounded-md font-bold text-amber-950 transition-all duration-300 hover:scale-105"
+                className="magic-button-gold h-auto px-6 py-3 rounded-md font-bold transition-all duration-300 hover:scale-105"
               >
                 Subscribe
               </Button>

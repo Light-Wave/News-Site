@@ -23,8 +23,9 @@ export default function Header({
   categories: Awaited<ReturnType<typeof getAllCategories>>;
 }) {
   const [show, setShow] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session } = authClient.useSession();
   const { hasSubscription } = useSubscription();
   const router = useRouter();
 
@@ -32,10 +33,8 @@ export default function Header({
     const controlNavbar = () => {
       if (typeof window !== "undefined") {
         if (window.scrollY > lastScrollY.current && window.scrollY > 100) {
-          // Scrolling down - hide navbar
           setShow(false);
         } else {
-          // Scrolling up - show navbar
           setShow(true);
         }
         lastScrollY.current = window.scrollY;
@@ -46,10 +45,82 @@ export default function Header({
     return () => window.removeEventListener("scroll", controlNavbar);
   }, []);
 
+  const closeMenu = () => setIsMenuOpen(false);
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    closeMenu();
+    router.refresh();
+  };
+
+  // Sub-component for Category Links
+  const CategoryLinks = ({ isMobile = false }) => (
+    <>
+      {categories.map((category) => (
+        <Link
+          key={category.id}
+          href={`/category/${category.name.toLowerCase()}`}
+          className={cn(
+            "hover:text-amber-700 transition-all duration-300",
+            isMobile
+              ? "border-b border-amber-800/10 pb-2"
+              : (show ? "text-lg" : "text-base")
+          )}
+          onClick={isMobile ? closeMenu : undefined}
+        >
+          {category.name}
+        </Link>
+      ))}
+    </>
+  );
+
+  // Sub-component for Auth & Subscribe Buttons
+  const ActionButtons = ({ isMobile = false }) => (
+    <div className={cn("flex items-center", isMobile ? "flex-col gap-3 mt-4" : "gap-6")}>
+      {!hasSubscription && (
+        <Link href="/subscribe" className={isMobile ? "w-full" : ""}>
+          <Button
+            className={cn(
+              "magic-button-gold font-bold transition-all duration-300",
+              isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
+            )}
+            onClick={isMobile ? closeMenu : undefined}
+          >
+            Subscribe
+          </Button>
+        </Link>
+      )}
+
+      {session ? (
+        <Button
+          className={cn(
+            "magic-button text-amber-100 font-bold transition-all duration-300",
+            isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
+          )}
+          onClick={handleSignOut}
+        >
+          Sign Out
+        </Button>
+      ) : (
+        <Link href="/sign-in" className={isMobile ? "w-full" : ""}>
+          <Button
+            className={cn(
+              "magic-button text-amber-100 font-bold transition-all duration-300",
+              isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
+            )}
+            onClick={isMobile ? closeMenu : undefined}
+          >
+            Sign In
+          </Button>
+        </Link>
+      )}
+    </div>
+  );
+
   return (
     <header
       className={cn(
-        "border-b fixed top-0 left-0 w-full z-50 h-auto bg-background transition-all duration-300 parchment-card",
+        "border-b fixed top-0 left-0 w-full z-50 h-auto bg-background transition-all duration-300 parchment-card !overflow-visible",
       )}
     >
       <div
@@ -58,90 +129,34 @@ export default function Header({
           show ? "h-16" : "h-12"
         )}
       >
-        {/* LEFT: Mobile menu + Logo */}
-        <div className="flex items-center gap-4">
-          {/* Mobile Menu */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                aria-label="Open menu"
-              >
-                <Menu />
-              </Button>
-            </SheetTrigger>
-
-            <SheetContent side="left" className="w-3/4 px-6">
-              <SheetHeader>
-                <SheetTitle className="text-lg">Menu</SheetTitle>
-              </SheetHeader>
-
-              {/* MOBILE NAV */}
-              <nav className="mt-6 flex flex-col gap-4 text-lg font-cinzel">
-                {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={`/category/${category.name.toLowerCase()}`}
-                    className="hover:text-amber-600"
-                  >
-                    {category.name}
-                  </Link>
-                ))}
-
-                <hr className="my-4" />
-
-                <div className="mt-2 flex flex-col gap-2">
-                  {!hasSubscription && (
-                    <Link href="/subscribe">
-                      <Button className="magic-button-gold w-full text-amber-950 font-bold">
-                        Subscribe
-                      </Button>
-                    </Link>
-                  )}
-
-                  {session ? (
-                    <Button
-                      className="magic-button w-full text-amber-100 font-bold"
-                      onClick={async () => {
-                        await authClient.signOut();
-                        router.refresh();
-                      }}
-                    >
-                      Sign Out
-                    </Button>
-                  ) : (
-                    <Link href="/sign-in">
-                      <Button className="magic-button w-full text-amber-100 font-bold">
-                        Sign In
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              </nav>
-            </SheetContent>
-          </Sheet>
-
-          {/* Logo */}
+        {/* LEFT: Logo Column (Medallion Effect) */}
+        <div className="flex-shrink-0 flex items-center relative z-[70] w-16 md:w-32 h-full">
           <Link
             href="/"
-            className="flex items-center gap-2 group"
+            className={cn(
+              "group absolute top-0 left-0 md:left-1/2 md:-translate-x-1/2 transition-all duration-500",
+              show ? "h-[64px] w-[64px] md:h-[100px] md:w-[100px]" : "h-[48px] w-[48px]"
+            )}
           >
             <Image
               src="/biblo-logo_v4.svg"
               alt="The Bibliomancer's Brief Logo"
-              width={40}
-              height={40}
+              width={100}
+              height={100}
               className={cn(
-                "transition-all duration-300",
-                show ? "h-10 w-10" : "h-8 w-8" // Logo shrinks slightly on scroll
+                "w-full h-full object-contain transition-all duration-500 drop-shadow-[0_0_12px_rgba(251,191,36,0.3)] group-hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]",
               )}
             />
+          </Link>
+        </div>
+
+        {/* MIDDLE: Site Name Area */}
+        <div className="flex-grow flex items-center ml-2 md:ml-12 min-w-0">
+          <Link href="/" className="group">
             <span
               className={cn(
-                "font-cinzel font-bold text-amber-800 tracking-tighter transition-all duration-300",
-                show ? "text-xl" : "text-lg" // Logo text shrinks on scroll
+                "font-cinzel font-bold text-amber-800 tracking-tighter transition-all duration-300 whitespace-nowrap",
+                show ? "text-lg sm:text-xl" : "text-base sm:text-lg"
               )}
             >
               The Bibliomancer's Brief
@@ -149,67 +164,48 @@ export default function Header({
           </Link>
         </div>
 
-        {/* RIGHT */}
-        <div className="hidden md:flex items-center gap-6">
-          {!hasSubscription && (
-            <Link href="/subscribe">
-              <Button
-                className={cn(
-                  "magic-button-gold px-4 text-amber-950 font-bold transition-all duration-300",
-                  show ? "h-9 text-sm" : "h-8 text-xs px-3"
-                )}
-              >
-                Subscribe
-              </Button>
-            </Link>
-          )}
+        {/* RIGHT: Buttons (Desktop) + Mobile Menu Trigger */}
+        <div className="flex items-center gap-2 sm:gap-6">
+          <div className="hidden md:block">
+            <ActionButtons />
+          </div>
 
-          {session ? (
-            <Button
-              className={cn(
-                "magic-button px-4 text-amber-100 font-bold transition-all duration-300",
-                show ? "h-9 text-sm" : "h-8 text-xs px-3"
-              )}
-              onClick={async () => {
-                await authClient.signOut();
-                router.refresh();
-              }}
-            >
-              Sign Out
-            </Button>
-          ) : (
-            <Link href="/sign-in">
+          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <SheetTrigger asChild>
               <Button
-                className={cn(
-                  "magic-button px-4 text-amber-100 font-bold transition-all duration-300",
-                  show ? "h-9 text-sm" : "h-8 text-xs px-3"
-                )}
+                variant="ghost"
+                size="icon"
+                className="md:hidden h-9 w-9 p-0 text-amber-900"
+                aria-label="Open menu"
               >
-                Sign In
+                <Menu className="h-6 w-6" />
               </Button>
-            </Link>
-          )}
+            </SheetTrigger>
+
+            <SheetContent side="right" className="w-full sm:w-80 px-6 parchment-card border-l-amber-800/20">
+              <SheetHeader>
+                <SheetTitle className="text-xl font-cinzel text-amber-950 text-left">Arcane Menu</SheetTitle>
+              </SheetHeader>
+
+              <nav className="mt-8 flex flex-col gap-5 text-lg font-cinzel">
+                <CategoryLinks isMobile />
+                <ActionButtons isMobile />
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-      {/* DESKTOP NAV */}
+
+      {/* DESKTOP CATEGORY NAV */}
       <nav
         className={cn(
-          "hidden md:flex w-full justify-center gap-8 font-cinzel bg-transparent items-center transition-all duration-300 overflow-hidden",
-          show ? "max-h-12 pb-2 opacity-100" : "max-h-0 pb-0 opacity-0 pointer-events-none", // Collapse and fade categories
+          "hidden md:flex w-full transition-all duration-300 overflow-hidden",
+          show ? "h-9 opacity-100" : "h-0 opacity-0 pointer-events-none",
         )}
       >
-        {categories.map((category) => (
-          <Link
-            key={category.id}
-            href={`/category/${category.name.toLowerCase()}`}
-            className={cn(
-              "hover:text-amber-700 transition-all duration-300",
-              show ? "text-lg" : "text-base"
-            )}
-          >
-            {category.name}
-          </Link>
-        ))}
+        <div className="max-w-7xl mx-auto w-full px-4 flex justify-end gap-8 font-cinzel items-center h-full">
+          <CategoryLinks />
+        </div>
       </nav>
     </header>
   );
