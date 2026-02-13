@@ -75,10 +75,15 @@ async function generateCategories() {
 async function generateArticles() {
   console.log("\n📰 Generating articles...");
   const articleCount = await prisma.article.count();
+  if (articleCount > 0) {
+    console.log(
+      `Articles already exist (${articleCount}), removing old test articles.`,
+    );
+    await prisma.article.deleteMany({
+      where: { user: { email: { endsWith: "@testing.com" } } },
+    });
+  }
   const targetArticleCount = 20;
-  console.log(
-    `  Current articles: ${articleCount}, Target: ${targetArticleCount}`,
-  );
   let writerEmail =
     (await prisma.user.count({
       where: { email: "writer@testing.com" },
@@ -88,7 +93,7 @@ async function generateArticles() {
   if (!writerEmail) {
     throw new Error("No users found for article writers.");
   }
-  for (let i = articleCount; i < targetArticleCount; i++) {
+  for (let i = 0; i < targetArticleCount; i++) {
     console.log(`  Creating article ${i + 1}/${targetArticleCount}...`);
     const summary = await lipsum.getText({
       amount: Math.floor(Math.random() * 2) + 1,
@@ -97,13 +102,13 @@ async function generateArticles() {
     let content = summary + "\n\n";
     for (let j = 0; j < i % 10; j++) {
       content += await lipsum.getText({
-        amount: Math.floor(Math.random() * 5) + 3,
+        amount: Math.floor(Math.random() * 3) + 1,
         what: "paragraphs",
       });
       content += "\n\n";
     }
     let headline = await lipsum.getText({
-      amount: Math.floor(Math.random() * 10) + 1,
+      amount: Math.floor(Math.random() * 3) + 2,
       what: "words",
     });
     switch (i % 4) {
@@ -123,6 +128,15 @@ async function generateArticles() {
       default:
         break;
     }
+    const newCategories = new Set([
+      premadeCategories[i % premadeCategories.length],
+    ]);
+    const extraCategoryCount = Math.floor(Math.random() * 2);
+    for (let k = 0; k < extraCategoryCount; k++) {
+      const extraCategory =
+        premadeCategories[Math.floor(Math.random() * premadeCategories.length)];
+      newCategories.add(extraCategory);
+    }
     await prisma.article.create({
       data: {
         headline,
@@ -130,15 +144,14 @@ async function generateArticles() {
         summary,
         image: `https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/200/300`,
         user: { connect: { email: writerEmail } },
-        category: {
-          connect: { name: premadeCategories[i % premadeCategories.length] },
+        views: i,
+        categories: {
+          connect: Array.from(newCategories).map((name) => ({ name })),
         },
       },
     });
   }
-  console.log(
-    `✅ Articles complete (${targetArticleCount - articleCount} created)`,
-  );
+  console.log(`✅ Articles complete (${targetArticleCount} created)`);
 }
 
 async function main() {

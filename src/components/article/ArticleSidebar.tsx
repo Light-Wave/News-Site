@@ -3,15 +3,17 @@ import Link from "next/link";
 
 export default function Sidebar({
   articles,
-  category,
+  categories,
 }: {
   articles: { id: string; headline: string; image: string }[];
-  category: string;
+  categories: { id: string; name: string }[];
 }) {
   return (
     <aside className="space-y-6">
       <h1 className="text-sm font-semibold uppercase tracking-wide">
-        Latest in {category}
+        {categories.length
+          ? `Latest in ${categories.map((cat) => cat.name).join(", ")}`
+          : "Latest"}
       </h1>
 
       {articles.map((article) => (

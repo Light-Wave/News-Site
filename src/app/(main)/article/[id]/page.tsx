@@ -13,7 +13,7 @@ export default async function ArticlePage({
   const article = await prisma.article.findUnique({
     where: { id: id },
     include: {
-      category: true,
+      categories: true,
       user: { select: { name: true } },
     },
   });
@@ -26,21 +26,19 @@ export default async function ArticlePage({
     where: {
       isActive: true,
       NOT: { id },
-      category: {
-        name: article.category.name, // SAME CATEGORY
+      categories: {
+        some: {
+          name: {
+            in: article.categories.map((cat) => cat.name),
+            mode: "insensitive",
+          },
+        },
       },
     },
-    select: {
-      id: true,
-      headline: true,
-      image: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
+    select: { id: true, headline: true, image: true },
+    orderBy: { createdAt: "desc" },
     take: 8,
   });
-
   return (
     <div className="w-full px-4 py-6 lg:max-w-7xl lg:mx-auto lg:px-6 lg:py-10">
       {/* Breadcrumb */}
@@ -49,12 +47,27 @@ export default async function ArticlePage({
           Home
         </Link>
         {" › "}
-        <Link
-          href={`/category/${article.category.name.toLowerCase()}`}
-          className="hover:underline"
-        >
-          {article.category.name}
-        </Link>
+        {article.categories
+          .map((cat) => (
+            <Link
+              key={cat.id}
+              href={`/category/${cat.name.toLowerCase()}`}
+              className="hover:underline"
+            >
+              {cat.name}
+            </Link>
+          ))
+          .reduce<React.ReactNode[]>((acc, link, index) => {
+            if (index > 0) {
+              acc.push(
+                <span key={`sep-${index}`} className="px-1">
+                  /
+                </span>,
+              );
+            }
+            acc.push(link);
+            return acc;
+          }, [])}
         {" › "}
         <span className="text-gray-900">{article.headline}</span>
       </nav>
@@ -66,7 +79,7 @@ export default async function ArticlePage({
 
         <ArticleSidebar
           articles={latestArticles}
-          category={article.category.name}
+          categories={article.categories}
         />
       </div>
     </div>
