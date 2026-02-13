@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import * as React from "react"
+import { useSubscription } from "@/hooks/use-subscription";
 /**
  * SubscriptionBox Component
  * TODO - Implement an actual check for user subscription status
@@ -19,13 +20,16 @@ interface SubscriptionBoxProps {
 
 export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
   const [email, setEmail] = useState("");
-  const [isHovered, setIsHovered] = useState(false);
+  const { hasSubscription, isLoading } = useSubscription();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement actual subscription logic
     console.log("Subscribing:", email);
   };
+
+  if (isLoading) return null; // Don't render anything while checking subscription status
+  if (hasSubscription === true) return null; // Only hide if definitively subscribed
 
   return (
     <div className={cn("relative w-full max-w-[1024px] mx-auto py-8 px-4", className)}>
@@ -72,6 +76,7 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row sm:items-center gap-3 w-full max-w-md mt-2">
               <label htmlFor="email" className="sr-only">Email Address</label>
               <input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -82,7 +87,7 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
               />
               <Button
                 type="submit"
-                className="subscription-button h-auto px-6 py-3 rounded-md font-bold text-amber-100 transition-all duration-300 hover:scale-105"
+                className="magic-button-gold h-auto px-6 py-3 rounded-md font-bold transition-all duration-300 hover:scale-105"
               >
                 Subscribe
               </Button>
