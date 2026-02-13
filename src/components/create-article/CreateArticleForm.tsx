@@ -55,10 +55,8 @@ type Category = {
 };
 
 export default function CreateArticleForm({
-  userId,
   categories,
 }: {
-  userId: string;
   categories: Category[];
 }) {
   const [open, setOpen] = useState(false);
@@ -77,7 +75,6 @@ export default function CreateArticleForm({
   const onSubmit = async (values: FormValues) => {
     const res = await createArticle({
       ...values,
-      userId,
     });
 
     if (res.success) {

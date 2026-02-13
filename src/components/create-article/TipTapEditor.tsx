@@ -26,19 +26,19 @@ export default function TipTapEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-xl max-w-none focus:outline-none p-4",
+          "tiptap prose prose-sm sm:prose-base lg:prose-lg xl:prose-xl max-w-none focus:outline-none p-4",
       },
     },
     content,
     onUpdate: ({ editor }) => {
-      onUpdate(editor.getHTML());
+      onUpdate(editor.getText());
     },
     immediatelyRender: false,
   });
 
   useEffect(() => {
     if (!editor) return;
-    if (content !== editor.getHTML()) {
+    if (content !== editor.getText()) {
       editor.commands.setContent(content || "");
     }
   }, [content, editor]);
