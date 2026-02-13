@@ -6,13 +6,14 @@ import {
 
 const statement = {
   ...defaultStatements,
+  ...adminAc.statements,
   article: ["read", "create", "delete", "update"],
   category: ["create", "update", "delete"],
   subscriptionType: ["create", "update", "delete"],
   editorsChoice: ["create", "update", "delete"],
   subscription: ["create", "update"],
   signInEmail: ["*"],
-  user: ["read", "create", "delete", "update"],
+  user: ["read", "create", "delete", "update", "ban", "unban", "set-role"],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -28,7 +29,7 @@ export const admin = ac.newRole({
   subscriptionType: ["create", "update", "delete"],
   editorsChoice: ["create", "update", "delete"],
   subscription: ["create", "update"],
-  user: ["read", "create", "delete", "update"],
+  user: ["read", "create", "delete", "update", "ban", "unban", "set-role"],
 });
 
 export const writer = ac.newRole({

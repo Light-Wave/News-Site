@@ -45,7 +45,7 @@ export async function toggleUserBan(
     if (isCurrentlyBanned) {
       await auth.api.unbanUser({
         body: {
-          userId: "user-id", // required
+          userId,
         },
         // This endpoint requires session cookies.
         headers: await headers(),
@@ -53,8 +53,8 @@ export async function toggleUserBan(
     } else {
       await auth.api.banUser({
         body: {
-          userId: "user-id", // required
-          banReason: "Spamming",
+          userId,
+          banReason: "Account under review",
           banExpiresIn: 60 * 60 * 24 * 7,
         },
         // This endpoint requires session cookies.
