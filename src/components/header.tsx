@@ -17,6 +17,96 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useSubscription } from "@/hooks/use-subscription";
 
+// Sub-component for Category Links
+const CategoryLinks = ({
+  categories,
+  isMobile = false,
+  show,
+  closeMenu
+}: {
+  categories: any[],
+  isMobile?: boolean,
+  show: boolean,
+  closeMenu: () => void
+}) => (
+  <>
+    {categories.map((category) => (
+      <Link
+        key={category.id}
+        href={`/category/${category.name.toLowerCase()}`}
+        className={cn(
+          "hover:text-amber-700 transition-all duration-300",
+          isMobile
+            ? "border-b border-amber-800/10 pb-2"
+            : (show ? "text-lg" : "text-base")
+        )}
+        onClick={isMobile ? closeMenu : undefined}
+      >
+        {category.name}
+      </Link>
+    ))}
+  </>
+);
+
+// Sub-component for Auth & Subscribe Buttons
+const ActionButtons = ({
+  session,
+  hasSubscription,
+  isLoading,
+  show,
+  isMobile = false,
+  handleSignOut,
+  closeMenu
+}: {
+  session: any,
+  hasSubscription: boolean | null,
+  isLoading: boolean,
+  show: boolean,
+  isMobile?: boolean,
+  handleSignOut: () => void,
+  closeMenu: () => void
+}) => (
+  <div className={cn("flex items-center", isMobile ? "flex-col gap-3 mt-4" : "gap-6")}>
+    {hasSubscription === false && !isLoading && (
+      <Button
+        asChild
+        className={cn(
+          "magic-button-gold font-bold transition-all duration-300",
+          isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
+        )}
+      >
+        <Link href="/subscribe" onClick={isMobile ? closeMenu : undefined}>
+          Subscribe
+        </Link>
+      </Button>
+    )}
+
+    {session ? (
+      <Button
+        className={cn(
+          "magic-button text-amber-100 font-bold transition-all duration-300",
+          isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
+        )}
+        onClick={handleSignOut}
+      >
+        Sign Out
+      </Button>
+    ) : (
+      <Button
+        asChild
+        className={cn(
+          "magic-button text-amber-100 font-bold transition-all duration-300",
+          isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
+        )}
+      >
+        <Link href="/sign-in" onClick={isMobile ? closeMenu : undefined}>
+          Sign In
+        </Link>
+      </Button>
+    )}
+  </div>
+);
+
 export default function Header({
   categories,
 }: {
@@ -30,14 +120,25 @@ export default function Header({
   const router = useRouter();
 
   useEffect(() => {
+    let ticking = false;
     const controlNavbar = () => {
-      if (typeof window !== "undefined") {
-        if (window.scrollY > lastScrollY.current && window.scrollY > 100) {
-          setShow(false);
-        } else {
-          setShow(true);
-        }
-        lastScrollY.current = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          // Calculate delta to prevent jittering on small movements or layout shifts in Chrome
+          const diff = Math.abs(currentScrollY - lastScrollY.current);
+
+          if (diff > 10) {
+            if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+              setShow(false);
+            } else if (currentScrollY < lastScrollY.current) {
+              setShow(true);
+            }
+            lastScrollY.current = currentScrollY;
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -53,74 +154,33 @@ export default function Header({
     router.refresh();
   };
 
-  // Sub-component for Category Links
-  const CategoryLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <>
-      {categories.map((category) => (
-        <Link
-          key={category.id}
-          href={`/category/${category.name.toLowerCase()}`}
-          className={cn(
-            "hover:text-amber-700 transition-all duration-300",
-            isMobile
-              ? "border-b border-amber-800/10 pb-2"
-              : (show ? "text-lg" : "text-base")
-          )}
-          onClick={isMobile ? closeMenu : undefined}
-        >
-          {category.name}
-        </Link>
-      ))}
-    </>
-  );
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDown, setIsDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
-  // Sub-component for Auth & Subscribe Buttons
-  const ActionButtons = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <div className={cn("flex items-center", isMobile ? "flex-col gap-3 mt-4" : "gap-6")}>
-      {hasSubscription === false && !isLoading && (
-        <Button
-          asChild
-          className={cn(
-            "magic-button-gold font-bold transition-all duration-300",
-            isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
-          )}
-        >
-          <Link href="/subscribe" onClick={isMobile ? closeMenu : undefined}>
-            Subscribe
-          </Link>
-        </Button>
-      )}
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDown(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
 
-      {session ? (
-        <Button
-          className={cn(
-            "magic-button text-amber-100 font-bold transition-all duration-300",
-            isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
-          )}
-          onClick={handleSignOut}
-        >
-          Sign Out
-        </Button>
-      ) : (
-        <Button
-          asChild
-          className={cn(
-            "magic-button text-amber-100 font-bold transition-all duration-300",
-            isMobile ? "w-full h-12" : (show ? "h-9 text-sm px-4" : "h-8 text-xs px-3")
-          )}
-        >
-          <Link href="/sign-in" onClick={isMobile ? closeMenu : undefined}>
-            Sign In
-          </Link>
-        </Button>
-      )}
-    </div>
-  );
+  const handleMouseLeave = () => setIsDown(false);
+  const handleMouseUp = () => setIsDown(false);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDown || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // Scroll speed multiplier
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
 
   return (
     <header
       className={cn(
-        "border-b fixed top-0 left-0 w-full z-50 h-auto bg-background transition-all duration-300 parchment-card !overflow-visible",
+        "border-b sticky top-0 w-full z-50 h-auto bg-background transition-all duration-300 parchment-card !overflow-visible",
       )}
     >
       <div
@@ -167,7 +227,14 @@ export default function Header({
         {/* RIGHT: Buttons (Desktop) + Mobile Menu Trigger */}
         <div className="flex items-center gap-2 sm:gap-6">
           <div className="hidden md:block">
-            <ActionButtons />
+            <ActionButtons
+              session={session}
+              hasSubscription={hasSubscription}
+              isLoading={isLoading}
+              show={show}
+              handleSignOut={handleSignOut}
+              closeMenu={closeMenu}
+            />
           </div>
 
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -188,8 +255,16 @@ export default function Header({
               </SheetHeader>
 
               <nav className="mt-8 flex flex-col gap-5 text-lg font-cinzel">
-                <CategoryLinks isMobile />
-                <ActionButtons isMobile />
+                <CategoryLinks categories={categories} isMobile show={show} closeMenu={closeMenu} />
+                <ActionButtons
+                  session={session}
+                  hasSubscription={hasSubscription}
+                  isLoading={isLoading}
+                  show={show}
+                  isMobile
+                  handleSignOut={handleSignOut}
+                  closeMenu={closeMenu}
+                />
               </nav>
             </SheetContent>
           </Sheet>
@@ -200,11 +275,26 @@ export default function Header({
       <nav
         className={cn(
           "hidden md:flex w-full transition-all duration-300 overflow-hidden",
-          show ? "h-9 opacity-100" : "h-0 opacity-0 pointer-events-none",
+          show ? "h-10 opacity-100" : "h-0 opacity-0 pointer-events-none",
         )}
       >
-        <div className="max-w-7xl mx-auto w-full px-4 flex justify-end gap-8 font-cinzel items-center h-full">
-          <CategoryLinks />
+        <div className="max-w-7xl mx-auto w-full px-4 md:pl-36 flex items-center h-full">
+          <div
+            ref={scrollRef}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+            className={cn(
+              "flex-grow min-w-0 overflow-x-auto no-scrollbar flex items-center select-none",
+              isDown ? "cursor-grabbing" : "cursor-grab"
+            )}
+          >
+            <div className="flex-grow" />
+            <div className="flex-shrink-0 w-max flex gap-x-5 lg:gap-x-8 font-cinzel items-center h-full whitespace-nowrap py-1">
+              <CategoryLinks categories={categories} show={show} closeMenu={closeMenu} />
+            </div>
+          </div>
         </div>
       </nav>
     </header>

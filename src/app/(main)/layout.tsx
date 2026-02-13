@@ -50,7 +50,7 @@ export default async function RootLayout({
     >
       <body className="min-h-screen flex flex-col overflow-x-hidden bg-[var(--wood-darkest)]">
         <Header categories={categories} />
-        <main className="flex-1 w-full max-w-7xl m-auto mt-20 sm:mt-24 ">{children}</main>
+        <main className="flex-1 w-full max-w-7xl m-auto ">{children}</main>
         <Toaster />
         <Footer />
       </body>

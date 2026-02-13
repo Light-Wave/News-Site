@@ -76,6 +76,7 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row sm:items-center gap-3 w-full max-w-md mt-2">
               <label htmlFor="email" className="sr-only">Email Address</label>
               <input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
