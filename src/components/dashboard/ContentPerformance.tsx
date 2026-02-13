@@ -19,7 +19,7 @@ export function ContentPerformance({ articles }: { articles: ArticleData }) {
         <h3 className="font-bold text-slate-800 text-sm">
           Content Performance
         </h3>
-        <div className="flex gap-8 text-[10px] font-black text-slate-400 uppercase">
+        <div className="flex gap-15 text-[10px] font-black text-slate-400 uppercase">
           <span>Views</span>
           <span>Status</span>
           <span>Action</span>
