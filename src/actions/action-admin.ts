@@ -10,9 +10,12 @@ export async function updateUserRole(userId: string, newRole: string) {
     if (session?.user.id === userId) {
       return { success: false, message: "You cannot change your own role" };
     }
+    if (newRole.toLowerCase() === "admin") {
+      return { success: false, message: "Admin cannot be change" };
+    }
 
-    // Force check: If not admin, stop immediately
     if (!session || session.user.role !== "admin") {
+      // Force check: If not admin, stop immediately
       return { success: false, message: "Unauthorized" };
     }
 
