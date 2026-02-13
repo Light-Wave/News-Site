@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import { z } from "zod";
+import DOMPurify from "isomorphic-dompurify";
 
 // Create Article
 
@@ -47,26 +48,35 @@ export async function createArticle(
   // if (!success) {
   //   return { success: false, message: "Unauthorized" };
   // }
-  
+
   const parsed = createArticleSchema.safeParse(input);
+
   if (!parsed.success) {
     return { success: false, errors: parsed.error };
   }
+
   try {
-    const { categoryIds, ...data } = parsed.data;
+    const { categoryIds, content, ...data } = parsed.data;
+
+
+    const safeHtml = DOMPurify.sanitize(content, {
+      USE_PROFILES: { html: true },
+    });
+
+
     await prisma.article.create({
       data: {
         ...data,
+        content: safeHtml,
         user: {
           connect: { id: session.user.id },
         },
         categories: {
-          connect: categoryIds.map((id) => ({
-            id,
-          })),
+          connect: categoryIds.map((id) => ({ id })),
         },
       },
     });
+
     return { success: true };
   } catch (error) {
     return {
@@ -75,7 +85,6 @@ export async function createArticle(
     };
   }
 }
-
 // Update Article
 
 const updateArticleSchema = createArticleSchema.partial().extend({

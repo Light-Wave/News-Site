@@ -31,14 +31,14 @@ export default function TipTapEditor({
     },
     content,
     onUpdate: ({ editor }) => {
-      onUpdate(editor.getText());
+      onUpdate(editor.getHTML());
     },
     immediatelyRender: false,
   });
 
   useEffect(() => {
     if (!editor) return;
-    if (content !== editor.getText()) {
+    if (content !== editor.getHTML()) {
       editor.commands.setContent(content || "");
     }
   }, [content, editor]);
