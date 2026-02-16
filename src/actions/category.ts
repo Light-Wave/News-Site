@@ -1,9 +1,9 @@
 "use server";
 
-import { z } from "zod";
-import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
+import { z } from "zod";
 
 const createCategorySchema = z.object({
   name: z
@@ -180,4 +180,10 @@ export async function getCategoryIdsByNames(names: string[]): Promise<{
       notFound: trimmed,
     };
   }
+}
+
+export async function getAllCategories() {
+  return prisma.category.findMany({
+    orderBy: { name: "asc" },
+  });
 }

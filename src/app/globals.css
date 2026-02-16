@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -320,6 +321,18 @@
       0 0 15px rgba(255, 200, 100, 0.2);
   }
 
+  /* Simple TipTap Editor styling */
+  .tiptap {
+    outline: none;
+    min-height: 200px;
+  }
+
+  .tiptap p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    color: var(--color-muted-foreground);
+    float: left;
+    height: 0;
+    pointer-events: none;
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
