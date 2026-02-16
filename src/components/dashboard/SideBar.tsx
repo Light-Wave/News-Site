@@ -17,7 +17,7 @@ export default function SideBar() {
   const menu = [
     { name: "Homepage", icon: House, href: "/" },
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
-    { name: "Article Manager", icon: Newspaper, href: "/admin/articles" },
+    { name: "Article Manager", icon: Newspaper, href: "/admin/dashboard/articles" },
     { name: "Editor's Picks", icon: Star, href: "/admin/picks" },
     { name: "User Management", icon: Users, href: "/admin/users" },
     { name: "Plans & Pricing", icon: CreditCard, href: "/admin/plans" },
