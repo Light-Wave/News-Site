@@ -1,9 +1,8 @@
 const noiseSvg = `data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E`;
 
 export default function Footer() {
-
   return (
-    <footer className="relative mt-12">
+    <footer className="relative mt-12" aria-label="Site Footer">
       <div className="h-1 bg-gradient-to-r from-transparent via-amber-700/60 to-transparent" />
 
       {/* Main footer body */}
@@ -40,7 +39,12 @@ export default function Footer() {
                 <span className="font-semibold text-amber-900">
                   🐦‍⬛ Send a Raven:
                 </span>{" "}
-                contact@bibliomancers-brief.realm
+                <a
+                  href="mailto:contact@bibliomancers-brief.realm"
+                  className="hover:text-amber-700 underline decoration-amber-700/30 transition-colors"
+                >
+                  contact@bibliomancers-brief.realm
+                </a>
               </p>
 
               <p className="mt-1 text-sm text-amber-900/80">
