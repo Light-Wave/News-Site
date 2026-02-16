@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import { z } from "zod";
+import DOMPurify from "isomorphic-dompurify";
 
 // Create Article
 
@@ -23,12 +24,18 @@ const createArticleSchema = z.object({
     .max(800, "Summary can be at most 800 characters"),
   image: z.string().min(1, "Image url must be at least 1 character"),
   categoryIds: z.array(z.string()).min(1, "Article needs a category"),
-  userId: z.string().min(1, "Article needs a writer"),
 });
 
 export async function createArticle(
   input: z.infer<typeof createArticleSchema>,
 ) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) return {
+    success: false,
+    message: "Invalid session",
+  }
   // TODO: Need to implement once testing is done
   // const { success } = await auth.api.userHasPermission({
   //   headers: await headers(),
@@ -41,25 +48,35 @@ export async function createArticle(
   // if (!success) {
   //   return { success: false, message: "Unauthorized" };
   // }
+
   const parsed = createArticleSchema.safeParse(input);
+
   if (!parsed.success) {
     return { success: false, errors: parsed.error };
   }
+
   try {
-    const { categoryIds, userId, ...data } = parsed.data;
+    const { categoryIds, content, ...data } = parsed.data;
+
+
+    const safeHtml = DOMPurify.sanitize(content, {
+      USE_PROFILES: { html: true },
+    });
+
+
     await prisma.article.create({
       data: {
         ...data,
+        content: safeHtml,
         user: {
-          connect: { id: userId },
+          connect: { id: session.user.id },
         },
         categories: {
-          connect: categoryIds.map((id) => ({
-            id,
-          })),
+          connect: categoryIds.map((id) => ({ id })),
         },
       },
     });
+
     return { success: true };
   } catch (error) {
     return {
@@ -68,7 +85,6 @@ export async function createArticle(
     };
   }
 }
-
 // Update Article
 
 const updateArticleSchema = createArticleSchema.partial().extend({
@@ -166,7 +182,9 @@ export async function getArticleById(
   }
 
   try {
-    const article = await prisma.article.findFirst({ where: { id: parsed.data.id, isActive: true } })
+    const article = await prisma.article.findFirst({
+      where: { id: parsed.data.id, isActive: true },
+    });
     return { success: true, article };
   } catch (error) {
     return {
@@ -206,7 +224,7 @@ export async function getLatestArticles(
 }
 
 // Get Random Articles. grabs a random selection equal to the set limit (default 3)
-// it then returns an array of the grabbed articles. 
+// it then returns an array of the grabbed articles.
 // NOTE: Not sure this has any real use in the finished product, but it's here for now for when we need completely random articles
 // NOTE2: This solution with queryRaw was suggested by copilot, but I'm pretty sure it's not the best way to do it.
 const getRandomArticlesSchema = z.object({
@@ -237,4 +255,3 @@ export async function getRandomArticles(
     };
   }
 }
-

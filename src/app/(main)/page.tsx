@@ -2,9 +2,12 @@ import ArticleCard from "@/components/layout/articleCard";
 import SmallArticleCard from "@/components/layout/smallArticleCard";
 import { getLatestArticles, getRandomArticles } from "@/actions/article";
 import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
-import UtilitySideBar from "@/components/layout/utilitySideBar";
 import BreakingNewsScroll from "@/components/layout/BreakingNewsScroll";
 import SubscriptionBox from "@/components/layout/SubscriptionBox";
+import UtilitySideBar from "@/components/layout/utility-sidebar/utilitySideBar";
+import OsrsItemContainer from "@/components/layout/osrs/osrsItemContainer";
+import WeatherContainer from "@/components/layout/weather/weatherContainer";
+import { UtilitySideBarTitle } from "@/components/layout/utility-sidebar/utilitySideBarTitle";
 
 /*  NOTE - all sections should be lifted out of page and into separate components
     NOTE2 - Right now the main article shows a fixed example article from tempPlaceholderArticle.tsx
@@ -85,11 +88,17 @@ export default async function Home() {
                 </p>
               )}
             </section>
-
-
           </section>
           <section id="sidebar" className="col-span-7 sm:col-span-1 order-2">
-            <UtilitySideBar />
+            <UtilitySideBar>
+              <UtilitySideBarTitle title="Osrs Item Prices">
+                <OsrsItemContainer />
+              </UtilitySideBarTitle>
+
+              <UtilitySideBarTitle title="Weather">
+                <WeatherContainer />
+              </UtilitySideBarTitle>
+            </UtilitySideBar>
           </section>
           {/* Newsletter subscription section */}
           <section className="col-span-7 order-3">

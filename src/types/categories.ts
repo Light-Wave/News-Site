@@ -30,10 +30,12 @@ export async function getCategoryArticles({
   return prisma.article.findMany({
     where: {
       isActive: true,
-      category: {
-        name: {
-          equals: slug,
-          mode: "insensitive",
+      categories: {
+        some: {
+          name: {
+            equals: slug,
+            mode: "insensitive",
+          },
         },
       },
     },
