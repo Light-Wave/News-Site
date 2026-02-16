@@ -181,14 +181,12 @@ export default function Header({
 
   return (
     <header
-      className="border-b sticky top-0 w-full z-50 bg-background parchment-card !overflow-hidden"
-      style={{
-        /* Fixed height so show/hide never causes layout shift */
-        height: show ? '6.5rem' : '4rem',
-        transition: 'height 0.3s ease',
-        /* will-change tells the compositor to optimize for this property */
-        willChange: 'height',
-      }}
+      className={cn(
+        "border-b sticky top-0 w-full z-50 bg-background parchment-card !overflow-hidden transition-[height] duration-300 ease-in-out",
+        /* Mobile: always h-16 (categories row is hidden). Desktop: 6.5rem when expanded, 4rem when collapsed. */
+        "h-16",
+        show ? "md:h-[6.5rem]" : "md:h-16"
+      )}
     >
       {/* Main bar — always h-16, never changes height */}
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 h-16">
