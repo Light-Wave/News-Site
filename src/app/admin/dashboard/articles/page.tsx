@@ -29,18 +29,18 @@ export default async function Page() {
         </div>
       </div>
 
-      {/* Articles List */}
       <div className="space-y-3">
         {articles.length === 0 ? (
           <p className="text-gray-500">No articles found.</p>
         ) : (
           articles.map((article) => (
-            <div
+            <Link
               key={article.id}
-              className="p-4 border rounded-md hover:bg-gray-50 transition"
+              href={`/admin/dashboard/articles/${article.id}`}
+              className="block p-4 border rounded-md hover:bg-gray-50 transition"
             >
               <h2 className="font-medium">{article.headline}</h2>
-            </div>
+            </Link>
           ))
         )}
       </div>

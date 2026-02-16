@@ -33,10 +33,11 @@ export async function createArticle(
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  if (!session) return {
-    success: false,
-    message: "Invalid session",
-  }
+  if (!session)
+    return {
+      success: false,
+      message: "Invalid session",
+    };
   // TODO: Need to implement once testing is done
   // const { success } = await auth.api.userHasPermission({
   //   headers: await headers(),
@@ -59,11 +60,9 @@ export async function createArticle(
   try {
     const { categoryIds, content, ...data } = parsed.data;
 
-
     const safeHtml = DOMPurify.sanitize(content, {
       USE_PROFILES: { html: true },
     });
-
 
     await prisma.article.create({
       data: {
@@ -77,7 +76,7 @@ export async function createArticle(
         },
       },
     });
-    revalidatePath("/")
+    revalidatePath("/");
     return { success: true };
   } catch (error) {
     return {
@@ -111,12 +110,21 @@ export async function updateArticle(
     return { success: false, errors: parsed.error };
   }
 
-  const { id, ...data } = parsed.data;
+  const { id, categoryIds, ...data } = parsed.data;
 
   try {
     const article = await prisma.article.update({
       where: { id },
-      data,
+      data: {
+        ...data,
+        ...(categoryIds
+          ? {
+              categories: {
+                set: categoryIds.map((categoryId) => ({ id: categoryId })),
+              },
+            }
+          : {}),
+      },
     });
 
     return { success: true, article };
@@ -260,11 +268,10 @@ export async function getRandomArticles(
 export async function getAllArticles() {
   try {
     return await prisma.article.findMany();
-  }
-  catch (error) {
+  } catch (error) {
     return {
       success: false,
       message: error instanceof Error ? error.message : "Unknown error",
-    }
+    };
   }
 }
