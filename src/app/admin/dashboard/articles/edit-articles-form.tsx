@@ -1,7 +1,8 @@
 "use client";
 
-import { updateArticle } from "@/actions/article";
+import { updateArticle, deleteArticle } from "@/actions/article";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   Form,
@@ -39,7 +40,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 import TipTapEditor from "@/components/create-article/TipTapEditor";
 
-
 const formSchema = z.object({
   headline: z.string().min(2),
   summary: z.string().min(10),
@@ -57,7 +57,9 @@ export default function EditArticleForm({
   article: any;
   categories: { id: string; name: string }[];
 }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -83,6 +85,21 @@ export default function EditArticleForm({
     }
   };
 
+  const onDelete = async () => {
+    if (!confirm("Are you sure you want to delete this article?")) return;
+
+    setIsDeleting(true);
+    const res = await deleteArticle({ id: article.id });
+    setIsDeleting(false);
+
+    if (res.success) {
+      toast.success(`"${article.headline}" deleted successfully`);
+      router.push("/admin/dashboard/articles"); // Redirect back to list
+    } else {
+      toast.error(res.message ?? "Failed to delete article");
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-8">
       <Card className="rounded-2xl shadow-lg">
@@ -93,7 +110,6 @@ export default function EditArticleForm({
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              
               {/* Headline */}
               <FormField
                 control={form.control}
@@ -139,14 +155,13 @@ export default function EditArticleForm({
                 )}
               />
 
-              {/* Categories (same popover as create) */}
+              {/* Categories */}
               <FormField
                 control={form.control}
                 name="categoryIds"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Categories</FormLabel>
-
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
@@ -168,7 +183,6 @@ export default function EditArticleForm({
                           <CommandGroup>
                             {categories.map((c) => {
                               const selected = field.value.includes(c.id);
-
                               return (
                                 <CommandItem
                                   key={c.id}
@@ -184,9 +198,7 @@ export default function EditArticleForm({
                                 >
                                   <Check
                                     className={`mr-2 h-4 w-4 ${
-                                      selected
-                                        ? "opacity-100"
-                                        : "opacity-0"
+                                      selected ? "opacity-100" : "opacity-0"
                                     }`}
                                   />
                                   {c.name}
@@ -219,9 +231,21 @@ export default function EditArticleForm({
                 )}
               />
 
-              <Button type="submit" className="w-full cursor-pointer">
-                Update Article
-              </Button>
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                <Button type="submit" className="flex-1 cursor-pointer">
+                  Update Article
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="flex-1"
+                  onClick={onDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting..." : "Delete Article"}
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>
