@@ -1,6 +1,11 @@
+import { getAllArticles } from "@/actions/article";
 import Link from "next/link";
 
 export default async function Page() {
+  const result = await getAllArticles();
+
+  const articles = Array.isArray(result) ? result : [];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -22,6 +27,22 @@ export default async function Page() {
             Generate AI Article
           </Link>
         </div>
+      </div>
+
+      {/* Articles List */}
+      <div className="space-y-3">
+        {articles.length === 0 ? (
+          <p className="text-gray-500">No articles found.</p>
+        ) : (
+          articles.map((article) => (
+            <div
+              key={article.id}
+              className="p-4 border rounded-md hover:bg-gray-50 transition"
+            >
+              <h2 className="font-medium">{article.headline}</h2>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

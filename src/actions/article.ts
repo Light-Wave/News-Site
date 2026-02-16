@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import { z } from "zod";
 import DOMPurify from "isomorphic-dompurify";
+import { revalidatePath } from "next/cache";
 
 // Create Article
 
@@ -76,7 +77,7 @@ export async function createArticle(
         },
       },
     });
-
+    revalidatePath("/")
     return { success: true };
   } catch (error) {
     return {
@@ -253,5 +254,17 @@ export async function getRandomArticles(
       success: false,
       message: error instanceof Error ? error.message : "Unknown error",
     };
+  }
+}
+
+export async function getAllArticles() {
+  try {
+    return await prisma.article.findMany();
+  }
+  catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    }
   }
 }
