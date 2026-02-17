@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/table";
 
 import { formatDistanceToNow } from "date-fns";
-import { RoleDropdown } from "./RoleDropdown";
+
 import { BanAction } from "./BanAction";
+import { RoleDropdown } from "./Role-DropDown";
 
 type User = {
   id: string;
