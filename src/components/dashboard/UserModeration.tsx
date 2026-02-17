@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 
 import { formatDistanceToNow } from "date-fns";
-import { RoleDropdown } from "./Role-DropDown";
+import { RoleDropdown } from "./RoleDropdown";
 import { BanAction } from "./BanAction";
 
 type User = {
