@@ -33,6 +33,8 @@ model User {
   editorsChoices EditorsChoice[]
   articles       Article[]
 
+  stripeCustomerId String?
+
   @@unique([email])
   @@map("user")
 }
