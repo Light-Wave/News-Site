@@ -16,16 +16,17 @@ import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useSubscription } from "@/hooks/use-subscription";
+import { isSubscriber } from "../lib/utils";
 
 // Sub-component for Category Links
 const CategoryLinks = ({
   categories,
   isMobile = false,
-  closeMenu
+  closeMenu,
 }: {
-  categories: any[],
-  isMobile?: boolean,
-  closeMenu: () => void
+  categories: any[];
+  isMobile?: boolean;
+  closeMenu: () => void;
 }) => (
   <>
     {categories.map((category) => (
@@ -34,7 +35,7 @@ const CategoryLinks = ({
         href={`/category/${category.name.toLowerCase()}`}
         className={cn(
           "hover:text-amber-700 transition-colors duration-300 text-base",
-          isMobile && "border-b border-amber-800/10 pb-2"
+          isMobile && "border-b border-amber-800/10 pb-2",
         )}
         onClick={isMobile ? closeMenu : undefined}
       >
@@ -51,22 +52,27 @@ const ActionButtons = ({
   isLoading,
   isMobile = false,
   handleSignOut,
-  closeMenu
+  closeMenu,
 }: {
-  session: any,
-  hasSubscription: boolean | null,
-  isLoading: boolean,
-  isMobile?: boolean,
-  handleSignOut: () => void,
-  closeMenu: () => void
+  session: any;
+  hasSubscription: boolean | null;
+  isLoading: boolean;
+  isMobile?: boolean;
+  handleSignOut: () => void;
+  closeMenu: () => void;
 }) => (
-  <div className={cn("flex items-center", isMobile ? "flex-col gap-3 mt-4" : "gap-6")}>
+  <div
+    className={cn(
+      "flex items-center",
+      isMobile ? "flex-col gap-3 mt-4" : "gap-6",
+    )}
+  >
     {hasSubscription === false && !isLoading && (
       <Button
         asChild
         className={cn(
           "magic-button-gold font-bold transition-all duration-300",
-          isMobile ? "w-full h-12" : "h-9 text-sm px-4"
+          isMobile ? "w-full h-12" : "h-9 text-sm px-4",
         )}
       >
         <Link href="/subscribe" onClick={isMobile ? closeMenu : undefined}>
@@ -79,7 +85,7 @@ const ActionButtons = ({
       <Button
         className={cn(
           "magic-button text-amber-100 font-bold transition-all duration-300",
-          isMobile ? "w-full h-12" : "h-9 text-sm px-4"
+          isMobile ? "w-full h-12" : "h-9 text-sm px-4",
         )}
         onClick={handleSignOut}
       >
@@ -90,7 +96,7 @@ const ActionButtons = ({
         asChild
         className={cn(
           "magic-button text-amber-100 font-bold transition-all duration-300",
-          isMobile ? "w-full h-12" : "h-9 text-sm px-4"
+          isMobile ? "w-full h-12" : "h-9 text-sm px-4",
         )}
       >
         <Link href="/sign-in" onClick={isMobile ? closeMenu : undefined}>
@@ -131,11 +137,15 @@ export default function Header({
         setShow(false);
         // Cooldown: ignore scroll events briefly after state change
         cooldownRef.current = true;
-        setTimeout(() => { cooldownRef.current = false; }, 200);
+        setTimeout(() => {
+          cooldownRef.current = false;
+        }, 200);
       } else if (!scrollingDown && !show) {
         setShow(true);
         cooldownRef.current = true;
-        setTimeout(() => { cooldownRef.current = false; }, 200);
+        setTimeout(() => {
+          cooldownRef.current = false;
+        }, 200);
       }
 
       lastScrollY.current = currentScrollY;
@@ -185,7 +195,7 @@ export default function Header({
         "border-b sticky top-0 w-full z-50 bg-background parchment-card !overflow-hidden transition-[height] duration-300 ease-in-out",
         /* Mobile: always h-16 (categories row is hidden). Desktop: 6.5rem when expanded, 4rem when collapsed. */
         "h-16",
-        show ? "md:h-[6.5rem]" : "md:h-16"
+        show ? "md:h-[6.5rem]" : "md:h-16",
       )}
     >
       {/* Main bar — always h-16, never changes height */}
@@ -196,7 +206,9 @@ export default function Header({
             href="/"
             className={cn(
               "group absolute top-0 left-0 md:left-1/2 md:-translate-x-1/2 transition-all duration-500",
-              show ? "h-[64px] w-[64px] md:h-[100px] md:w-[100px]" : "h-[48px] w-[48px]"
+              show
+                ? "h-[64px] w-[64px] md:h-[100px] md:w-[100px]"
+                : "h-[48px] w-[48px]",
             )}
           >
             <Image
@@ -215,7 +227,7 @@ export default function Header({
             <span
               className={cn(
                 "font-cinzel font-bold text-amber-800 tracking-tighter transition-all duration-300 whitespace-nowrap",
-                show ? "text-lg sm:text-xl" : "text-base sm:text-lg"
+                show ? "text-lg sm:text-xl" : "text-base sm:text-lg",
               )}
             >
               The Bibliomancer&apos;s Brief
@@ -247,13 +259,22 @@ export default function Header({
               </Button>
             </SheetTrigger>
 
-            <SheetContent side="right" className="w-full sm:w-80 px-6 parchment-card border-l-amber-800/20">
+            <SheetContent
+              side="right"
+              className="w-full sm:w-80 px-6 parchment-card border-l-amber-800/20"
+            >
               <SheetHeader>
-                <SheetTitle className="text-xl font-cinzel text-amber-950 text-left">Arcane Menu</SheetTitle>
+                <SheetTitle className="text-xl font-cinzel text-amber-950 text-left">
+                  Arcane Menu
+                </SheetTitle>
               </SheetHeader>
 
               <nav className="mt-8 flex flex-col gap-5 text-lg font-cinzel">
-                <CategoryLinks categories={categories} isMobile closeMenu={closeMenu} />
+                <CategoryLinks
+                  categories={categories}
+                  isMobile
+                  closeMenu={closeMenu}
+                />
                 <ActionButtons
                   session={session}
                   hasSubscription={hasSubscription}
@@ -272,10 +293,10 @@ export default function Header({
       <nav
         className="hidden md:flex w-full h-10"
         style={{
-          transform: show ? 'translateY(0)' : 'translateY(-100%)',
+          transform: show ? "translateY(0)" : "translateY(-100%)",
           opacity: show ? 1 : 0,
-          transition: 'transform 0.3s ease, opacity 0.3s ease',
-          pointerEvents: show ? 'auto' : 'none',
+          transition: "transform 0.3s ease, opacity 0.3s ease",
+          pointerEvents: show ? "auto" : "none",
         }}
       >
         <div className="max-w-7xl mx-auto w-full px-4 md:pl-36 flex items-center h-full">
@@ -287,7 +308,7 @@ export default function Header({
             onMouseMove={handleMouseMove}
             className={cn(
               "flex-grow min-w-0 overflow-x-auto no-scrollbar flex items-center select-none",
-              isDown ? "cursor-grabbing" : "cursor-grab"
+              isDown ? "cursor-grabbing" : "cursor-grab",
             )}
           >
             <div className="flex-grow" />
