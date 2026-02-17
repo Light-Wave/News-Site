@@ -6,6 +6,8 @@ import z from "zod";
 import { createArticle } from "./article";
 import { getCategoryIdsByNames } from "./category";
 import { getAiInstructionsByUserId, getUserIdByEmail } from "./user";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const HEADLINE_MAX = 200;
 const CONTENT_MAX = 10000;
@@ -19,13 +21,17 @@ const AiArticleSchema = z.object({
     .max(HEADLINE_MAX, `Headline can be at most ${HEADLINE_MAX} characters`)
     .transform((s) => s.slice(0, HEADLINE_MAX))
     .pipe(z.string().min(2).max(HEADLINE_MAX))
-    .describe(`Headline to the article. Can be at most ${HEADLINE_MAX} characters`),
+    .describe(
+      `Headline to the article. Can be at most ${HEADLINE_MAX} characters`,
+    ),
   content: z
     .string()
     .trim()
     .min(10, `Content must be at least 10 characters`)
     .max(CONTENT_MAX, `Content can be at most ${CONTENT_MAX} characters`)
-    .describe(`Content to the article. Can be at most ${CONTENT_MAX} characters`),
+    .describe(
+      `Content to the article. Can be at most ${CONTENT_MAX} characters`,
+    ),
   summary: z
     .string()
     .trim()
@@ -33,7 +39,9 @@ const AiArticleSchema = z.object({
     .max(SUMMARY_MAX, `Summary can be at most ${SUMMARY_MAX} characters`)
     .transform((s) => s.slice(0, SUMMARY_MAX))
     .pipe(z.string().min(10).max(SUMMARY_MAX))
-    .describe(`Summary to the article. Can be at most ${SUMMARY_MAX} characters`),
+    .describe(
+      `Summary to the article. Can be at most ${SUMMARY_MAX} characters`,
+    ),
 });
 
 const AiImageSchema = AiArticleSchema.extend({
@@ -60,6 +68,26 @@ export async function generateArticle(
   categoryNames: string[],
   aiWriterEmail: string,
 ) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session)
+    return {
+      success: false,
+      message: "Invalid session",
+    };
+
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        article: ["create"],
+      },
+    },
+  });
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
   if (!prompt || prompt.trim().length === 0) {
     return {
       success: false,

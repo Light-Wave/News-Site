@@ -3,9 +3,10 @@
 import { Article } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import DOMPurify from "isomorphic-dompurify";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
-import DOMPurify from "isomorphic-dompurify";
 
 // Create Article
 
@@ -32,22 +33,23 @@ export async function createArticle(
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  if (!session) return {
-    success: false,
-    message: "Invalid session",
+  if (!session)
+    return {
+      success: false,
+      message: "Invalid session",
+    };
+
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        article: ["create"],
+      },
+    },
+  });
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
   }
-  // TODO: Need to implement once testing is done
-  // const { success } = await auth.api.userHasPermission({
-  //   headers: await headers(),
-  //   body: {
-  //     permissions: {
-  //       article: ["create"],
-  //     },
-  //   },
-  // });
-  // if (!success) {
-  //   return { success: false, message: "Unauthorized" };
-  // }
 
   const parsed = createArticleSchema.safeParse(input);
 
@@ -58,11 +60,9 @@ export async function createArticle(
   try {
     const { categoryIds, content, ...data } = parsed.data;
 
-
     const safeHtml = DOMPurify.sanitize(content, {
       USE_PROFILES: { html: true },
     });
-
 
     await prisma.article.create({
       data: {
@@ -76,7 +76,7 @@ export async function createArticle(
         },
       },
     });
-
+    revalidatePath("/");
     return { success: true };
   } catch (error) {
     return {
@@ -110,12 +110,28 @@ export async function updateArticle(
     return { success: false, errors: parsed.error };
   }
 
-  const { id, ...data } = parsed.data;
+  const { id, categoryIds, content, ...data } = parsed.data;
+
+  const updateData: any = {
+    ...data,
+  };
+
+  if (content !== undefined) {
+    updateData.content = DOMPurify.sanitize(content, {
+      USE_PROFILES: { html: true },
+    });
+  }
+
+  if (categoryIds) {
+    updateData.categories = {
+      set: categoryIds.map((categoryId) => ({ id: categoryId })),
+    };
+  }
 
   try {
     const article = await prisma.article.update({
       where: { id },
-      data,
+      data: updateData,
     });
 
     return { success: true, article };
@@ -248,6 +264,41 @@ export async function getRandomArticles(
       LIMIT ${parsed.data.limit};
     `;
     return { success: true, articles };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+export async function getAllArticles() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session)
+    return {
+      success: false,
+      message: "Invalid session",
+    };
+
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        article: ["read"],
+      },
+    },
+  });
+  if (!success) {
+    return { success: false, message: "Unauthorized" };
+  }
+  try {
+    return await prisma.article.findMany({
+      include: {
+        user: true
+      }
+    });
   } catch (error) {
     return {
       success: false,
