@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useState } from "react";
 
 import {
@@ -253,8 +252,14 @@ export default function GenerateArticleForm({
                 )}
               />
 
-              <Button type="submit" className="w-full cursor-pointer">
-                Generate Article
+              <Button
+                type="submit"
+                className="w-full cursor-pointer"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting
+                  ? "Generating article..."
+                  : "Generate Article"}
               </Button>
             </form>
           </Form>

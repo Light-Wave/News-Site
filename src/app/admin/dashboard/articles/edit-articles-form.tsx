@@ -39,6 +39,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import TipTapEditor from "@/components/create-article/TipTapEditor";
+import { Prisma } from "@/generated/prisma/client";
 
 const formSchema = z.object({
   headline: z.string().min(2),
@@ -49,12 +50,15 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+type ArticleWithCategories = Prisma.ArticleGetPayload<{
+  include: { categories: true };
+}>;
 
 export default function EditArticleForm({
   article,
   categories,
 }: {
-  article: any;
+  article: ArticleWithCategories;
   categories: { id: string; name: string }[];
 }) {
   const router = useRouter();
@@ -68,7 +72,7 @@ export default function EditArticleForm({
       summary: article.summary,
       image: article.image,
       content: article.content,
-      categoryIds: article.categories.map((c: any) => c.id),
+      categoryIds: article.categories.map((c) => c.id),
     },
   });
 
@@ -233,8 +237,14 @@ export default function EditArticleForm({
 
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mt-4">
-                <Button type="submit" className="flex-1 cursor-pointer">
-                  Update Article
+                <Button
+                  type="submit"
+                  className="flex-1 cursor-pointer"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting
+                    ? "Updating..."
+                    : "Update Article"}
                 </Button>
                 <Button
                   type="button"

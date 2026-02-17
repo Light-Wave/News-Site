@@ -10,8 +10,6 @@ export default async function Page({
 }) {
   const { id } = await params;
 
-  if (!id) return notFound();
-
   const article = await prisma.article.findUnique({
     where: { id },
     include: {

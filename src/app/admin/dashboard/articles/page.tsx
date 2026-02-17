@@ -40,6 +40,23 @@ export default async function Page() {
               className="block p-4 border rounded-md hover:bg-gray-50 transition"
             >
               <h2 className="font-medium">{article.headline}</h2>
+              <div className="mt-1 text-sm text-gray-500 flex flex-wrap gap-x-3 gap-y-1">
+                {article.user.name && <span>By {article.user.name}</span>}
+                {article.createdAt && (
+                  <span>
+                    {new Date(article.createdAt as any).toLocaleDateString()}
+                  </span>
+                )}
+                {Array.isArray((article as any).categories) &&
+                  (article as any).categories.length > 0 && (
+                    <span>
+                      {(article as any).categories.length}{" "}
+                      {(article as any).categories.length === 1
+                        ? "category"
+                        : "categories"}
+                    </span>
+                  )}
+              </div>
             </Link>
           ))
         )}
