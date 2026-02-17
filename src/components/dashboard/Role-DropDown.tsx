@@ -28,7 +28,11 @@ export function RoleDropdown({ userId, currentRole }: RoleDropdownProps) {
       if (result?.success) {
         toast.success(`Success! User is now updated to ${newRole}`);
       } else {
-        toast.error("Failed to update role." + result.message);
+        toast.error(
+          result?.message
+            ? `Failed: ${result.message}`
+            : "Failed to update status",
+        );
       }
     });
   };

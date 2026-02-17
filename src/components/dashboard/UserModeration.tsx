@@ -16,7 +16,16 @@ import { formatDistanceToNow } from "date-fns";
 import { RoleDropdown } from "./Role-DropDown";
 import { BanAction } from "./BanAction";
 
-export function UserModeration({ users }: { users: any[] }) {
+type User = {
+  id: string;
+  name: string | null;
+  email: string;
+  role: string | null;
+  banned: boolean | null;
+  lastActive: Date | null;
+};
+
+export function UserModeration({ users }: { users: User[] }) {
   const [search, setSearch] = useState("");
 
   // Search Logic: Filter name and email at the same time
@@ -69,7 +78,10 @@ export function UserModeration({ users }: { users: any[] }) {
                   <div className="text-sm text-slate-500">{user.email}</div>
                 </TableCell>
                 <TableCell>
-                  <RoleDropdown userId={user.id} currentRole={user.role} />
+                  <RoleDropdown
+                    userId={user.id}
+                    currentRole={user.role ?? "user"}
+                  />
                 </TableCell>
                 <TableCell className="text-sm text-slate-500">
                   {user.lastActive
@@ -79,7 +91,7 @@ export function UserModeration({ users }: { users: any[] }) {
                     : "Never logged in"}
                 </TableCell>
                 <TableCell className="text-right">
-                  <BanAction userId={user.id} isBanned={user.banned} />
+                  <BanAction userId={user.id} isBanned={!!user.banned} />
                 </TableCell>
               </TableRow>
             ))}

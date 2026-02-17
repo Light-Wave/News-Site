@@ -7,12 +7,16 @@ export async function getDashboardData() {
       articleStats,
       latestArticles,
       topArticles,
-      users,
-      // Change: Aggregate revenue and count instead of findMany
+      usersRaw,
       subscriptionStats,
     ] = await Promise.all([
       prisma.user.count({ where: { banned: false } }),
-      prisma.article.aggregate({ _sum: { views: true }, _count: true }),
+
+      prisma.article.aggregate({
+        _sum: { views: true },
+        _count: true,
+      }),
+
       prisma.article.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
@@ -24,15 +28,28 @@ export async function getDashboardData() {
           categories: { select: { name: true } },
         },
       }),
+
       prisma.article.findMany({
         take: 2,
         orderBy: { views: "desc" },
         select: { id: true, headline: true, views: true },
       }),
+
       prisma.user.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
-        select: { id: true, name: true, email: true, role: true, banned: true },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          banned: true,
+          sessions: {
+            orderBy: { updatedAt: "desc" },
+            take: 1,
+            select: { updatedAt: true },
+          },
+        },
       }),
 
       prisma.subscription.aggregate({
@@ -40,7 +57,16 @@ export async function getDashboardData() {
       }),
     ]);
 
-    const totalRevenue = 0; // Replace with aggregate result once schema is updated
+    const formattedUsers = usersRaw.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      banned: user.banned,
+      lastActive: user.sessions[0]?.updatedAt ?? null,
+    }));
+
+    const totalRevenue = 0;
 
     const statsData = {
       revenue: totalRevenue,
@@ -56,7 +82,7 @@ export async function getDashboardData() {
       statsData,
       latestArticles,
       topArticles,
-      users,
+      users: formattedUsers,
     };
   } catch (error) {
     console.error("Database Error:", error);
