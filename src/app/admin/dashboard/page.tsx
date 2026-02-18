@@ -6,7 +6,7 @@ import { NewsStats } from "@/components/dashboard/StatCards";
 import { UserModeration } from "@/components/dashboard/UserModeration";
 
 export default async function DashboardPage() {
-  await redirectControl(["admin", "writer", "editor"], "/")
+  await redirectControl(["admin", "writer", "editor"], "/");
 
   const { statsData, latestArticles, topArticles, users } =
     await getDashboardData();

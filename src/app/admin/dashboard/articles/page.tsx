@@ -1,5 +1,7 @@
 import { getAllArticles } from "@/actions/article";
 import { redirectControl } from "@/actions/utils";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import Link from "next/link";
 
 export default async function Page() {
@@ -7,7 +9,7 @@ export default async function Page() {
 
   const articles = Array.isArray(result) ? result : [];
 
-  await redirectControl(["admin", "writer"], "/admin/dashboard");
+  await redirectControl(["admin", "writer", "editor"], "/admin/dashboard");
 
   return (
     <div className="space-y-6">

@@ -16,7 +16,10 @@ export function degreesToDirection(deg: number): string {
   return directions[index];
 }
 
-export async function redirectControl(allowedRoles: string[], redirectTo: string) {
+export async function redirectControl(
+  allowedRoles: string[],
+  redirectTo: string,
+) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
