@@ -7,7 +7,7 @@ export default async function Page() {
 
   const articles = Array.isArray(result) ? result : [];
 
-  await redirectControl(["admin", "writer"]);
+  await redirectControl(["admin", "writer"], "/admin/dashboard");
 
   return (
     <div className="space-y-6">
