@@ -14,9 +14,7 @@ export default async function DashboardPage() {
     headers: await headers(),
   });
 
-  if (!session) redirect("/");
-
-  if (!session.user.role || !allowedRoles.includes(session.user.role)) {
+  if (!session || !session.user.role || !allowedRoles.includes(session.user.role)) {
     redirect("/");
   }
 
