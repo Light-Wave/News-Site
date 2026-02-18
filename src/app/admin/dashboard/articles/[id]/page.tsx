@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import EditArticleForm from "../edit-articles-form";
 import { getAllCategories } from "@/actions/category";
-import { redirectControl } from "@/actions/utils";
+import { redirectControl } from "@/actions/server-utils";
 
 export default async function Page({
   params,

@@ -1,5 +1,5 @@
 import { getAllArticles } from "@/actions/article";
-import { redirectControl } from "@/actions/utils";
+import { redirectControl } from "@/actions/server-utils";
 import Link from "next/link";
 
 export default async function Page() {
