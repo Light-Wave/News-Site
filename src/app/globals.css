@@ -49,7 +49,6 @@
   }
 
   @keyframes spell-levitate {
-
     0%,
     100% {
       transform: translateY(0);
@@ -168,12 +167,17 @@
 }
 
 @layer components {
-
   /* Design for fantasy/magic containers */
   .parchment-card {
     @apply relative overflow-hidden transition-all duration-300;
-    background: radial-gradient(circle at center, oklch(0.96 0.03 90) 0%, oklch(0.88 0.07 80) 100%);
-    box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), inset 0 0 80px oklch(0.85 0.1 75 / 0.3);
+    background: radial-gradient(
+      circle at center,
+      oklch(0.96 0.03 90) 0%,
+      oklch(0.88 0.07 80) 100%
+    );
+    box-shadow:
+      0 10px 25px -5px rgb(0 0 0 / 0.1),
+      inset 0 0 80px oklch(0.85 0.1 75 / 0.3);
     border: 1px solid oklch(0.8 0.1 70 / 0.4);
     border-radius: 0px;
   }
@@ -181,13 +185,30 @@
   /* Metallic Header Plates */
   .metal-plate {
     @apply relative rounded-lg border-2 border-neutral-800;
-    background: linear-gradient(180deg, #525252 0%, #404040 10%, #262626 50%, #404040 90%, #262626 100%);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(
+      180deg,
+      #525252 0%,
+      #404040 10%,
+      #262626 50%,
+      #404040 90%,
+      #262626 100%
+    );
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 0 20px rgba(0, 0, 0, 0.5);
   }
 
   /* Glimmer/Glint Effects */
   .text-magic-glint {
-    background: linear-gradient(110deg, #b8860b 20%, #eec900 40%, #ffffff 50%, #eec900 60%, #b8860b 80%);
+    background: linear-gradient(
+      110deg,
+      #b8860b 20%,
+      #eec900 40%,
+      #ffffff 50%,
+      #eec900 60%,
+      #b8860b 80%
+    );
     background-size: 200% auto;
     background-clip: text;
     -webkit-background-clip: text;
@@ -197,11 +218,18 @@
   }
 
   .text-inlaid-gold {
-    background: linear-gradient(180deg, #9c6e00 0%, #d4af37 45%, #b8860b 55%, #8b6d05 100%);
+    background: linear-gradient(
+      180deg,
+      #9c6e00 0%,
+      #d4af37 45%,
+      #b8860b 55%,
+      #8b6d05 100%
+    );
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.8))
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     letter-spacing: -0.01em;
   }
 
@@ -220,7 +248,14 @@
   .sidebar-title-glint::after {
     content: attr(data-title);
     @apply absolute inset-0 opacity-0 transition-opacity duration-700 pointer-events-none z-10;
-    background: linear-gradient(110deg, #cf9f1a 20%, #ffe066 40%, #ffffff 50%, #ffe066 60%, #cf9f1a 80%);
+    background: linear-gradient(
+      110deg,
+      #cf9f1a 20%,
+      #ffe066 40%,
+      #ffffff 50%,
+      #ffe066 60%,
+      #cf9f1a 80%
+    );
     background-size: 200% auto;
     background-clip: text;
     -webkit-background-clip: text;
@@ -235,24 +270,47 @@
 
   /* Magic Buttons */
   .magic-button {
-    background: linear-gradient(135deg, #8b5a2b 0%, #a0522d 25%, #cd853f 50%, #a0522d 75%, #8b5a2b 100%);
+    background: linear-gradient(
+      135deg,
+      #8b5a2b 0%,
+      #a0522d 25%,
+      #cd853f 50%,
+      #a0522d 75%,
+      #8b5a2b 100%
+    );
     background-size: 200% 200%;
     border: 2px solid rgba(139, 90, 43, 0.6);
-    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    box-shadow:
+      0 4px 15px rgba(139, 90, 43, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     @apply font-bold transition-all duration-300;
   }
 
   .magic-button:hover {
     background-position: 100% 100%;
-    box-shadow: 0 6px 20px rgba(205, 133, 63, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    box-shadow:
+      0 6px 20px rgba(205, 133, 63, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2);
   }
 
   .magic-button-gold {
-    background: linear-gradient(135deg, #9c6e00 0%, #d4af37 25%, #fff8e1 50%, #d4af37 75%, #9c6e00 100%);
+    background: linear-gradient(
+      135deg,
+      #9c6e00 0%,
+      #d4af37 25%,
+      #fff8e1 50%,
+      #d4af37 75%,
+      #9c6e00 100%
+    );
     background-size: 200% 200%;
     border: 2px solid rgba(184, 134, 11, 0.8);
-    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    box-shadow:
+      0 4px 15px rgba(184, 134, 11, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2);
     /* Improved Contrast: Dark brown text on gold background */
     color: oklch(0.2 0.05 30) !important;
     text-shadow: 0 1px 0px rgba(255, 255, 255, 0.2);
@@ -261,7 +319,10 @@
 
   .magic-button-gold:hover {
     background-position: 100% 100%;
-    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    box-shadow:
+      0 6px 25px rgba(212, 175, 55, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2);
   }
 
   /* Utility Classes */

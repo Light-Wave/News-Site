@@ -20,7 +20,7 @@ export default function PricingCard({
 
       <div className="mb-6">
         <span className="text-4xl font-bold">${price}</span>
-        <span className="text-gray-500"> / month</span>
+        <span className="text-gray-500"> / {yearly ? "year" : "month"}</span>
       </div>
 
       <ul className="space-y-3 mb-8">
@@ -31,12 +31,30 @@ export default function PricingCard({
           </li>
         ))}
       </ul>
-
-      <Button
-        className="
-          mt-6
-          w-full
-          rounded-lg
+      {monthlyPrice <= 0 ? (
+        <Button
+          className="
+            mt-6
+            w-full
+            rounded-lg
+            border
+            py-3
+            text-sm
+            font-medium
+            bg-yellow-500
+            transition-colors
+            hover:bg-orange-600
+          "
+          disabled={true}
+        >
+          Active Plan
+        </Button>
+      ) : (
+        <Button
+          className="
+            mt-6
+            w-full
+            rounded-lg
           border
           py-3
           text-sm
@@ -45,9 +63,10 @@ export default function PricingCard({
           transition-colors
          hover:bg-orange-600
         "
-      >
-        Choose Plan
-      </Button>
+        >
+          Choose Plan
+        </Button>
+      )}
     </div>
   );
 }
