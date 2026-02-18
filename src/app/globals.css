@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -163,9 +162,11 @@
 @layer components {
   .parchment-card {
     @apply relative overflow-hidden transition-all duration-300;
-    background: radial-gradient(circle at center,
-        oklch(0.96 0.03 90) 0%,
-        oklch(0.88 0.07 80) 100%);
+    background: radial-gradient(
+      circle at center,
+      oklch(0.96 0.03 90) 0%,
+      oklch(0.88 0.07 80) 100%
+    );
     box-shadow:
       0 10px 25px -5px rgb(0 0 0 / 0.1),
       inset 0 0 80px oklch(0.85 0.1 75 / 0.3);
@@ -186,7 +187,6 @@
 
   /* Adds a fancy bobbing animation, primarily used for the spell icons */
   @keyframes spell-levitate {
-
     0%,
     100% {
       transform: translateY(0);
@@ -210,12 +210,14 @@
   /* CSS Class for background "metal" plate, currently in use on the "Articles from the Arcane Network" section */
   .metal-plate {
     @apply relative rounded-lg border-2 border-neutral-800;
-    background: linear-gradient(180deg,
-        #525252 0%,
-        #404040 10%,
-        #262626 50%,
-        #404040 90%,
-        #262626 100%);
+    background: linear-gradient(
+      180deg,
+      #525252 0%,
+      #404040 10%,
+      #262626 50%,
+      #404040 90%,
+      #262626 100%
+    );
     box-shadow:
       0 10px 15px -3px rgba(0, 0, 0, 0.5),
       inset 0 1px 0 rgba(255, 255, 255, 0.1),
@@ -224,12 +226,14 @@
 
   /* CSS Class to give text a glint effect. Only tested on a header with the metal-plate class. Currently in use on section header for smallArticle on landing page*/
   .text-magic-glint {
-    background: linear-gradient(110deg,
-        #b8860b 20%,
-        #eec900 40%,
-        #ffffff 50%,
-        #eec900 60%,
-        #b8860b 80%);
+    background: linear-gradient(
+      110deg,
+      #b8860b 20%,
+      #eec900 40%,
+      #ffffff 50%,
+      #eec900 60%,
+      #b8860b 80%
+    );
     background-size: 200% auto;
     background-clip: text;
     -webkit-background-clip: text;
@@ -255,12 +259,14 @@
 
   /* Design for fantasy/magic buttons, used for subscription and auth */
   .magic-button {
-    background: linear-gradient(135deg,
-        #8b5a2b 0%,
-        #a0522d 25%,
-        #cd853f 50%,
-        #a0522d 75%,
-        #8b5a2b 100%);
+    background: linear-gradient(
+      135deg,
+      #8b5a2b 0%,
+      #a0522d 25%,
+      #cd853f 50%,
+      #a0522d 75%,
+      #8b5a2b 100%
+    );
     background-size: 200% 200%;
     border: 2px solid rgba(139, 90, 43, 0.6);
     box-shadow:
@@ -280,12 +286,14 @@
 
   /* Eye-catching gold variant for primary calls to action like Subscribe */
   .magic-button-gold {
-    background: linear-gradient(135deg,
-        #9c6e00 0%,
-        #d4af37 25%,
-        #fff8e1 50%,
-        #d4af37 75%,
-        #9c6e00 100%);
+    background: linear-gradient(
+      135deg,
+      #9c6e00 0%,
+      #d4af37 25%,
+      #fff8e1 50%,
+      #d4af37 75%,
+      #9c6e00 100%
+    );
     background-size: 200% 200%;
     border: 2px solid rgba(184, 134, 11, 0.8);
     box-shadow:
