@@ -134,6 +134,7 @@ export async function updateArticle(
       data: updateData,
     });
 
+    revalidatePath("/admin/dashboard/articles");
     return { success: true, article };
   } catch (error) {
     return {
@@ -296,8 +297,8 @@ export async function getAllArticles() {
   try {
     return await prisma.article.findMany({
       include: {
-        user: true
-      }
+        user: true,
+      },
     });
   } catch (error) {
     return {
