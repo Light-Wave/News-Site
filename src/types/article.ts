@@ -1,5 +1,6 @@
-import { ArticleModel } from "@/generated/prisma/models";
+import { ArticleModel, CategoryModel } from "@/generated/prisma/models";
 
 export type ArticleExpended = ArticleModel & {
   user: { name: string };
+  categories: CategoryModel[];
 };

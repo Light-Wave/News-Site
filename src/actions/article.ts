@@ -229,6 +229,7 @@ export async function getLatestArticles(
       orderBy: { createdAt: "desc" },
       take: parsed.data.limit,
       where: { isActive: true },
+      include: { categories: true },
     });
     return { success: true, articles };
   } catch (error) {
