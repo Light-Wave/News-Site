@@ -15,7 +15,7 @@ export default function ArticleMain({
         {/* Headline */}
         <h1
           className="font-cinzel font-bold leading-tight mb-6
-               text-[2.5rem] sm:text-48px lg:text-64px text-magic-glint drop-shadow-sm"
+               text-[2.5rem] sm:text-48px lg:text-64px text-inlaid-gold drop-shadow-sm"
         >
           {article.headline}
         </h1>
@@ -57,7 +57,7 @@ export default function ArticleMain({
 
         <div className="mt-16 pt-10 border-t-2 border-primary/10">
           <h2 className="metal-plate font-bold text-center text-2xl py-3 w-fit mx-auto px-10 mb-10 rounded-lg">
-            <span className="text-magic-glint">Further Arcane Readings</span>
+            <span className="text-inlaid-gold">Further Arcane Readings</span>
           </h2>
           <RelatedArticles articles={relatedArticles} />
         </div>
