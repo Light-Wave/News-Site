@@ -23,11 +23,6 @@ export default function ArticleMain({
           {article.headline}
         </h1>
 
-        {/* Summary 
-        <p className="text-lg sm:text-xl lg:text-2xl font-serif italic text-foreground/70 mb-8 border-l-4 border-primary/20 pl-6 py-2">
-          {article.summary}
-        </p>
-        */}
         {/* Main Image */}
         <div className="relative w-full aspect-video mb-6">
           <Image
