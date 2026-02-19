@@ -2,7 +2,7 @@ import ArticleMain from "@/components/article/ArticleMain";
 import UtilitySideBar from "@/components/layout/utility-sidebar/utilitySideBar";
 import { UtilitySideBarTitle } from "@/components/layout/utility-sidebar/utilitySideBarTitle";
 import ArticleSidebar from "@/components/article/ArticleSidebar";
-import { getLatestArticles } from "@/actions/article";
+import { getLatestArticles, getArticleForViewing } from "@/actions/article";
 import OsrsItemContainer from "@/components/layout/osrs/osrsItemContainer";
 import WeatherContainer from "@/components/layout/weather/weatherContainer";
 import prisma from "@/lib/prisma";
@@ -15,17 +15,19 @@ export default async function ArticlePage({
 }) {
   const { id } = await params;
 
-  const article = await prisma.article.findUnique({
-    where: { id: id },
-    include: {
-      categories: true,
-      user: { select: { name: true } },
-    },
-  });
+  const result = await getArticleForViewing(id);
 
-  if (!article) {
-    return <div>Article not found</div>;
+  if (!result.success || !result.article) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
+        <h1 className="text-2xl font-bold font-cinzel mb-4">The Scroll Cannot Be Found</h1>
+        <p className="text-muted-foreground mb-8">It appears this arcane knowledge is lost to time or hidden by powerful wards.</p>
+        <Link href="/" className="magic-button px-6 py-2">Return Home</Link>
+      </div>
+    );
   }
+
+  const { article, isRestricted } = result;
 
   const latestArticlesData = await getLatestArticles({ limit: 5 });
   const latestArticles =
@@ -83,7 +85,7 @@ export default async function ArticlePage({
               </span>
             </nav>
 
-            <ArticleMain article={article} relatedArticles={latestArticles} />
+            <ArticleMain article={article} relatedArticles={latestArticles} isRestricted={isRestricted} />
           </div>
         </div>
 

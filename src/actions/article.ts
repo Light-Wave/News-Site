@@ -3,6 +3,8 @@
 import { Article } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { checkActiveSubscription } from "./subscription";
+import { ArticleExpended } from "@/types/article";
 import DOMPurify from "isomorphic-dompurify";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -300,6 +302,53 @@ export async function getAllArticles() {
         user: true
       }
     });
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// Get Article For Viewing - checks subscription and restricts content if necessary
+export async function getArticleForViewing(id: string): Promise<{
+  success: boolean;
+  article?: ArticleExpended;
+  isRestricted?: boolean;
+  message?: string;
+}> {
+  try {
+    const article = await prisma.article.findUnique({
+      where: { id, isActive: true },
+      include: {
+        categories: true,
+        user: { select: { name: true } },
+      },
+    }) as ArticleExpended | null;
+
+    if (!article) {
+      return { success: false, message: "Article not found" };
+    }
+
+    const { hasActiveSubscription } = await checkActiveSubscription();
+
+    if (!hasActiveSubscription) {
+      // If not subscribed, replace content with summary for security
+      return {
+        success: true,
+        article: {
+          ...article,
+          content: article.summary, // Send summary instead of content
+        },
+        isRestricted: true,
+      };
+    }
+
+    return {
+      success: true,
+      article,
+      isRestricted: false,
+    };
   } catch (error) {
     return {
       success: false,
