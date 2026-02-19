@@ -4,37 +4,56 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 // Create Editors Choice
 
 const createEditorsChoiceSchema = z.object({
   articleId: z.string().min(1, "Article is required"),
-  editorId: z.string().min(1, "Editor is required"),
 });
 
 export async function createEditorsChoice(
   input: z.infer<typeof createEditorsChoiceSchema>,
 ) {
-  const { success } = await auth.api.userHasPermission({
+  // Check permissions first
+  const { success: hasPermission } = await auth.api.userHasPermission({
     headers: await headers(),
     body: {
       permissions: { editorsChoice: ["create"] },
     },
   });
 
-  if (!success) {
+  if (!hasPermission) {
     return { success: false, message: "Unauthorized" };
   }
 
+  // Validate input
   const parsed = createEditorsChoiceSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, errors: parsed.error };
   }
 
+  // Get editorId from session
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { success: false, message: "Unauthorized" };
+  }
+
   try {
-    await prisma.editorsChoice.create({
-      data: parsed.data,
+    // Optional: replace any previous choice for this editor
+    await prisma.$transaction(async (tx) => {
+      await tx.editorsChoice.deleteMany();
+
+      await tx.editorsChoice.create({
+        data: {
+          articleId: parsed.data.articleId,
+          editorId: session.user.id,
+        },
+      });
     });
+
+    // Revalidate the editors choice page so the UI updates
+    revalidatePath("/admin/dashboard/editors-choice");
 
     return { success: true };
   } catch (error) {
@@ -74,6 +93,7 @@ export async function updateEditorsChoice(
       data: parsed.data,
     });
 
+    revalidatePath("/");
     return { success: true, editorsChoice };
   } catch (error) {
     return {
