@@ -5,7 +5,6 @@ import ArticleSidebar from "@/components/article/ArticleSidebar";
 import { getLatestArticles, getArticleForViewing } from "@/actions/article";
 import OsrsItemContainer from "@/components/layout/osrs/osrsItemContainer";
 import WeatherContainer from "@/components/layout/weather/weatherContainer";
-import prisma from "@/lib/prisma";
 import Link from "next/link";
 
 export default async function ArticlePage({
