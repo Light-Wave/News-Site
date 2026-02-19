@@ -14,7 +14,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { toggleUserBan } from "@/actions/action-admin";
+import { toggleUserBan } from "@/actions/action-adminUser";
 
 export function BanAction({
   userId,

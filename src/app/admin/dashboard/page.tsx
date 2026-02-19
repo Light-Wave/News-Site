@@ -3,8 +3,10 @@ import { NewsStats } from "@/components/dashboard/StatCards";
 import { UserModeration } from "@/components/dashboard/UserModeration";
 import { ContentPerformance } from "@/components/dashboard/ContentPerformance";
 import { getDashboardData } from "@/actions/data";
+import { getContentPerformance } from "@/actions/data-adminContent";
 
 export default async function DashboardPage() {
+  const articles = await getContentPerformance();
   const { statsData, latestArticles, topArticles, users } =
     await getDashboardData();
 
@@ -20,7 +22,7 @@ export default async function DashboardPage() {
 
         <div className="lg:col-span-3 space-y-6">
           <UserModeration users={users ?? []} />
-          <ContentPerformance articles={latestArticles} />
+          <ContentPerformance articles={articles} />
         </div>
       </div>
     </div>

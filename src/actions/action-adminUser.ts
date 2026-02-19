@@ -41,31 +41,31 @@ export async function updateUserRole(userId: string, newRole: string) {
       };
     }
 
-    // Fetch target user to check current role
-    const targetUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true },
-    });
+    // // Fetch target user to check current role
+    // const targetUser = await prisma.user.findUnique({
+    //   where: { id: userId },
+    //   select: { role: true },
+    // });
 
-    if (!targetUser) {
-      return { success: false, message: "User not found" };
-    }
+    // if (!targetUser) {
+    //   return { success: false, message: "User not found" };
+    // }
 
-    // Prevent modifying existing admins
-    if (targetUser.role === "admin") {
-      return {
-        success: false,
-        message: "Admin role cannot be modified",
-      };
-    }
+    // // Prevent modifying existing admins
+    // if (targetUser.role === "admin") {
+    //   return {
+    //     success: false,
+    //     message: "Admin role cannot be modified",
+    //   };
+    // }
 
-    // Prevent assigning admin role
-    if (validatedRole === "admin") {
-      return {
-        success: false,
-        message: "Admin role cannot be assigned",
-      };
-    }
+    // // Prevent assigning admin role
+    // if (validatedRole === "admin") {
+    //   return {
+    //     success: false,
+    //     message: "Admin role cannot be assigned",
+    //   };
+    // }
 
     // Update role
     await auth.api.setRole({
