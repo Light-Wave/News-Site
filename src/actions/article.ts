@@ -1,6 +1,6 @@
 "use server";
 
-import { Article } from "@/generated/prisma/client";
+import { Article, Prisma } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import DOMPurify from "isomorphic-dompurify";
@@ -272,8 +272,14 @@ export async function getRandomArticles(
   }
 }
 
+type ArticleWithUser = Prisma.ArticleGetPayload<{
+  include: {
+    user: true;
+  };
+}>;
+
 type GetAllArticlesResult =
-  | { success: true; articles: any[] }
+  | { success: true; articles: ArticleWithUser[] }
   | { success: false; message: string };
 
 export async function getAllArticles(): Promise<GetAllArticlesResult> {

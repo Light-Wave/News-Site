@@ -40,7 +40,6 @@ export async function createEditorsChoice(
   }
 
   try {
-    // Optional: replace any previous choice for this editor
     await prisma.$transaction(async (tx) => {
       await tx.editorsChoice.deleteMany();
 

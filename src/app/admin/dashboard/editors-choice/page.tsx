@@ -19,7 +19,7 @@ export default async function EditorsChoicePage() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Editors Choice</h1>
+      <h1 className="text-2xl font-bold">Editor's Choice</h1>
 
       <EditorsChoiceForm
         articles={result.articles}

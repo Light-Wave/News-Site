@@ -54,14 +54,6 @@ export default async function Page() {
                     {new Date(article.createdAt).toLocaleDateString()}
                   </span>
                 )}
-                {article.categories?.length > 0 && (
-                  <span>
-                    {article.categories.length}{" "}
-                    {article.categories.length === 1
-                      ? "category"
-                      : "categories"}
-                  </span>
-                )}
               </div>
             </Link>
           ))
