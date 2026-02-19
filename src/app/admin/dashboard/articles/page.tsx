@@ -1,10 +1,13 @@
 import { getAllArticles } from "@/actions/article";
+import { redirectControl } from "@/actions/server-utils";
 import Link from "next/link";
 
 export default async function Page() {
+  await redirectControl(["admin", "writer", "editor"], "/admin/dashboard");
   const result = await getAllArticles();
 
   const articles = Array.isArray(result) ? result : [];
+
 
   return (
     <div className="space-y-6">
