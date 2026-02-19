@@ -1,10 +1,13 @@
-import { TrendsChart, TopArticles } from "@/components/dashboard/Charts";
+import { getDashboardData } from "@/actions/data";
+import { redirectControl } from "@/actions/utils";
+import { TopArticles, TrendsChart } from "@/components/dashboard/Charts";
+import { ContentPerformance } from "@/components/dashboard/ContentPerformance";
 import { NewsStats } from "@/components/dashboard/StatCards";
 import { UserModeration } from "@/components/dashboard/UserModeration";
-import { ContentPerformance } from "@/components/dashboard/ContentPerformance";
-import { getDashboardData } from "@/actions/data";
 
 export default async function DashboardPage() {
+  await redirectControl(["admin", "writer", "editor"], "/");
+
   const { statsData, latestArticles, topArticles, users } =
     await getDashboardData();
 
