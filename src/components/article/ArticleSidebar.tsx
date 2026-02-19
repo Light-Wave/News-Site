@@ -6,7 +6,6 @@ export default function Sidebar({
   articles,
 }: {
   articles: (Article & { categories?: Category[] })[];
-  categories: { id: string; name: string }[];
 }) {
   return (
     <div className="flex flex-col gap-6 p-2">

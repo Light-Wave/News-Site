@@ -42,7 +42,6 @@ export default async function ArticlePage({
             <UtilitySideBarTitle title="Latest Scrolls">
               <ArticleSidebar
                 articles={latestArticles}
-                categories={article.categories}
               />
             </UtilitySideBarTitle>
           </UtilitySideBar>
