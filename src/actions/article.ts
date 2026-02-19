@@ -3,6 +3,8 @@
 import { Article } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { checkActiveSubscription } from "./subscription";
+import { ArticleExpended } from "@/types/article";
 import DOMPurify from "isomorphic-dompurify";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -229,6 +231,7 @@ export async function getLatestArticles(
       orderBy: { createdAt: "desc" },
       take: parsed.data.limit,
       where: { isActive: true },
+      include: { categories: true },
     });
     return { success: true, articles };
   } catch (error) {
@@ -256,14 +259,29 @@ export async function getRandomArticles(
   }
 
   try {
-    const articles = await prisma.$queryRaw<Article[]>`
-      SELECT *
-      FROM "article"
-      WHERE "isActive" = true
-      ORDER BY random()
-      LIMIT ${parsed.data.limit};
-    `;
-    return { success: true, articles };
+    // 1. Get all active article IDs
+    const allIds = await prisma.article.findMany({
+      where: { isActive: true },
+      select: { id: true },
+    });
+
+    // 2. Pick random IDs based on the limit
+    const randomIds = allIds
+      .sort(() => Math.random() - 0.5)
+      .slice(0, parsed.data.limit)
+      .map((a) => a.id);
+
+    // 3. Fetch the full articles with categories included
+    const articles = await prisma.article.findMany({
+      where: { id: { in: randomIds } },
+      include: { categories: true },
+    });
+
+    // 4. Return in random order (Prisma's 'in' might return them in DB order)
+    return {
+      success: true,
+      articles: articles.sort(() => Math.random() - 0.5),
+    };
   } catch (error) {
     return {
       success: false,
@@ -299,6 +317,69 @@ export async function getAllArticles() {
         user: true
       }
     });
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+const getArticleForViewingSchema = z.object({
+  id: z.string().min(1, "Article ID is required"),
+});
+
+// Get Article For Viewing - checks subscription and restricts content if necessary
+export async function getArticleForViewing(id: string): Promise<{
+  success: boolean;
+  article?: ArticleExpended;
+  isRestricted?: boolean;
+  message?: string;
+  errors?: z.ZodError;
+}> {
+  const parsed = getArticleForViewingSchema.safeParse({ id });
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
+  try {
+    const article = await prisma.article.findUnique({
+      where: { id: parsed.data.id, isActive: true },
+      include: {
+        categories: true,
+        user: { select: { name: true } },
+      },
+    }) as ArticleExpended | null;
+
+    if (!article) {
+      return { success: false, message: "Article not found" };
+    }
+
+    // Increment view count (simple placeholder system)
+    await prisma.article.update({
+      where: { id: parsed.data.id },
+      data: { views: { increment: 1 } },
+    });
+
+    const { hasActiveSubscription } = await checkActiveSubscription();
+
+    if (!hasActiveSubscription) {
+      // If not subscribed, replace content with summary for security
+      return {
+        success: true,
+        article: {
+          ...article,
+          content: article.summary, // Send summary instead of content
+        },
+        isRestricted: true,
+      };
+    }
+
+    return {
+      success: true,
+      article,
+      isRestricted: false,
+    };
   } catch (error) {
     return {
       success: false,
