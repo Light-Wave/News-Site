@@ -259,14 +259,29 @@ export async function getRandomArticles(
   }
 
   try {
-    const articles = await prisma.$queryRaw<Article[]>`
-      SELECT *
-      FROM "article"
-      WHERE "isActive" = true
-      ORDER BY random()
-      LIMIT ${parsed.data.limit};
-    `;
-    return { success: true, articles };
+    // 1. Get all active article IDs
+    const allIds = await prisma.article.findMany({
+      where: { isActive: true },
+      select: { id: true },
+    });
+
+    // 2. Pick random IDs based on the limit
+    const randomIds = allIds
+      .sort(() => Math.random() - 0.5)
+      .slice(0, parsed.data.limit)
+      .map((a) => a.id);
+
+    // 3. Fetch the full articles with categories included
+    const articles = await prisma.article.findMany({
+      where: { id: { in: randomIds } },
+      include: { categories: true },
+    });
+
+    // 4. Return in random order (Prisma's 'in' might return them in DB order)
+    return {
+      success: true,
+      articles: articles.sort(() => Math.random() - 0.5),
+    };
   } catch (error) {
     return {
       success: false,
