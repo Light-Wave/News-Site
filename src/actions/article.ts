@@ -310,16 +310,26 @@ export async function getAllArticles() {
   }
 }
 
+const getArticleForViewingSchema = z.object({
+  id: z.string().min(1, "Article ID is required"),
+});
+
 // Get Article For Viewing - checks subscription and restricts content if necessary
 export async function getArticleForViewing(id: string): Promise<{
   success: boolean;
   article?: ArticleExpended;
   isRestricted?: boolean;
   message?: string;
+  errors?: z.ZodError;
 }> {
+  const parsed = getArticleForViewingSchema.safeParse({ id });
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error };
+  }
+
   try {
     const article = await prisma.article.findUnique({
-      where: { id, isActive: true },
+      where: { id: parsed.data.id, isActive: true },
       include: {
         categories: true,
         user: { select: { name: true } },
@@ -332,7 +342,7 @@ export async function getArticleForViewing(id: string): Promise<{
 
     // Increment view count (simple placeholder system)
     await prisma.article.update({
-      where: { id },
+      where: { id: parsed.data.id },
       data: { views: { increment: 1 } },
     });
 
