@@ -330,6 +330,12 @@ export async function getArticleForViewing(id: string): Promise<{
       return { success: false, message: "Article not found" };
     }
 
+    // Increment view count (simple placeholder system)
+    await prisma.article.update({
+      where: { id },
+      data: { views: { increment: 1 } },
+    });
+
     const { hasActiveSubscription } = await checkActiveSubscription();
 
     if (!hasActiveSubscription) {
