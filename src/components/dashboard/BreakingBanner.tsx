@@ -5,6 +5,7 @@ export default async function BreakingBanner() {
   const article = await prisma.article.findFirst({
     where: { isBreaking: true, isActive: true },
     select: { id: true, headline: true },
+    orderBy: { createdAt: "desc" },
   });
 
   if (!article) return null;
