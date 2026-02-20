@@ -49,6 +49,7 @@ export function RoleDropdown({ userId, currentRole }: RoleDropdownProps) {
       <SelectContent>
         <SelectItem value="user">User</SelectItem>
         <SelectItem value="writer">Writer</SelectItem>
+        <SelectItem value="editor">Editor</SelectItem>
         <SelectItem value="admin">Admin</SelectItem>
       </SelectContent>
     </Select>
