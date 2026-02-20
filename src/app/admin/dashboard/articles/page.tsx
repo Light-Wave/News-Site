@@ -1,7 +1,7 @@
 import { getAllArticles } from "@/actions/article";
 import { redirectControl } from "@/actions/server-utils";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
 export default async function Page() {
   await redirectControl(["admin", "writer", "editor"], "/admin/dashboard");
@@ -60,6 +60,10 @@ export default async function Page() {
                   src={article.image}
                   width={100}
                   height={100}
+                  unoptimized={
+                    typeof article.image === "string" &&
+                    article.image.startsWith("data:")
+                  }
                 />
               </div>
             </Link>

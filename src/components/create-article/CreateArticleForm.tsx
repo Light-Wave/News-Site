@@ -142,25 +142,38 @@ export default function CreateArticleForm({
                         accept="image/jpeg"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
-                          if (!file) return;
+                          if (!file) {
+                            form.resetField("image");
+                            setImagePreview(null);
+                            return;
+                          }
 
                           // File type validation
                           if (file.type !== "image/jpeg") {
-                            toast.error("Only .jpeg files are allowed");
+                            toast.error(
+                              "Only JPEG (.jpg/.jpeg) images are allowed",
+                            );
                             return;
                           }
 
                           // Optional: limit file size (2MB example)
-                          const MAX_SIZE = 2 * 1024 * 1024;
-                          if (file.size > MAX_SIZE) {
+                          const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024;
+                          if (file.size > MAX_FILE_SIZE_BYTES) {
                             toast.error("Image must be smaller than 2MB");
                             return;
                           }
-
+                          // Enforce limit on the stored base64 data URL as well
+                          const MAX_BASE64_LENGTH = 2 * 1024 * 1024;
                           const reader = new FileReader();
-
                           reader.onloadend = () => {
                             const base64String = reader.result as string;
+                            if (base64String.length > MAX_BASE64_LENGTH) {
+                              toast.error("Image must be smaller than 2MB");
+                              // Clear any existing image value/preview since this one is too large
+                              field.onChange("");
+                              setImagePreview(null);
+                              return;
+                            }
 
                             // Save to form (this goes to DB)
                             field.onChange(base64String);

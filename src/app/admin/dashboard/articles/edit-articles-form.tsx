@@ -160,24 +160,38 @@ export default function EditArticleForm({
                         type="file"
                         accept="image/jpeg"
                         onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-
-                          if (file.type !== "image/jpeg") {
-                            toast.error("Only .jpeg files are allowed");
+                          const input = e.target as HTMLInputElement;
+                          const file = input.files?.[0];
+                          if (!file) {
+                            // Clear previous image value and preview when no file is selected
+                            field.onChange("");
+                            setImagePreview("");
+                            input.value = "";
                             return;
                           }
-
-                          const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+                          if (file.type !== "image/jpeg") {
+                            toast.error(
+                              "Only JPEG (.jpg/.jpeg) images are allowed",
+                            );
+                            // Clear previous image value and preview on invalid type
+                            field.onChange("");
+                            setImagePreview("");
+                            input.value = "";
+                            return;
+                          }
+                          const MAX_SIZE = 2 * 1024 * 1024; // 2MB (raw file size)
                           if (file.size > MAX_SIZE) {
                             toast.error("Image must be smaller than 2MB");
                             return;
                           }
-
+                          const MAX_ENCODED_SIZE = 2 * 1024 * 1024; // 2MB ceiling for encoded data
                           const reader = new FileReader();
-
                           reader.onloadend = () => {
                             const base64String = reader.result as string;
+                            if (base64String.length > MAX_ENCODED_SIZE) {
+                              toast.error("Image must be smaller than 2MB");
+                              return;
+                            }
 
                             field.onChange(base64String);
                             setImagePreview(base64String);
