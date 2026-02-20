@@ -10,6 +10,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
 import { getAllCategories } from "@/types/categories";
+import BreakingBanner from "@/components/dashboard/BreakingBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${goudyBookletter1911.variable} ${cinzel.variable} light`}
     >
       <body className="min-h-screen flex flex-col overflow-x-hidden bg-[var(--wood-darkest)]">
+        <BreakingBanner />
         <Header categories={categories} />
         <main className="flex-1 w-full max-w-7xl m-auto ">{children}</main>
         <Toaster />

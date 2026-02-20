@@ -30,7 +30,6 @@ export async function updateArticleStatus(id: string, isActive: boolean) {
       data: { isActive },
     });
 
-    // This is the "Magic" that refreshes the table data
     revalidatePath("/admin/dashboard");
 
     return { success: true };

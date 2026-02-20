@@ -25,6 +25,7 @@ const createArticleSchema = z.object({
     .max(800, "Summary can be at most 800 characters"),
   image: z.string().min(1, "Image url must be at least 1 character"),
   categoryIds: z.array(z.string()).min(1, "Article needs a category"),
+  isBreaking: z.boolean().optional(),
 });
 
 export async function createArticle(
@@ -110,11 +111,20 @@ export async function updateArticle(
     return { success: false, errors: parsed.error };
   }
 
-  const { id, categoryIds, content, ...data } = parsed.data;
+  const { id, isBreaking, categoryIds, content, ...data } = parsed.data;
 
   const updateData: any = {
     ...data,
+    isBreaking: isBreaking ?? false,
   };
+
+  if (isBreaking) {
+    await prisma.article.updateMany({
+      where: { isBreaking: true },
+      data: { isBreaking: false },
+    });
+    updateData.isBreaking = true;
+  }
 
   if (content !== undefined) {
     updateData.content = DOMPurify.sanitize(content, {
@@ -133,7 +143,7 @@ export async function updateArticle(
       where: { id },
       data: updateData,
     });
-
+    revalidatePath("/");
     revalidatePath("/admin/dashboard/articles");
     return { success: true, article };
   } catch (error) {
