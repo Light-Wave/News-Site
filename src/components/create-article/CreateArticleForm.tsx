@@ -60,6 +60,7 @@ export default function CreateArticleForm({
   categories: Category[];
 }) {
   const [open, setOpen] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -81,6 +82,7 @@ export default function CreateArticleForm({
       toast.success(`"${values.headline}" was successfully created`);
 
       form.reset();
+      setImagePreview(null);
     } else {
       toast.error(res.message ?? "Failed to create article");
     }
@@ -132,10 +134,73 @@ export default function CreateArticleForm({
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image URL</FormLabel>
+                    <FormLabel>Upload JPEG Image</FormLabel>
+
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        type="file"
+                        accept="image/jpeg"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) {
+                            form.resetField("image");
+                            setImagePreview(null);
+                            return;
+                          }
+
+                          // File type validation
+                          if (file.type !== "image/jpeg") {
+                            toast.error(
+                              "Only JPEG (.jpg/.jpeg) images are allowed",
+                            );
+                            return;
+                          }
+
+                          // Optional: limit file size (2MB example)
+                          const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024;
+                          if (file.size > MAX_FILE_SIZE_BYTES) {
+                            toast.error("Image must be smaller than 2MB");
+                            return;
+                          }
+                          // Enforce limit on the stored base64 data URL as well
+                          const MAX_BASE64_LENGTH = 2 * 1024 * 1024;
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            const base64String = reader.result as string;
+                            if (base64String.length > MAX_BASE64_LENGTH) {
+                              toast.error("Image must be smaller than 2MB");
+                              // Clear any existing image value/preview since this one is too large
+                              field.onChange("");
+                              setImagePreview(null);
+                              return;
+                            }
+
+                            // Save to form (this goes to DB)
+                            field.onChange(base64String);
+
+                            // Save to preview state
+                            setImagePreview(base64String);
+                          };
+
+                          reader.readAsDataURL(file);
+                        }}
+                      />
                     </FormControl>
+
+                    {/* Preview */}
+                    {imagePreview && (
+                      <div className="mt-4">
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Image Preview:
+                        </p>
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="rounded-lg max-h-64 object-cover border"
+                        />
+                      </div>
+                    )}
+
                     <FormMessage />
                   </FormItem>
                 )}

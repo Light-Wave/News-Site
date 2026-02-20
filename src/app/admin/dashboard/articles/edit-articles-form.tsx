@@ -64,6 +64,9 @@ export default function EditArticleForm({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    article.image || null,
+  );
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -150,10 +153,69 @@ export default function EditArticleForm({
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image URL</FormLabel>
+                    <FormLabel>Upload JPEG Image</FormLabel>
+
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        type="file"
+                        accept="image/jpeg"
+                        onChange={(e) => {
+                          const input = e.target as HTMLInputElement;
+                          const file = input.files?.[0];
+                          if (!file) {
+                            // Clear previous image value and preview when no file is selected
+                            field.onChange("");
+                            setImagePreview("");
+                            input.value = "";
+                            return;
+                          }
+                          if (file.type !== "image/jpeg") {
+                            toast.error(
+                              "Only JPEG (.jpg/.jpeg) images are allowed",
+                            );
+                            // Clear previous image value and preview on invalid type
+                            field.onChange("");
+                            setImagePreview("");
+                            input.value = "";
+                            return;
+                          }
+                          const MAX_SIZE = 2 * 1024 * 1024; // 2MB (raw file size)
+                          if (file.size > MAX_SIZE) {
+                            toast.error("Image must be smaller than 2MB");
+                            return;
+                          }
+                          const MAX_ENCODED_SIZE = 2 * 1024 * 1024; // 2MB ceiling for encoded data
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            const base64String = reader.result as string;
+                            if (base64String.length > MAX_ENCODED_SIZE) {
+                              toast.error("Image must be smaller than 2MB");
+                              return;
+                            }
+
+                            field.onChange(base64String);
+                            setImagePreview(base64String);
+                          };
+
+                          reader.readAsDataURL(file);
+                        }}
+                      />
                     </FormControl>
+
+                    {/* Current / Preview Image */}
+                    {imagePreview && (
+                      <div className="mt-4">
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Current Image:
+                        </p>
+                        <img
+                          src={imagePreview}
+                          alt={article.headline}
+                          className="rounded-lg max-h-64 object-cover border"
+                        />
+                      </div>
+                    )}
+
                     <FormMessage />
                   </FormItem>
                 )}
