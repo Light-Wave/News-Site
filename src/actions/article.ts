@@ -73,7 +73,7 @@ export async function createArticle(
           data: { isBreaking: false },
         });
       }
-      await prisma.article.create({
+      await tx.article.create({
         data: {
           ...data,
           content: safeHtml,
@@ -144,8 +144,8 @@ export async function updateArticle(
           where: { isBreaking: true },
           data: { isBreaking: false },
         });
-        updateData.isBreaking = true;
       }
+      updateData.isBreaking = isBreaking;
 
       await tx.article.update({
         where: { id },
