@@ -1,6 +1,7 @@
 import { getAllArticles } from "@/actions/article";
 import { redirectControl } from "@/actions/server-utils";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function Page() {
   await redirectControl(["admin", "writer", "editor"], "/admin/dashboard");
@@ -54,6 +55,12 @@ export default async function Page() {
                     {new Date(article.createdAt).toLocaleDateString()}
                   </span>
                 )}
+                <Image
+                  alt={article.headline}
+                  src={article.image}
+                  width={100}
+                  height={100}
+                />
               </div>
             </Link>
           ))

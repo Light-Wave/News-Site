@@ -64,6 +64,9 @@ export default function EditArticleForm({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    article.image || null,
+  );
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -150,10 +153,55 @@ export default function EditArticleForm({
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image URL</FormLabel>
+                    <FormLabel>Upload JPEG Image</FormLabel>
+
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        type="file"
+                        accept="image/jpeg"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+
+                          if (file.type !== "image/jpeg") {
+                            toast.error("Only .jpeg files are allowed");
+                            return;
+                          }
+
+                          const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+                          if (file.size > MAX_SIZE) {
+                            toast.error("Image must be smaller than 2MB");
+                            return;
+                          }
+
+                          const reader = new FileReader();
+
+                          reader.onloadend = () => {
+                            const base64String = reader.result as string;
+
+                            field.onChange(base64String);
+                            setImagePreview(base64String);
+                          };
+
+                          reader.readAsDataURL(file);
+                        }}
+                      />
                     </FormControl>
+
+                    {/* Current / Preview Image */}
+                    {imagePreview && (
+                      <div className="mt-4">
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Current Image:
+                        </p>
+                        <img
+                          src={imagePreview}
+                          alt={article.headline}
+                          className="rounded-lg max-h-64 object-cover border"
+                        />
+                      </div>
+                    )}
+
                     <FormMessage />
                   </FormItem>
                 )}

@@ -5,6 +5,7 @@ import { createEditorsChoice } from "@/actions/editorsChoice";
 import { useRouter } from "next/navigation";
 import { EditorsChoice, Prisma } from "@/generated/prisma/client";
 import { toast } from "sonner";
+import Image from "next/image";
 
 type ArticleWithUser = Prisma.ArticleGetPayload<{ include: { user: true } }>;
 export default function EditorsChoiceForm({
@@ -63,6 +64,12 @@ export default function EditorsChoiceForm({
               >
                 <h2 className="font-semibold">{article.headline}</h2>
                 <p className="text-sm text-gray-500">By {article.user.name}</p>
+                                <Image
+                                  alt={article.headline}
+                                  src={article.image}
+                                  width={100}
+                                  height={100}
+                                />
               </div>
               {isExpanded && (
                 <div
