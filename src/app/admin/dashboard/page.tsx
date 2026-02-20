@@ -1,5 +1,5 @@
 import { getDashboardData } from "@/actions/data";
-import { redirectControl } from "@/actions/utils";
+import { redirectControl } from "@/actions/server-utils";
 import { TopArticles, TrendsChart } from "@/components/dashboard/Charts";
 import { ContentPerformance } from "@/components/dashboard/ContentPerformance";
 import { NewsStats } from "@/components/dashboard/StatCards";

@@ -1,6 +1,6 @@
 "use server";
 
-import { Article } from "@/generated/prisma/client";
+import { Article, Prisma } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { checkActiveSubscription } from "./subscription";
@@ -290,15 +290,24 @@ export async function getRandomArticles(
   }
 }
 
-export async function getAllArticles() {
+type ArticleWithUser = Prisma.ArticleGetPayload<{
+  include: {
+    user: true;
+  };
+}>;
+
+type GetAllArticlesResult =
+  | { success: true; articles: ArticleWithUser[] }
+  | { success: false; message: string };
+
+export async function getAllArticles(): Promise<GetAllArticlesResult> {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  if (!session)
-    return {
-      success: false,
-      message: "Invalid session",
-    };
+
+  if (!session) {
+    return { success: false, message: "Invalid session" };
+  }
 
   const { success } = await auth.api.userHasPermission({
     headers: await headers(),
@@ -308,15 +317,22 @@ export async function getAllArticles() {
       },
     },
   });
+
   if (!success) {
     return { success: false, message: "Unauthorized" };
   }
+
   try {
-    return await prisma.article.findMany({
+    const articles = await prisma.article.findMany({
       include: {
-        user: true
-      }
+        user: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
+
+    return { success: true, articles };
   } catch (error) {
     return {
       success: false,

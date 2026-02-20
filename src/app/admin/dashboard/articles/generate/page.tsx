@@ -1,6 +1,6 @@
 import { getAllCategories } from "@/actions/category";
 import { getAllAiWriters } from "@/actions/user";
-import { redirectControl } from "@/actions/utils";
+import { redirectControl } from "@/actions/server-utils";
 import GenerateArticleForm from "./generate-article-form";
 
 export default async function Page() {
