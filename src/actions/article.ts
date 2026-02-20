@@ -365,7 +365,7 @@ export async function getArticleForViewing(id: string): Promise<{
         categories: true,
         user: { select: { name: true } },
       },
-    }) as ArticleExpended | null;
+    });
 
     if (!article) {
       return { success: false, message: "Article not found" };
