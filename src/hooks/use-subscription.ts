@@ -21,7 +21,7 @@ export function useSubscription() {
 
       setIsLoading(true);
       const result = await checkActiveSubscription();
-      setHasSubscription(result.hasActiveSubscription);
+      setHasSubscription(result);
       setIsLoading(false);
     }
 
