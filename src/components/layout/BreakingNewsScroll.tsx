@@ -1,17 +1,18 @@
+import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
-
+import Link from "next/link";
 
 /**
  * BreakingNewsScroll Component
- * 
+ *
  * This component creates a breaking news ticker with a fantasy flair, designed to resemble
  * text moving across a scroll of paper.
- * 
+ *
  * The component accepts:
  * - `text`: A string to be displayed in the marquee.
  * - `className`: An optional string for styling overrides to ensure reusability.
- * 
- * TODO: Decide on where to set the actual breaking news text - admin or from the latest article? 
+ *
+ * TODO: Decide on where to set the actual breaking news text - admin or from the latest article?
  */
 
 // SVG for giving the paper a bit of texture, not really visible
@@ -22,10 +23,15 @@ interface BreakingNewsScrollProps {
   text: string;
 }
 
-export default function BreakingNewsScroll({
+export default async function BreakingNewsScroll({
   className,
   text,
 }: BreakingNewsScrollProps) {
+  const article = await prisma.article.findFirst({
+    where: { isBreaking: true, isActive: true },
+    select: { id: true, headline: true },
+    orderBy: { createdAt: "desc" },
+  });
   return (
     <div className={cn("relative w-full overflow-hidden py-2", className)}>
       <div className="mx-auto flex w-full max-w-[1024] items-center justify-center">
@@ -36,7 +42,13 @@ export default function BreakingNewsScroll({
           <div className="absolute -left-1 -top-1 sm:-top-2 h-12 sm:h-20 w-2 sm:w-3 rounded-full bg-[var(--scroll-wood-darker)] shadow-md" />
         </div>
         {/* The "paper" and text of the scroll */}
-        <div className="relative z-10 flex h-10 sm:h-14 flex-1 min-w-0 items-center overflow-hidden bg-[var(--scroll-paper)] shadow-lg" style={{ boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.15), inset 0 -4px 8px -2px rgba(0,0,0,0.15), 0 10px 15px -3px rgba(0,0,0,0.1)' }}>
+        <div
+          className="relative z-10 flex h-10 sm:h-14 flex-1 min-w-0 items-center overflow-hidden bg-[var(--scroll-paper)] shadow-lg"
+          style={{
+            boxShadow:
+              "inset 0 4px 8px -2px rgba(0,0,0,0.15), inset 0 -4px 8px -2px rgba(0,0,0,0.15), 0 10px 15px -3px rgba(0,0,0,0.1)",
+          }}
+        >
           <div
             className="absolute inset-0 pointer-events-none opacity-40"
             style={{ backgroundImage: noiseSvg }}
@@ -47,7 +59,17 @@ export default function BreakingNewsScroll({
           <div className="absolute inset-0 flex items-center w-full overflow-hidden whitespace-nowrap">
             <div className="animate-marquee inline-block py-1 sm:py-2 pl-[100%]">
               <span className="mx-2 sm:mx-4 text-sm sm:text-xl font-bold text-[var(--scroll-text)] font-cinzel tracking-widest uppercase drop-shadow-[0_1px_1px_rgba(255,245,220,0.8)]">
-                BREAKING NEWS: {text}
+                BREAKING NEWS:{" "}
+                {article ? (
+                  <Link
+                    href={`/article/${article.id}`}
+                    className="hover:underline font-bold truncate"
+                  >
+                    {article.headline}
+                  </Link>
+                ) : (
+                  text
+                )}
               </span>
             </div>
           </div>
