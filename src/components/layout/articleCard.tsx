@@ -1,11 +1,15 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import type { Article } from "@/generated/prisma/client";
+import type { Article, Category } from "@/generated/prisma/client";
 import SpellIcon from "./spellIcon";
+import Link from "next/link";
 
 interface ArticleCardProps {
-  article?: Article & { user?: { name?: string | null } };
+  article?: Article & {
+    user?: { name?: string | null };
+    categories?: Category[];
+  };
   authorName?: string;
 }
 
@@ -41,6 +45,15 @@ export default function ArticleCard({ article, authorName }: ArticleCardProps) {
         <span>5 min read</span>
       </div>
       <CardContent className="space-y-4">
+        {article?.categories && article.categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 justify-center mb-2">
+            {article.categories.map((cat) => (
+              <span key={cat.id} className="text-[10px] font-bold text-primary/70 uppercase tracking-tighter border border-primary/20 px-2 py-0.5">
+                {cat.name}
+              </span>
+            ))}
+          </div>
+        )}
         <h2 className="text-2xl font-bold text-center leading-tight">
           {title}
         </h2>
@@ -65,12 +78,14 @@ export default function ArticleCard({ article, authorName }: ArticleCardProps) {
             </SpellIcon>
           </div>
         </div>
-        <Button
-          type="button"
-          className="w-full sm:w-auto min-w-[180px] bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_6px_0_0_rgba(0,0,0,0.3)] border-b border-primary/50 active:translate-y-[2px] active:shadow-none transition-all font-cinzel px-8 h-14 text-xl"
-        >
-          Read Scroll
-        </Button>
+        <Link href={`/article/${article?.id}`} className="w-full sm:w-auto">
+          <Button
+            type="button"
+            className="w-full sm:w-auto min-w-[180px] bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_6px_0_0_rgba(0,0,0,0.3)] border-b border-primary/50 active:translate-y-[2px] active:shadow-none transition-all font-cinzel px-8 h-14 text-xl"
+          >
+            Read Scroll
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );

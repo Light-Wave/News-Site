@@ -6,8 +6,8 @@ type UtilitySideBarProps = {
 
 export default function UtilitySideBar({ children }: UtilitySideBarProps) {
   return (
-    <section>
-      <div className="parchment-card shadow border-t-0 border-r-0">
+    <section className="group">
+      <div className="parchment-card shadow border-t-0 border-r-0 overflow-visible">
         {children}
       </div>
     </section>

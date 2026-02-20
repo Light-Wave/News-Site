@@ -4,10 +4,14 @@ import Link from "next/link";
 
 export default async function Page() {
   await redirectControl(["admin", "writer", "editor"], "/admin/dashboard");
+
   const result = await getAllArticles();
 
-  const articles = Array.isArray(result) ? result : [];
+  if (!result.success) {
+    return <p className="text-red-500">{result.message}</p>;
+  }
 
+  const articles = result.articles;
 
   return (
     <div className="space-y-6">
@@ -47,18 +51,9 @@ export default async function Page() {
                 {article.user.name && <span>By {article.user.name}</span>}
                 {article.createdAt && (
                   <span>
-                    {new Date(article.createdAt as any).toLocaleDateString()}
+                    {new Date(article.createdAt).toLocaleDateString()}
                   </span>
                 )}
-                {Array.isArray((article as any).categories) &&
-                  (article as any).categories.length > 0 && (
-                    <span>
-                      {(article as any).categories.length}{" "}
-                      {(article as any).categories.length === 1
-                        ? "category"
-                        : "categories"}
-                    </span>
-                  )}
               </div>
             </Link>
           ))

@@ -18,7 +18,7 @@ export default function SideBar() {
     { name: "Homepage", icon: House, href: "/" },
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
     { name: "Article Manager", icon: Newspaper, href: "/admin/dashboard/articles" },
-    { name: "Editor's Picks", icon: Star, href: "/admin/picks" },
+    { name: "Editor's Picks", icon: Star, href: "/admin/dashboard/editors-choice" },
     { name: "User Management", icon: Users, href: "/admin/users" },
     { name: "Plans & Pricing", icon: CreditCard, href: "/admin/plans" },
   ];
