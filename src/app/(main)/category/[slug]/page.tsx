@@ -5,11 +5,11 @@ import OsrsItemContainer from "@/components/layout/osrs/osrsItemContainer";
 import WeatherContainer from "@/components/layout/weather/weatherContainer";
 import { UtilitySideBarTitle } from "@/components/layout/utility-sidebar/utilitySideBarTitle";
 import SubscriptionBox from "@/components/layout/SubscriptionBox";
-import { getCategoryArticles, getCategoryBySlug } from "@/types/categories";
+import { getCategoryArticles, getCategoryBySlug, PAGE_SIZE } from "@/types/categories";
 import Link from "next/link";
-import { ArticleExpended } from "@/types/article";
 
-const PAGE_SIZE = 5;
+
+
 
 export default async function CategoryPage({
   params,
@@ -38,25 +38,25 @@ export default async function CategoryPage({
     <div className="">
       <div className="grid grid-cols-7 m-auto ">
         <section
-          id="main content"
+          id="main-content"
           className="col-span-7 sm:col-span-5 sm:col-start-2 sm:mx-4 order-1"
         >
           {articles.length === 0 ? (
             <div className="parchment-card text-center py-20 mb-8 flex flex-col items-center justify-center">
               <div className="text-6xl mb-6 filter drop-shadow-md">📜</div>
               <p className="text-2xl font-cinzel text-primary font-bold">The archives for this chamber are currently empty.</p>
-              <p className="text-primary/70 mt-3 font-serif italic italic text-lg max-w-md mx-auto">Waiting for the scribes to unearth new scrolls and inscribe them into the chronicles.</p>
+              <p className="text-primary/70 mt-3 font-serif italic text-lg max-w-md mx-auto">Waiting for the scribes to unearth new scrolls and inscribe them into the chronicles.</p>
             </div>
           ) : (
             <div className="flex flex-col gap-8">
               {/* Featured article in category */}
-              <ArticleCard article={articles[0] as unknown as ArticleExpended} />
+              <ArticleCard article={articles[0]} />
 
               {/* Other articles in category */}
               {articles.slice(1).length > 0 && (
                 <div className="flex flex-col gap-4">
                   {articles.slice(1).map((article) => (
-                    <SmallArticleCard key={article.id} article={article as unknown as ArticleExpended} />
+                    <SmallArticleCard key={article.id} article={article} />
                   ))}
                 </div>
               )}
