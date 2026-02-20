@@ -11,8 +11,6 @@ import Link from "next/link";
  * The component accepts:
  * - `text`: A string to be displayed in the marquee.
  * - `className`: An optional string for styling overrides to ensure reusability.
- *
- * TODO: Decide on where to set the actual breaking news text - admin or from the latest article?
  */
 
 // SVG for giving the paper a bit of texture, not really visible
