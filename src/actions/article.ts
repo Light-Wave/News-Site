@@ -27,7 +27,7 @@ const createArticleSchema = z.object({
     .max(800, "Summary can be at most 800 characters"),
   image: z.string().min(1, "Image url must be at least 1 character"),
   categoryIds: z.array(z.string()).min(1, "Article needs a category"),
-  isBreaking: z.boolean().optional(),
+  isBreaking: z.boolean(),
 });
 
 export async function createArticle(
@@ -66,19 +66,27 @@ export async function createArticle(
     const safeHtml = DOMPurify.sanitize(content, {
       USE_PROFILES: { html: true },
     });
-
-    await prisma.article.create({
-      data: {
-        ...data,
-        content: safeHtml,
-        user: {
-          connect: { id: session.user.id },
+    await prisma.$transaction(async (tx) => {
+      if (data.isBreaking) {
+        await tx.article.updateMany({
+          where: { isBreaking: true },
+          data: { isBreaking: false },
+        });
+      }
+      await prisma.article.create({
+        data: {
+          ...data,
+          content: safeHtml,
+          user: {
+            connect: { id: session.user.id },
+          },
+          categories: {
+            connect: categoryIds.map((id) => ({ id })),
+          },
         },
-        categories: {
-          connect: categoryIds.map((id) => ({ id })),
-        },
-      },
+      });
     });
+
     revalidatePath("/");
     return { success: true };
   } catch (error) {
@@ -117,17 +125,7 @@ export async function updateArticle(
 
   const updateData: any = {
     ...data,
-    isBreaking: isBreaking ?? false,
   };
-
-  if (isBreaking) {
-    await prisma.article.updateMany({
-      where: { isBreaking: true },
-      data: { isBreaking: false },
-    });
-    updateData.isBreaking = true;
-  }
-
   if (content !== undefined) {
     updateData.content = DOMPurify.sanitize(content, {
       USE_PROFILES: { html: true },
@@ -139,21 +137,30 @@ export async function updateArticle(
       set: categoryIds.map((categoryId) => ({ id: categoryId })),
     };
   }
-
   try {
-    const article = await prisma.article.update({
-      where: { id },
-      data: updateData,
+    await prisma.$transaction(async (tx) => {
+      if (isBreaking) {
+        await tx.article.updateMany({
+          where: { isBreaking: true },
+          data: { isBreaking: false },
+        });
+        updateData.isBreaking = true;
+      }
+
+      await tx.article.update({
+        where: { id },
+        data: updateData,
+      });
     });
-    revalidatePath("/");
-    revalidatePath("/admin/dashboard/articles");
-    return { success: true, article };
   } catch (error) {
     return {
       success: false,
       message: error instanceof Error ? error.message : "Unknown error",
     };
   }
+  revalidatePath("/");
+  revalidatePath("/admin/dashboard/articles");
+  return { success: true };
 }
 
 // Delete Article
