@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { updateUserRole } from "@/actions/action-admin";
+import { updateUserRole } from "@/actions/action-adminUser";
 
 interface RoleDropdownProps {
   userId: string;

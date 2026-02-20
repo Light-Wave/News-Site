@@ -101,6 +101,7 @@ model Article {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   editorsChoices EditorsChoice[]
+  isBreaking     Boolean         @default(false)
 
   @@index([userId])
   @@map("article")

@@ -1,13 +1,14 @@
-import { getDashboardData } from "@/actions/data";
-import { redirectControl } from "@/actions/server-utils";
 import { TopArticles, TrendsChart } from "@/components/dashboard/Charts";
-import { ContentPerformance } from "@/components/dashboard/ContentPerformance";
 import { NewsStats } from "@/components/dashboard/StatCards";
 import { UserModeration } from "@/components/dashboard/UserModeration";
+import { getDashboardData } from "@/actions/data";
+import { getContentPerformance } from "@/actions/data-adminContent";
+import { ContentPerformance } from "@/components/dashboard/ContentPerformance";
+import { redirectControl } from "@/actions/server-utils";
 
 export default async function DashboardPage() {
   await redirectControl(["admin", "writer", "editor"], "/");
-
+  const articles = await getContentPerformance();
   const { statsData, latestArticles, topArticles, users } =
     await getDashboardData();
 
@@ -23,7 +24,7 @@ export default async function DashboardPage() {
 
         <div className="lg:col-span-3 space-y-6">
           <UserModeration users={users ?? []} />
-          <ContentPerformance articles={latestArticles} />
+          <ContentPerformance articles={articles} />
         </div>
       </div>
     </div>
