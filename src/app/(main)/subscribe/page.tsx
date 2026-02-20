@@ -4,9 +4,24 @@ import { useState } from "react";
 import PricingCard from "@/components/subscription/PricingCard";
 import PricingToggle from "@/components/subscription/PricingToggle";
 import FAQ from "@/components/subscription/FAQ";
+import { authClient } from "@/lib/auth-client";
 
 export default function SubscribePage() {
   const [yearly, setYearly] = useState(false);
+  async function subscribe() {
+    await authClient.subscription.upgrade({
+      plan: "basic",
+      successUrl: "http://localhost:3000",
+      cancelUrl: "http://localhost:3000",
+      disableRedirect: false,
+    });
+  }
+  async function unsubscribe() {
+    await authClient.subscription.cancel({
+      returnUrl: "http://localhost:3000",
+      disableRedirect: false,
+    });
+  }
 
   return (
     <div className="min-h-screen bg-[#f5f1ea] px-4 py-16 overflow-x-hidden">
@@ -20,9 +35,9 @@ export default function SubscribePage() {
       {/* Controlled toggle */}
       <PricingToggle yearly={yearly} onChange={setYearly} />
 
-      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
         <PricingCard
-          title="Basic"
+          title="Free"
           monthlyPrice={0}
           yearly={yearly}
           features={[
@@ -34,26 +49,14 @@ export default function SubscribePage() {
         />
 
         <PricingCard
-          title="Pro"
+          title="Basic"
           monthlyPrice={9}
           yearly={yearly}
           features={[
-            "Everything in Basic",
+            "Everything in Free",
             "20 Projects",
             "Priority support",
             "Early access to stories",
-          ]}
-        />
-
-        <PricingCard
-          title="Premium"
-          monthlyPrice={19}
-          yearly={yearly}
-          features={[
-            "Everything in Pro",
-            "Unlimited Projects",
-            "24/7 Support",
-            "Direct editor access",
           ]}
         />
       </div>
