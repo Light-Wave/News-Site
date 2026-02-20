@@ -1,10 +1,13 @@
-import { TrendsChart, TopArticles } from "@/components/dashboard/Charts";
+import { getDashboardData } from "@/actions/data";
+import { redirectControl } from "@/actions/server-utils";
+import { TopArticles, TrendsChart } from "@/components/dashboard/Charts";
+import { ContentPerformance } from "@/components/dashboard/ContentPerformance";
 import { NewsStats } from "@/components/dashboard/StatCards";
 import { UserModeration } from "@/components/dashboard/UserModeration";
-import { ContentPerformance } from "@/components/dashboard/ContentPerformance";
-import { getDashboardData } from "@/actions/data";
 
 export default async function DashboardPage() {
+  await redirectControl(["admin", "writer", "editor"], "/");
+
   const { statsData, latestArticles, topArticles, users } =
     await getDashboardData();
 
@@ -15,11 +18,11 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1 space-y-6">
           <TrendsChart />
-          <TopArticles articles={topArticles} />
+          <TopArticles articles={latestArticles} />
         </div>
 
         <div className="lg:col-span-3 space-y-6">
-          <UserModeration users={users} />
+          <UserModeration users={users ?? []} />
           <ContentPerformance articles={latestArticles} />
         </div>
       </div>

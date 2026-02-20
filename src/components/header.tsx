@@ -124,9 +124,22 @@ export default function Header({
   // After a state change, we ignore scroll events for a short period
   // so the layout-shift-induced scroll event doesn't flip the state back.
   const controlNavbar = useCallback(() => {
-    if (cooldownRef.current) return;
-
     const currentScrollY = window.scrollY;
+
+    if (cooldownRef.current) {
+      // Keep the baseline fresh while cooling down so we don't process
+      // a stale delta right after cooldown ends.
+      lastScrollY.current = currentScrollY;
+      return;
+    }
+
+    // Always show at/near the top.
+    if (currentScrollY <= 80) {
+      if (!show) setShow(true);
+      lastScrollY.current = currentScrollY;
+      return;
+    }
+
     const diff = Math.abs(currentScrollY - lastScrollY.current);
 
     if (diff > 5) {

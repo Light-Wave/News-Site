@@ -1,4 +1,8 @@
 "use client";
+
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -7,66 +11,94 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { toggleUserBan } from "@/actions/action-admin";
 
-interface UserModerationRow {
-  id: string | number;
-  name: string;
+import { formatDistanceToNow } from "date-fns";
+
+import { BanAction } from "./BanAction";
+import { RoleDropdown } from "./Role-DropDown";
+
+type User = {
+  id: string;
+  name: string | null;
   email: string;
   role: string | null;
-  banned?: boolean | null;
-}
+  banned: boolean | null;
+  lastActive: Date | null;
+};
 
-export function UserModeration({ users }: { users: UserModerationRow[] }) {
+export function UserModeration({ users }: { users: User[] }) {
+  const [search, setSearch] = useState("");
+
+  // Search Logic: Filter name and email at the same time
+  const filteredUsers = users.filter((user) => {
+    const searchTerm = search.toLowerCase();
+    return (
+      user.name?.toLowerCase().includes(searchTerm) ||
+      user.email.toLowerCase().includes(searchTerm)
+    );
+  });
+
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="p-4 border-b flex justify-between items-center">
-        <h3 className="font-bold text-slate-800 text-sm">User Moderation</h3>
-        <button className="text-[10px] bg-slate-100 px-2 py-1 rounded font-bold uppercase text-slate-500">
+    <div className="space-y-6">
+      {/* Search Bar & View All */}
+      <div className="flex items-center gap-3">
+        <Input
+          placeholder="Search by name or email..."
+          value={search}
+          aria-label="Search name or email"
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-md"
+        />
+        <Button
+          variant="default"
+          onClick={() => setSearch("")}
+          disabled={!search}
+        >
           View All
-        </button>
+        </Button>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-slate-50 hover:bg-slate-50">
-            <TableHead className="h-10 text-[11px] font-bold">USER</TableHead>
-            <TableHead className="h-10 text-[11px] font-bold">EMAIL</TableHead>
-            <TableHead className="h-10 text-[11px] font-bold">ROLE</TableHead>
-            <TableHead className="h-10 text-right text-[11px] font-bold">
-              ACTION
-            </TableHead>
-            <TableHead className="h-10 text-right text-[11px] font-bold">
-              CHANGE ROLE
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((u) => (
-            <TableRow key={u.id} className="hover:bg-slate-50/50">
-              <TableCell className="font-medium">{u.name}</TableCell>
-              <TableCell className="text-slate-500">{u.email}</TableCell>
 
-              <TableCell className="py-2">
-                <Badge className="text-[10px] uppercase h-5">{u.role}</Badge>
-              </TableCell>
-              <TableCell className="py-2 text-right">
-                <button
-                  onClick={() => toggleUserBan(u.id.toString(), !!u.banned)}
-                  className={`text-[11px] font-bold underline ${u.banned ? "text-green-600" : "text-red-500"}`}
-                >
-                  {u.banned ? "Unban" : "Ban"}
-                </button>
-              </TableCell>
-              <TableCell className="text-right">
-                <button className="text-blue-600 text-xs font-bold">
-                  Edit
-                </button>
-              </TableCell>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>User</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Last Active</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredUsers.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <div className="font-medium">{user.name || "Anonymous"}</div>
+                </TableCell>
+                <TableCell>
+                  <div className="text-sm text-slate-500">{user.email}</div>
+                </TableCell>
+                <TableCell>
+                  <RoleDropdown
+                    userId={user.id}
+                    currentRole={user.role ?? "user"}
+                  />
+                </TableCell>
+                <TableCell className="text-sm text-slate-500">
+                  {user.lastActive
+                    ? formatDistanceToNow(new Date(user.lastActive), {
+                        addSuffix: true,
+                      })
+                    : "Never logged in"}
+                </TableCell>
+                <TableCell className="text-right">
+                  <BanAction userId={user.id} isBanned={!!user.banned} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

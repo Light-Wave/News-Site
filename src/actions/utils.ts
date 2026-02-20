@@ -11,3 +11,4 @@ export function degreesToDirection(deg: number): string {
   const index = Math.floor((normalizedDeg + 22.5) / 45) % 8;
   return directions[index];
 }
+

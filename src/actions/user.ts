@@ -136,3 +136,33 @@ export async function getAiInstructionsByUserId(
     return null;
   }
 }
+
+export async function getAllAiWriters() {
+  try {
+    const writers = await prisma.user.findMany({
+      where: {
+        aiWriter: {
+          isNot: null, // Only users that have AiWriter record
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        aiWriter: {
+          select: {
+            id: true,
+          },
+        },
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return writers;
+  } catch (error) {
+    console.error("Failed to fetch AI writers:", error);
+    return [];
+  }
+}
