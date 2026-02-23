@@ -7,18 +7,27 @@ import FAQ from "@/components/subscription/FAQ";
 import { authClient } from "@/lib/auth-client";
 
 export default function SubscribePage() {
-  const [yearly, setYearly] = useState(false);
-  async function subscribe() {
+  async function subscribeMonthly() {
     await authClient.subscription.upgrade({
       plan: "basic",
-      successUrl: "http://localhost:3000",
-      cancelUrl: "http://localhost:3000",
+      successUrl: "http://localhost:3000/subscribe/success",
+      cancelUrl: "http://localhost:3000/subscribe/error",
       disableRedirect: false,
+      annual: false,
+    });
+  }
+  async function subscribeYearly() {
+    await authClient.subscription.upgrade({
+      plan: "basic",
+      successUrl: "http://localhost:3000/subscribe/success",
+      cancelUrl: "http://localhost:3000/subscribe/error",
+      disableRedirect: false,
+      annual: true,
     });
   }
   async function unsubscribe() {
     await authClient.subscription.cancel({
-      returnUrl: "http://localhost:3000",
+      returnUrl: "http://localhost:3000/subscribe/unsubscribed",
       disableRedirect: false,
     });
   }
@@ -32,14 +41,12 @@ export default function SubscribePage() {
         Select the perfect plan for your needs. Cancel anytime.
       </p>
 
-      {/* Controlled toggle */}
-      <PricingToggle yearly={yearly} onChange={setYearly} />
-
-      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
+      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
         <PricingCard
           title="Free"
           monthlyPrice={0}
-          yearly={yearly}
+          yearly={false}
+          onClick={unsubscribe}
           features={[
             "Essential Features",
             "5 Projects",
@@ -49,15 +56,28 @@ export default function SubscribePage() {
         />
 
         <PricingCard
-          title="Basic"
+          title="Monthly"
           monthlyPrice={9}
-          yearly={yearly}
+          yearly={false}
+          onClick={subscribeMonthly}
           features={[
             "Everything in Free",
             "20 Projects",
             "Priority support",
             "Early access to stories",
           ]}
+        />
+        <PricingCard
+          title="Yearly"
+          monthlyPrice={9}
+          yearly={true}
+          features={[
+            "Everything in Free",
+            "20 Projects",
+            "Priority support",
+            "Early access to stories",
+          ]}
+          onClick={subscribeYearly}
         />
       </div>
 

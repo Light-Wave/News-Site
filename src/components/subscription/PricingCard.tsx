@@ -6,11 +6,13 @@ export default function PricingCard({
   monthlyPrice,
   yearly,
   features,
+  onClick,
 }: {
   title: string;
   monthlyPrice: number;
   yearly: boolean;
   features: string[];
+  onClick?: () => void;
 }) {
   const price = yearly ? calculateYearlyPrice(monthlyPrice) : monthlyPrice;
 
@@ -63,6 +65,8 @@ export default function PricingCard({
           transition-colors
          hover:bg-orange-600
         "
+          onClick={onClick}
+          type="button"
         >
           Choose Plan
         </Button>
