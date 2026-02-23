@@ -178,9 +178,10 @@ export async function generateArticle(
     const createResult = await createArticle(
       PersistedArticleSchema.parse({
         ...validOutput.data,
-        image: "",
+        image: "https://picsum.photos/seed/426/200/300",
         categoryIds,
         userId: writerId.id,
+        isBreaking: false,
       }),
     );
 
