@@ -38,6 +38,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import TipTapEditor from "./TipTapEditor";
+import { Switch } from "../ui/switch";
 
 const formSchema = z.object({
   headline: z.string().min(2),
@@ -45,6 +46,7 @@ const formSchema = z.object({
   image: z.string().min(1),
   content: z.string().min(10),
   categoryIds: z.array(z.string()).min(1),
+  isBreaking: z.boolean(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -70,6 +72,7 @@ export default function CreateArticleForm({
       image: "",
       content: "",
       categoryIds: [],
+      isBreaking: false,
     },
   });
 
@@ -272,6 +275,32 @@ export default function CreateArticleForm({
                   </FormItem>
                 )}
               />
+
+              <div className="my-8 p-6 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between shadow-sm">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-slate-900 uppercase tracking-tight">
+                    Set as Breaking News
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    Enable to show this in the top website banner.
+                  </p>
+                </div>
+                <FormField
+                  control={form.control}
+                  name="isBreaking"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-red-600"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               {/* TipTap */}
               <FormField
