@@ -77,7 +77,7 @@ export default async function CategoryPage({
 
         <section id="sidebar" className="col-span-7 sm:col-span-1 order-2">
           <UtilitySideBar>
-            <UtilitySideBarTitle title="Osrs Item Prices">
+            <UtilitySideBarTitle title="Item Market">
               <OsrsItemContainer />
             </UtilitySideBarTitle>
 
