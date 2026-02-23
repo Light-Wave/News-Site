@@ -314,22 +314,6 @@ export default function EditArticleForm({
                 />
               </div>
 
-              {/* Content Editor Field follows below */}
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Content</FormLabel>
-                    <TipTapEditor
-                      content={field.value}
-                      onUpdate={field.onChange}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {/* Content */}
               <FormField
                 control={form.control}
