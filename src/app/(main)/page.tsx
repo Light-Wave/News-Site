@@ -13,10 +13,8 @@ import { UtilitySideBarTitle } from "@/components/layout/utility-sidebar/utility
     NOTE2 - Right now the main article shows a fixed example article from tempPlaceholderArticle.tsx
     NOTE3 - Right now the Arcane Network section shows the latest active articles from the database (ordered by createdAt desc)
     NOTE4 - Right now the Recommended for you section shows random active articles from the database via getRandomArticles
-    TODO: Decide on what mainArticle should be (set by admin? just latest article? most popular?)
     TODO: Make a more intelligent choice of articles for Arcane Network section
     TODO: Make a more intelligent choice of articles for Recommended for you section
-    TODO: Decide where to get breaking news from (admin? latest article?)
 */
 
 export default async function Home() {
@@ -46,7 +44,7 @@ export default async function Home() {
             id="main-content"
             className="col-span-7 sm:col-span-5 sm:col-start-2 sm:mx-4 order-1"
           >
-            {/* Main article section (editors choice? most popular? most recent?) */}
+            {/* Main article section */}
             <section>
               <ArticleCard article={mainArticle} />
             </section>
@@ -91,7 +89,7 @@ export default async function Home() {
           </section>
           <section id="sidebar" className="col-span-7 sm:col-span-1 order-2">
             <UtilitySideBar>
-              <UtilitySideBarTitle title="Osrs Item Prices">
+              <UtilitySideBarTitle title="Item Market">
                 <OsrsItemContainer />
               </UtilitySideBarTitle>
 
