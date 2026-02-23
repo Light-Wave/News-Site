@@ -1,6 +1,7 @@
 import ArticleCard from "@/components/layout/articleCard";
 import SmallArticleCard from "@/components/layout/smallArticleCard";
-import { getLatestArticles, getRandomArticles, getEditorsChoice } from "@/actions/article";
+import { getLatestArticles, getRandomArticles } from "@/actions/article";
+import { getEditorsChoice } from "@/actions/editorsChoice";
 import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 import BreakingNewsScroll from "@/components/layout/BreakingNewsScroll";
 import SubscriptionBox from "@/components/layout/SubscriptionBox";
