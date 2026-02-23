@@ -45,6 +45,7 @@ const formSchema = z.object({
   image: z.string().min(1),
   content: z.string().min(10),
   categoryIds: z.array(z.string()).min(1),
+  isBreaking: z.boolean(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -70,6 +71,7 @@ export default function CreateArticleForm({
       image: "",
       content: "",
       categoryIds: [],
+      isBreaking: false,
     },
   });
 
