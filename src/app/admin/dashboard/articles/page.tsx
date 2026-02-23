@@ -1,5 +1,6 @@
 import { getAllArticles } from "@/actions/article";
 import { redirectControl } from "@/actions/server-utils";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function Page() {
@@ -54,6 +55,16 @@ export default async function Page() {
                     {new Date(article.createdAt).toLocaleDateString()}
                   </span>
                 )}
+                <Image
+                  alt={article.headline}
+                  src={article.image}
+                  width={100}
+                  height={100}
+                  unoptimized={
+                    typeof article.image === "string" &&
+                    article.image.startsWith("data:")
+                  }
+                />
               </div>
             </Link>
           ))
