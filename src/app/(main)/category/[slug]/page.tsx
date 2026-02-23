@@ -53,7 +53,7 @@ export default async function CategoryPage({
               <ArticleCard article={articles[0]} />
 
               {/* Other articles in category */}
-              {articles.slice(1).length > 0 && (
+              {articles.length > 1 && (
                 <div className="flex flex-col gap-4">
                   {articles.slice(1).map((article) => (
                     <SmallArticleCard key={article.id} article={article} />
