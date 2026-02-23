@@ -26,7 +26,7 @@ export default async function CategoryPage({
   const category = await getCategoryBySlug(resolvedParams.slug);
 
   if (!category) {
-    return <div className="p-10">Category not found</div>;
+    return <div className="p-10">No scrolls found in the chamber of {resolvedParams.slug}</div>;
   }
 
   const articles = await getCategoryArticles({
