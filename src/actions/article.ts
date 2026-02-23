@@ -405,9 +405,16 @@ export async function getArticleForViewing(id: string): Promise<{
 }
 
 // Get Editor's Choice
-export async function getEditorsChoice() {
+export async function getEditorsChoice(): Promise<
+  { success: true; article: ArticleExpended } | { success: false; message: string }
+> {
   try {
     const choices = await prisma.editorsChoice.findMany({
+      where: {
+        article: {
+          isActive: true
+        }
+      },
       include: {
         article: {
           include: {
@@ -440,7 +447,7 @@ export async function getEditorsChoice() {
   } catch (error) {
     return {
       success: false,
-      message: "Error fetching Editor's Choice",
+      message: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
