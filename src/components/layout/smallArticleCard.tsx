@@ -12,7 +12,7 @@ export default function SmallArticleCard({ article }: SmallArticleCardProps) {
   const summary = article?.summary || "Article super short version goes here. Lorem ipsum dolor, sit amet";
 
   return (
-    <Card className="parchment-card max-w-[1024px] rounded-none m-auto p-0 border-b border-primary/10 hover:shadow-lg transition-all group">
+    <Card className="parchment-card w-full max-w-[1024px] rounded-none m-auto p-0 border-b border-primary/10 hover:shadow-lg transition-all group">
       <Link href={`/article/${article?.id}`} className="grid grid-cols-5">
         <div className="col-span-1 relative min-h-[150px]">
           <Image
