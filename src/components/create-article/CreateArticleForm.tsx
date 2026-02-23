@@ -153,6 +153,8 @@ export default function CreateArticleForm({
                             toast.error(
                               "Only JPEG (.jpg/.jpeg) images are allowed",
                             );
+                            form.resetField("image");
+                            setImagePreview(null);
                             return;
                           }
 
@@ -160,6 +162,8 @@ export default function CreateArticleForm({
                           const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024;
                           if (file.size > MAX_FILE_SIZE_BYTES) {
                             toast.error("Image must be smaller than 2MB");
+                            form.resetField("image");
+                            setImagePreview(null);
                             return;
                           }
                           // Enforce limit on the stored base64 data URL as well

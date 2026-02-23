@@ -182,7 +182,11 @@ export default function EditArticleForm({
                           const MAX_SIZE = 2 * 1024 * 1024; // 2MB (raw file size)
                           if (file.size > MAX_SIZE) {
                             toast.error("Image must be smaller than 2MB");
-                            return;
+                             // Clear previous image value and preview on invalid type
+                            field.onChange("");
+                            setImagePreview("");
+                            input.value = "";
+                            return
                           }
                           const MAX_ENCODED_SIZE = 2 * 1024 * 1024; // 2MB ceiling for encoded data
                           const reader = new FileReader();
