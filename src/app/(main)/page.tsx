@@ -43,7 +43,7 @@ export default async function Home() {
         </section>
         <div className="grid grid-cols-7 m-auto ">
           <section
-            id="main content"
+            id="main-content"
             className="col-span-7 sm:col-span-5 sm:col-start-2 sm:mx-4 order-1"
           >
             {/* Main article section (editors choice? most popular? most recent?) */}
