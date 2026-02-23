@@ -51,6 +51,7 @@ const AiImageSchema = AiArticleSchema.extend({
 const PersistedArticleSchema = AiImageSchema.extend({
   categoryIds: z.array(z.string()).min(1, "Article needs a category"),
   userId: z.string().min(1, "Article needs a writer"),
+  isBreaking: z.boolean(),
 });
 
 const DEFAULT_INSTRUCTIONS =
@@ -177,7 +178,7 @@ export async function generateArticle(
     const createResult = await createArticle(
       PersistedArticleSchema.parse({
         ...validOutput.data,
-        image: "Implement real image once we can generate with AI",
+        image: "",
         categoryIds,
         userId: writerId.id,
       }),
