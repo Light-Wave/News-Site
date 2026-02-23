@@ -1,6 +1,6 @@
 import ArticleCard from "@/components/layout/articleCard";
 import SmallArticleCard from "@/components/layout/smallArticleCard";
-import { getLatestArticles, getRandomArticles } from "@/actions/article";
+import { getLatestArticles, getRandomArticles, getEditorsChoice } from "@/actions/article";
 import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 import BreakingNewsScroll from "@/components/layout/BreakingNewsScroll";
 import SubscriptionBox from "@/components/layout/SubscriptionBox";
@@ -20,9 +20,10 @@ import { UtilitySideBarTitle } from "@/components/layout/utility-sidebar/utility
 */
 
 export default async function Home() {
-  const [latestArticlesData, randomArticlesData] = await Promise.all([
+  const [latestArticlesData, randomArticlesData, editorsChoiceData] = await Promise.all([
     getLatestArticles({ limit: 3 }),
     getRandomArticles({ limit: 3 }),
+    getEditorsChoice(),
   ]);
   const tempLatestArticles = latestArticlesData.success
     ? latestArticlesData.articles
@@ -32,7 +33,11 @@ export default async function Home() {
     : [];
   const breakingNews =
     "Witches call for cauldron regulations after coven turned into swans due to faulty cauldron";
-  const mainArticle = exampleArticle[0];
+
+  // Use Editor's Choice if available, otherwise fallback to the example article
+  const mainArticle = editorsChoiceData.success && editorsChoiceData.article
+    ? editorsChoiceData.article
+    : exampleArticle[0];
 
   return (
     <div>

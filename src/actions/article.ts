@@ -403,3 +403,44 @@ export async function getArticleForViewing(id: string): Promise<{
     };
   }
 }
+
+// Get Editor's Choice
+export async function getEditorsChoice() {
+  try {
+    const choices = await prisma.editorsChoice.findMany({
+      include: {
+        article: {
+          include: {
+            categories: true,
+            user: {
+              select: {
+                name: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
+      },
+      take: 1
+    });
+
+    if (choices.length > 0) {
+      return {
+        success: true,
+        article: choices[0].article
+      };
+    }
+
+    return {
+      success: false,
+      message: "No Editor's Choice found",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Error fetching Editor's Choice",
+    };
+  }
+}

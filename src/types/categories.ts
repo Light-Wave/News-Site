@@ -43,6 +43,7 @@ export async function getCategoryArticles({
       user: {
         select: { name: true },
       },
+      categories: true,
     },
     orderBy: {
       createdAt: "desc",
