@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { ArticleExpended } from "@/types/article";
 
 // Create Editors Choice
 
@@ -133,6 +134,54 @@ export async function deleteEditorsChoice(
     });
 
     return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// Get Editor's Choice
+export async function getEditorsChoice(): Promise<
+  { success: true; article: ArticleExpended } | { success: false; message: string }
+> {
+  try {
+    const choices = await prisma.editorsChoice.findMany({
+      where: {
+        article: {
+          isActive: true
+        }
+      },
+      include: {
+        article: {
+          include: {
+            categories: true,
+            user: {
+              select: {
+                name: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
+      },
+      take: 1
+    });
+
+    if (choices.length > 0) {
+      return {
+        success: true,
+        article: choices[0].article as ArticleExpended,
+      };
+    }
+
+    return {
+      success: false,
+      message: "No Editor's Choice found",
+    };
   } catch (error) {
     return {
       success: false,

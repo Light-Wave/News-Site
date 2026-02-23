@@ -48,7 +48,7 @@ export default function ArticleCard({ article, authorName }: ArticleCardProps) {
         {article?.categories && article.categories.length > 0 && (
           <div className="flex flex-wrap gap-2 justify-center mb-2">
             {article.categories.map((cat) => (
-              <span key={cat.id} className="text-[10px] font-bold text-primary/70 uppercase tracking-tighter border border-primary/20 px-2 py-0.5">
+              <span key={cat.id} className="text-xs sm:text-sm font-bold text-primary/70 uppercase tracking-tighter border border-primary/20 px-3 py-1.5 bg-primary/5 inline-block">
                 {cat.name}
               </span>
             ))}

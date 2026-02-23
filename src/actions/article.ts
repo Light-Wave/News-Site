@@ -377,13 +377,13 @@ export async function getArticleForViewing(id: string): Promise<{
   }
 
   try {
-    const article = (await prisma.article.findUnique({
+    const article = await prisma.article.findUnique({
       where: { id: parsed.data.id, isActive: true },
       include: {
         categories: true,
         user: { select: { name: true } },
       },
-    })) as ArticleExpended | null;
+    });
 
     if (!article) {
       return { success: false, message: "Article not found" };
@@ -421,3 +421,4 @@ export async function getArticleForViewing(id: string): Promise<{
     };
   }
 }
+

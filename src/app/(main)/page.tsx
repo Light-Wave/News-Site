@@ -1,6 +1,7 @@
 import ArticleCard from "@/components/layout/articleCard";
 import SmallArticleCard from "@/components/layout/smallArticleCard";
 import { getLatestArticles, getRandomArticles } from "@/actions/article";
+import { getEditorsChoice } from "@/actions/editorsChoice";
 import { exampleArticle } from "@/components/layout/tempPlaceholderArticle";
 import BreakingNewsScroll from "@/components/layout/BreakingNewsScroll";
 import SubscriptionBox from "@/components/layout/SubscriptionBox";
@@ -13,16 +14,15 @@ import { UtilitySideBarTitle } from "@/components/layout/utility-sidebar/utility
     NOTE2 - Right now the main article shows a fixed example article from tempPlaceholderArticle.tsx
     NOTE3 - Right now the Arcane Network section shows the latest active articles from the database (ordered by createdAt desc)
     NOTE4 - Right now the Recommended for you section shows random active articles from the database via getRandomArticles
-    TODO: Decide on what mainArticle should be (set by admin? just latest article? most popular?)
     TODO: Make a more intelligent choice of articles for Arcane Network section
     TODO: Make a more intelligent choice of articles for Recommended for you section
-    TODO: Decide where to get breaking news from (admin? latest article?)
 */
 
 export default async function Home() {
-  const [latestArticlesData, randomArticlesData] = await Promise.all([
+  const [latestArticlesData, randomArticlesData, editorsChoiceData] = await Promise.all([
     getLatestArticles({ limit: 3 }),
     getRandomArticles({ limit: 3 }),
+    getEditorsChoice(),
   ]);
   const tempLatestArticles = latestArticlesData.success
     ? latestArticlesData.articles
@@ -32,7 +32,11 @@ export default async function Home() {
     : [];
   const breakingNews =
     "Witches call for cauldron regulations after coven turned into swans due to faulty cauldron";
-  const mainArticle = exampleArticle[0];
+
+  // Use Editor's Choice if available, otherwise fallback to the example article
+  const mainArticle = editorsChoiceData.success && editorsChoiceData.article
+    ? editorsChoiceData.article
+    : exampleArticle[0];
 
   return (
     <div>
@@ -43,10 +47,10 @@ export default async function Home() {
         </section>
         <div className="grid grid-cols-7 m-auto ">
           <section
-            id="main content"
+            id="main-content"
             className="col-span-7 sm:col-span-5 sm:col-start-2 sm:mx-4 order-1"
           >
-            {/* Main article section (editors choice? most popular? most recent?) */}
+            {/* Main article section */}
             <section>
               <ArticleCard article={mainArticle} />
             </section>
@@ -91,7 +95,7 @@ export default async function Home() {
           </section>
           <section id="sidebar" className="col-span-7 sm:col-span-1 order-2">
             <UtilitySideBar>
-              <UtilitySideBarTitle title="Osrs Item Prices">
+              <UtilitySideBarTitle title="Item Market">
                 <OsrsItemContainer />
               </UtilitySideBarTitle>
 

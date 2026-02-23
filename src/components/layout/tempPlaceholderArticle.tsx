@@ -13,6 +13,7 @@ export const exampleArticle: Article[] = [
     updatedAt: new Date(),
     userId: "1",
     isActive: true,
+    isBreaking: false,
   },
   {
     id: "2",
@@ -26,5 +27,6 @@ export const exampleArticle: Article[] = [
     updatedAt: new Date(),
     userId: "1",
     isActive: true,
+    isBreaking: false,
   },
 ];
