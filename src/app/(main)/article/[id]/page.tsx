@@ -90,7 +90,7 @@ export default async function ArticlePage({
         {/* Right Sidebar - Utility */}
         <div className="col-span-12 lg:col-span-2 order-3 mt-4 lg:mt-0">
           <UtilitySideBar>
-            <UtilitySideBarTitle title="Item Prices">
+            <UtilitySideBarTitle title="Item Market">
               <OsrsItemContainer />
             </UtilitySideBarTitle>
             <UtilitySideBarTitle title="Weather">
