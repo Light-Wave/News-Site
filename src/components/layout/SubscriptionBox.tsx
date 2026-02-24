@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/use-subscription";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 /**
  * SubscriptionBox Component
@@ -19,18 +19,11 @@ interface SubscriptionBoxProps {
 export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
   const { hasSubscription, isLoading } = useSubscription();
   const { data: session } = authClient.useSession();
-  const router = useRouter();
-
-  const handleSubscribeClick = () => {
-    if (session) {
-      router.push("/subscribe");
-    } else {
-      router.push("/sign-in");
-    }
-  };
 
   if (isLoading) return null; // Don't render anything while checking subscription status
   if (hasSubscription === true) return null; // Only hide if definitively subscribed
+
+  const subscribeHref = session ? "/subscribe" : "/sign-in";
 
   return (
     <div className={cn("relative w-full max-w-[1024px] mx-auto py-8 px-4", className)}>
@@ -76,10 +69,12 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
             {/* Subscription form */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-center gap-3 w-full mt-2">
               <Button
-                onClick={handleSubscribeClick}
+                asChild
                 className="magic-button-gold h-auto px-8 py-3 rounded-md font-bold transition-all duration-300 hover:scale-105"
               >
-                Subscribe
+                <Link href={subscribeHref}>
+                  Subscribe
+                </Link>
               </Button>
             </div>
             <p className="text-amber-800/60 text-xs mt-2">
