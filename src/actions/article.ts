@@ -395,7 +395,7 @@ export async function getArticleForViewing(id: string): Promise<{
       data: { views: { increment: 1 } },
     });
 
-    const { hasActiveSubscription } = await checkActiveSubscription();
+    const hasActiveSubscription = await checkActiveSubscription();
 
     if (!hasActiveSubscription) {
       // If not subscribed, replace content with summary for security

@@ -11,7 +11,13 @@ export default function PricingToggle({
 }) {
   return (
     <div className="mt-6 flex items-center justify-center gap-4">
-      <span className={!yearly ? "font-semibold" : "text-gray-600"}>
+      <span
+        className={
+          !yearly
+            ? "font-semibold text-amber-900"
+            : "text-amber-800/60"
+        }
+      >
         Monthly
       </span>
 
@@ -21,8 +27,15 @@ export default function PricingToggle({
         aria-label="Toggle between monthly and yearly billing"
       />
 
-      <span className={yearly ? "font-semibold" : "text-gray-600"}>
-        Yearly <span className="text-green-600">(Save 20%)</span>
+      <span
+        className={
+          yearly
+            ? "font-semibold text-amber-900"
+            : "text-amber-800/60"
+        }
+      >
+        Yearly{" "}
+        <span className="text-amber-700 font-bold">(Save 20%)</span>
       </span>
     </div>
   );
