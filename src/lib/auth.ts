@@ -53,7 +53,7 @@ export const auth = betterAuth({
           {
             name: "basic", // the name of the plan, it'll be automatically lower cased when stored in the database
             priceId: "price_1SzdZAKen9F2FPENwZAxr94I", // the price ID from stripe
-            annualDiscountPriceId: "price_1Szda2Ken9F2FPENoosHSpIr", // (optional) the price ID for annual billing with a discount
+            annualDiscountPriceId: "price_1T4GTnKen9F2FPENUlqNX3UP", // (optional) the price ID for annual billing with a discount
           },
         ],
       },

@@ -20,10 +20,11 @@ export default function PricingCard({
 
   return (
     <div
-      className={`relative flex flex-col overflow-hidden rounded-lg border-2 p-6 transition-all duration-300 hover:-translate-y-1 ${highlighted
+      className={`relative flex flex-col overflow-hidden rounded-lg border-2 p-6 transition-all duration-300 hover:-translate-y-1 ${
+        highlighted
           ? "border-amber-600/80 shadow-[0_0_25px_rgba(184,134,11,0.3)]"
           : "border-amber-800/40"
-        }`}
+      }`}
       style={{
         background:
           "linear-gradient(135deg, #f4e4bc 0%, #f8f0dc 50%, #e8d5a3 100%)",
@@ -51,7 +52,7 @@ export default function PricingCard({
         <h2 className="text-xl font-bold mb-4 text-amber-900/90">{title}</h2>
 
         <div className="mb-6">
-          <span className="text-4xl font-bold text-amber-900">${price}</span>
+          <span className="text-4xl font-bold text-amber-900">{price} sek</span>
           <span className="text-amber-800/60 ml-1">
             / {yearly ? "year" : "month"}
           </span>
@@ -99,5 +100,5 @@ export default function PricingCard({
 }
 
 function calculateYearlyPrice(monthlyPrice: number) {
-  return monthlyPrice * 12 * 0.8; // 20% discount
+  return Math.floor(monthlyPrice * 12 * 0.8); // 20% discount
 }

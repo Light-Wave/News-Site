@@ -69,7 +69,7 @@ export default function SubscribePage() {
 
           <PricingCard
             title="Apprentice"
-            monthlyPrice={9}
+            monthlyPrice={99}
             yearly={false}
             onClick={subscribeMonthly}
             features={[
@@ -82,7 +82,7 @@ export default function SubscribePage() {
           />
           <PricingCard
             title="Archmage"
-            monthlyPrice={9}
+            monthlyPrice={99}
             yearly={true}
             features={[
               "Everything in Wanderer",

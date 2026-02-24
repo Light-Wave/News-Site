@@ -29,7 +29,6 @@ model User {
   aiWriter       AiWriter?
   sessions       Session[]
   accounts       Account[]
-  subscriptions  Subscription[]
   editorsChoices EditorsChoice[]
   articles       Article[]
 
@@ -149,39 +148,21 @@ model Category {
 }
 
 model Subscription {
-  id                   String           @id @default(uuid())
-  createdAt            DateTime         @default(now())
-  expiresAt            DateTime
-  subscriptionTypeId   String
-  subscriptionType     SubscriptionType @relation(fields: [subscriptionTypeId], references: [id])
-  userId               String
-  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String    @id
   plan                 String
   referenceId          String
   stripeCustomerId     String?
   stripeSubscriptionId String?
-  status               String?          @default("incomplete")
+  status               String?   @default("incomplete")
   periodStart          DateTime?
   periodEnd            DateTime?
   trialStart           DateTime?
   trialEnd             DateTime?
-  cancelAtPeriodEnd    Boolean?         @default(false)
+  cancelAtPeriodEnd    Boolean?  @default(false)
   cancelAt             DateTime?
   canceledAt           DateTime?
   endedAt              DateTime?
   seats                Int?
 
   @@map("subscription")
-}
-
-model SubscriptionType {
-  id          String @id @default(uuid())
-  name        String
-  description String
-  price       Int
-
-  subscriptions Subscription[]
-
-  @@unique([name])
-  @@map("subscriptiontype")
 }
