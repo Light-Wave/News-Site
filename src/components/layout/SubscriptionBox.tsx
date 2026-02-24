@@ -2,15 +2,13 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import * as React from "react"
 import { useSubscription } from "@/hooks/use-subscription";
+import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
+
 /**
  * SubscriptionBox Component
- * TODO - Implement an actual check for user subscription status
- * TODO - Add an actual function to the submit button other than spitting out a console.log
  */
-
 
 const noiseSvg = `data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E`;
 
@@ -19,17 +17,13 @@ interface SubscriptionBoxProps {
 }
 
 export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
-  const [email, setEmail] = useState("");
   const { hasSubscription, isLoading } = useSubscription();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement actual subscription logic
-    console.log("Subscribing:", email);
-  };
+  const { data: session } = authClient.useSession();
 
   if (isLoading) return null; // Don't render anything while checking subscription status
   if (hasSubscription === true) return null; // Only hide if definitively subscribed
+
+  const subscribeHref = session ? "/subscribe" : "/sign-in";
 
   return (
     <div className={cn("relative w-full max-w-[1024px] mx-auto py-8 px-4", className)}>
@@ -73,25 +67,16 @@ export default function SubscriptionBox({ className }: SubscriptionBoxProps) {
             </p>
 
             {/* Subscription form */}
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row sm:items-center gap-3 w-full max-w-md mt-2">
-              <label htmlFor="email" className="sr-only">Email Address</label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your.name@enchanted-mail.realm"
-                className="subscription-input flex-1 px-4 py-3 rounded-md border-2 border-amber-700/30 bg-[#faf6ed]/80 text-amber-900 placeholder:text-amber-700/50 focus:outline-none focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all duration-300"
-                required
-                suppressHydrationWarning
-              />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-center gap-3 w-full mt-2">
               <Button
-                type="submit"
-                className="magic-button-gold h-auto px-6 py-3 rounded-md font-bold transition-all duration-300 hover:scale-105"
+                asChild
+                className="magic-button-gold h-auto px-8 py-3 rounded-md font-bold transition-all duration-300 hover:scale-105"
               >
-                Subscribe
+                <Link href={subscribeHref}>
+                  Subscribe
+                </Link>
               </Button>
-            </form>
+            </div>
             <p className="text-amber-800/60 text-xs mt-2">
               🔮 No hexes • 📿 Easily unsubscribe • 🧙 Wizard-approved
             </p>
