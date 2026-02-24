@@ -1,36 +1,23 @@
-"use client";
+import ResetPasswordPageClient from "./reset-password-page-client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { ResetPasswordForm } from "@/components/forms/reset-password-form";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string | string[] }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const tokenParam = resolvedSearchParams.token;
+  const token = Array.isArray(tokenParam)
+    ? (tokenParam[0] ?? "")
+    : (tokenParam ?? "");
 
-export default function Page() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token") ?? "";
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-      <Card className="w-full max-w-[350px]">
-        <CardHeader>
-          <CardTitle>Reset password</CardTitle>
-          <CardDescription>
-            Enter new password and confirm it to reset your password
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ResetPasswordForm
-            token={token}
-            onSuccess={() => router.push("/sign-in")}
-          />
-        </CardContent>
-      </Card>
-    </div>
-  );
+  if (!token) {
+    return (
+      <div>
+        <h1>Invalid password reset link</h1>
+        <p>The password reset link is missing a token or is invalid.</p>
+      </div>
+    );
+  }
+  return <ResetPasswordPageClient token={token} />;
 }
