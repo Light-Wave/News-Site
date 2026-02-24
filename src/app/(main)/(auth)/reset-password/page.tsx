@@ -11,5 +11,13 @@ export default async function Page({
     ? (tokenParam[0] ?? "")
     : (tokenParam ?? "");
 
+  if (!token) {
+    return (
+      <div>
+        <h1>Invalid password reset link</h1>
+        <p>The password reset link is missing a token or is invalid.</p>
+      </div>
+    );
+  }
   return <ResetPasswordPageClient token={token} />;
 }
