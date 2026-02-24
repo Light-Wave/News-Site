@@ -78,12 +78,12 @@ export default function PricingCard({
           ))}
         </ul>
 
-        {monthlyPrice <= 0 ? (
+        {onClick === undefined ? (
           <Button
             className="magic-button mt-auto w-full rounded-md py-3 text-sm font-bold transition-all duration-300 opacity-60 cursor-not-allowed"
             disabled={true}
           >
-            Current Plan
+            Current Quest
           </Button>
         ) : (
           <Button
@@ -91,7 +91,7 @@ export default function PricingCard({
             onClick={onClick}
             type="button"
           >
-            Begin Your Quest
+            {price === 0 ? "Abandon your quest" : "Begin Your Quest"}
           </Button>
         )}
       </div>

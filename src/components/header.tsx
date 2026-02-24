@@ -16,7 +16,6 @@ import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useSubscription } from "@/hooks/use-subscription";
-import { isSubscriber } from "../lib/utils";
 
 // Sub-component for Category Links
 const CategoryLinks = ({

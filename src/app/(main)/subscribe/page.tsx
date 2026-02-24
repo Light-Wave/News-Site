@@ -3,10 +3,12 @@
 import PricingCard from "@/components/subscription/PricingCard";
 import FAQ from "@/components/subscription/FAQ";
 import { authClient } from "@/lib/auth-client";
+import { useSubscription } from "@/hooks/use-subscription";
 
 const noiseSvg = `data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E`;
 
 export default function SubscribePage() {
+  const { hasSubscription, isLoading } = useSubscription();
   async function subscribeMonthly() {
     await authClient.subscription.upgrade({
       plan: "basic",
@@ -58,7 +60,7 @@ export default function SubscribePage() {
             title="Wanderer"
             monthlyPrice={0}
             yearly={false}
-            onClick={unsubscribe}
+            onClick={hasSubscription && !isLoading ? unsubscribe : undefined}
             features={[
               "Access to the Town Crier",
               "5 Scrolls per Moon",
@@ -71,7 +73,9 @@ export default function SubscribePage() {
             title="Apprentice"
             monthlyPrice={99}
             yearly={false}
-            onClick={subscribeMonthly}
+            onClick={
+              hasSubscription || isLoading ? undefined : subscribeMonthly
+            }
             features={[
               "Everything in Wanderer",
               "20 Scrolls per Moon",
@@ -90,7 +94,7 @@ export default function SubscribePage() {
               "Priority Raven Delivery",
               "Early Access to Chronicles",
             ]}
-            onClick={subscribeYearly}
+            onClick={hasSubscription || isLoading ? undefined : subscribeYearly}
           />
         </div>
 
