@@ -6,6 +6,7 @@ import { getLatestArticles, getArticleForViewing } from "@/actions/article";
 import OsrsItemContainer from "@/components/layout/osrs/osrsItemContainer";
 import WeatherContainer from "@/components/layout/weather/weatherContainer";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default async function ArticlePage({
   params,
@@ -17,13 +18,7 @@ export default async function ArticlePage({
   const result = await getArticleForViewing(id);
 
   if (!result.success || !result.article) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
-        <h1 className="text-2xl font-bold font-cinzel mb-4">The Scroll Cannot Be Found</h1>
-        <p className="text-muted-foreground mb-8">It appears this arcane knowledge is lost to time or hidden by powerful wards.</p>
-        <Link href="/" className="magic-button px-6 py-2">Return Home</Link>
-      </div>
-    );
+    notFound();
   }
 
   const { article, isRestricted } = result;

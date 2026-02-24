@@ -7,6 +7,7 @@ import { UtilitySideBarTitle } from "@/components/layout/utility-sidebar/utility
 import SubscriptionBox from "@/components/layout/SubscriptionBox";
 import { getCategoryArticles, getCategoryBySlug, PAGE_SIZE } from "@/types/categories";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 
 
@@ -26,7 +27,7 @@ export default async function CategoryPage({
   const category = await getCategoryBySlug(resolvedParams.slug);
 
   if (!category) {
-    return <div className="p-10">No scrolls found in the chamber of {resolvedParams.slug}</div>;
+    notFound();
   }
 
   const articles = await getCategoryArticles({
